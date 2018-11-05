@@ -1,0 +1,73 @@
+\rhead{\xiaowuhao作者简历}
+\part{作者简历}
+%列举发表论文、专著、专利、标准及参加科研项目情况（版权所有必须归中山大学）
+
+\noindent 个人简介：
+
+
+
+
+
+\begin{window}[0,r,{\includegraphics[scale=1.3]{me.jpg}},{}]
+曾碧怡，女，1992年生，籍贯广东惠州。本科就读于中山大学自动化专业，并获工学学士学位，研究生就读于中山大学数据科学与计算机学院计算机技术专业，主要研究方向为计算机视觉与图形处理。在读期间参与国家自然基金项目，并发表相关学术论文和专利。
+%XXX，女，1992年生，籍贯广东惠州。本科就读于中山大学自动化专业，并获工学学士学位，研究生就读于中山大学数据科学与计算机学院计算机技术专业，主要研究方向为计算机视觉与图形处理。在读期间参与国家自然基金项目，并发表相关学术论文和专利。
+\end{window}
+
+
+
+
+
+
+%\vspace{0.5\baselineskip}
+%\begin{tabular}{p{10cm}lr}
+%{\renewcommand\baselinestretch{1.0}\selectfont
+%\begin{tabular}{p{3.5cm}ll}
+%    \hspace{-1.25cm}姓名：\thesisauthor&性别：汉\\
+%    \hspace{-1.25cm}籍贯：广东广州&出生年月：1999\\
+%    \hspace{-1.25cm}最高学历：硕士\\
+%\end{tabular}}&%
+%\begin{minipage}[c]{1cm}
+%\includegraphics[bb=0 0 55 67]{figures/pic2.eps}
+%\end{minipage}
+%\end{tabular}
+
+\vspace{0.9\baselineskip}
+\noindent 发表的论文：
+\begin{compactenum}[\hspace{2em} \mbox{[}1\mbox{]}]
+\item 苏卓，吴学标，\textbf{曾碧怡}，颜吉超，罗笑南，
+%\item \textbf{第三作者}，
+基于双边核回归的相对约减纹理分解方法，
+ 计算机辅助设计与图形学学报， 2016，28(12)，2202-2209 (与学位论文第2章相关)%
+\item Zhuo Su, \textbf{Biyi Zeng}, Jiaxin Miao, et al,
+%\item  \textbf{第二作者},
+Related Reductive Structure-Aware Regression Filter,
+Elsevier Journal of Computational and Applied Mathematics, SCI期刊(二审小修), 2016 International Conference on Information and Computational Science会议推荐发表 (与学位论文第2章相关)
+\item Zhuo Su, \textbf{Biyi Zeng}, Jiaxin Miao,
+%\item  \textbf{第二作者},
+A Structure-aware Decomposition Model with Rolling Guided Local Laplacian Filtering Mode，IEEE Transactions on Multimedia，SCI期刊(一审中)(与学位论文第3章相关)
+
+\end{compactenum}
+\noindent 授权/公开专利：
+\begin{compactenum}[\hspace{2em} \mbox{[}1\mbox{]}]
+\item 苏卓，\textbf{曾碧怡}，
+%\item \textbf{第二作者}，
+ 一种基于双边核回归的相对约减纹理分解方法及其装置，专利申请号：201611144810.X
+\end{compactenum}
+
+
+
+%\noindent 专利/标准：
+%\begin{compactenum}[\hspace{2em} \mbox{[}1\mbox{]}]
+%\item 陈欣，罗力耕，陈湘萍, 一种基于数字电视中间件的视频点播方法及系统, 中国发明专利, 授权号：ZL201110130102.1.，授权日期：2012.09.05%
+%\item 陈欣，罗力耕，陈湘萍, 一种基于数字电视中间件的视频点播方法及系统, 中国发明专利, 授权号：ZL201110130102.1.，授权日期：2012.09.05%
+%\end{compactenum}
+
+
+\noindent 参与课题
+\begin{compactenum}[\hspace{2em} \mbox{[}1\mbox{]}]
+\item 课题名称：国家自然科学基金项目《视觉媒体的结构感知处理与分析模型研究(61502541)》，参与滤波方法相关的理论研究和应用，并发表相关学术成果\\
+\end{compactenum}
+%\noindent 获奖情况：
+%\begin{compactenum}[\hspace{2em} \mbox{[}1\mbox{]}]
+%\item 2015$\sim$2016年中山大学研究生三等奖助学金% 2016年度中山大学研究生三等奖助学金%
+%\end{compactenum}

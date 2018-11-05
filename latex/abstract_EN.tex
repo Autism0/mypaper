@@ -1,0 +1,23 @@
+% 请在 ENabstract 环境中输入英文摘要的内容。
+\lhead{\xiaowuhao\enthesistitle}
+\chead{}
+\rhead{\xiaowuhao Abstract}
+\begin{ENabstract}
+\begin{spacing}{1.5}
+\par{As an important data in the process of software evolution, the code commit plays an crucial role in code review and software maintenance. On the one hand, in order to ensure the correctness of code modification, reviewers need to evaluate the code commits submitted by developers. On the other hand, with the replacement of software developers, new developers often need to understand existing software code changes from historical code commits. However, because of the uneven quality of the code in software projects, the quality of some code commits is not high, which is difficult for developers to understand the code commits directly and maintain software efficiently. Therefore, this paper studied the evaluation and comprehension of the code commit, and proposed some solutions to improve the quality of code and enhance the maintainability of software.}
+\par{With the rapid development of open source software, the Internet has accumulated a huge amount of code commit data. Based on these data and combining with machine learning methods, we can evaluate and understand code commits better. In this paper, we proposed a data driven consistency detection method for code and comments to evaluate the quality of code commits. We utilized 64 features, taking the code before and after changes, comments and the relationship between the code and comments into account. Experimental results show that 74.6\% of outdated comments can be detected using our method, and 77.2\% of our detected outdated comments are real comments which require to be updated. In addition, experimental results indicated that our model can help developers to discover outdated comments in historical versions of existing projects. Aiming at the comprehension of code commits, we proposed a code commit understanding auxiliary method based on core class determination. This method taken the core class discrimination as a binary classification problem, and extracted features from the code commits generated in the software evolution process to measure the importance of the class. Multiple datasets of experimental results showed that our method's accuracy reached 88.4\%, and compared to the developers understand commits directly, using the core class information as an aid to understand commits can significantly increase the efficiency and accuracy of developers. In our code change analyzing and comments checking system, we integrated the above two methods to help developers understand the code modifications and evaluate the comments quality through various visualization methods.}
+\end{spacing}
+\end{ENabstract}
+
+% 请在 \enkeywd{} 的参数中加入关键词。
+% 所有的 \enkeywd 命令必须在 ENabstract 环境后面调用。
+
+% 每一个关键词调用一次 \enkeywd 命令。命令的闭合花括号后面应当紧跟着注释符号（即
+% "%"），否则会在顿号前面增加一个空格。
+\begin{spacing}{1.5}
+\enkeywd{Code Commit}% 填入一条关键词
+\enkeywd{Code Comment}%
+\enkeywd{Consistency}%
+\enkeywd{Core Class}
+\enkeywd{Machine Learning}
+\end{spacing}

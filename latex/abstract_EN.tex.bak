@@ -1,0 +1,28 @@
+% 请在 ENabstract 环境中输入英文摘要的内容。
+\lhead{\xiaowuhao\enthesistitle}
+\chead{}
+\rhead{\xiaowuhao Abstract}
+\begin{ENabstract}
+\begin{spacing}{1.5}
+As the pretreatment technology of image processing and display, edge-aware filtering methods play an important role in the visual media applications. It needs to filter the detail while preserving the salient structure, which could improve the effect of image visual and could be applied in structure-texture separation. With the deepening of research, how to achieve structure-texture separation of image thoroughly challenge edge-preserving methods, especially various textured images. In order to overcome the limitations of conventional structure-aware filtering in decomposing texture and structure, it need to discover a novel structure-aware decomposition model.
+
+Inspired by the theory of kernel regression, we propose a novel sparsity-guided bilateral kernel regression structure-aware smoothing filter based on local total variation related reductive descriptor. Taking advantage of fast joint bilateral filtering, we present the accelerated form of the bilateral kernel regression filtering, and develop to the structure-aware filtering application. In the experiments, we prove that bilateral kernel regression could remove textures and it is an efficient structure-aware filtering. 
+
+Besides, we propose a novel structure-texture separation method by incorporating the signal remapping function into the rolling guidance framework. Our method inherits the benefits of the efficient framework and effective signal remapping strategy. Our experiments show that our method could remove different scales of texture while preserving salient structure. 
+
+Finally, we describe the applications of the structure-aware. Compared with the state-of-the-art methods, we prove that our structure-aware filtering method is efficient.
+
+\end{spacing}
+\end{ENabstract}
+
+% 请在 \enkeywd{} 的参数中加入关键词。
+% 所有的 \enkeywd 命令必须在 ENabstract 环境后面调用。
+
+% 每一个关键词调用一次 \enkeywd 命令。命令的闭合花括号后面应当紧跟着注释符号（即
+% "%"），否则会在顿号前面增加一个空格。
+\begin{spacing}{1.5}
+\enkeywd{Edge-preserving filter}% 填入一条关键词
+\enkeywd{Structure-aware filter}%
+\enkeywd{Structure-texture separation method}%
+\enkeywd{Rolling guidance framework}%
+\end{spacing} 

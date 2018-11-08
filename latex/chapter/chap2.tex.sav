@@ -1,0 +1,558 @@
+\rhead{\xiaowuhao\sectionindex\quad基于历史修改模式的修改影响分析辅助方法}
+\section{基于历史修改模式的影响分析辅助方法}
+\par{对于一个软件系统来说，经过多年的开发历史，系统中各个软件实体之间存在非常复杂关联关系，当开发人员需要对其中一个软件实体进行修改时，必然会影响到其他软件实体，且影响范围会随着实体间的关联关系不断传播。因此，修改影响分析成为软件修改工作中的关键一步。修改影响分析的目的是评估一项修改任务可能带来的风险以及受影响的范围和程度。软件修改的主要目的包括增加新功能、修复缺陷或者适应新的用户需求。在同一项目或不同项目的演化历史中往往存在着相似的修改需求，这些相似修改的修改模式对于当前的修改任务有辅助作用。传统的静态影响分析以及动态影响分析方法难以捕获软件项目中复杂的依赖关系，引入历史修改模式信息可以对传统影响分析的结果进行优化，提升影响分析效果。已有的挖掘历史修改信息的影响分析方法没有涉及具体修改内容，本文从版本控制系统中收集优质开源项目的修改提交数据构建提交语料库，通过修改代码相似度以及修改需求的相似度检索相似的修改提交，再借助关键类判定方法将相似提交中的关键类作为当前修改类的等价类，引入关键类的修改模式对传统影响分析结果进行优化，从而获得最终的影响集。}
+\subsection{基于历史修改模式的影响分析辅助方法概述}
+\par{图\ref{fig:method}是基于历史修改模式的影响分析辅助方法总览，方法主要分为三个步骤：（1）构建历史提交语料库，（2）检索相似提交，（3）辅助影响分析。第一步，首先从版本控制器中收集大量不同项目下的代码修改提交数据，并将这些提交数据存储于本地仓库中，提交数据包括修改前代码片段、修改后代码片段以及修改注释信息。分别对每一条提交数据进行文本预处理，构建提交语料库，语料库中每一条语料包含相应提交中的代码修改信息和注释信息。第二步，对当前修改工作中的修改需求(文本描述)和修改前后的代码片段做相同的文本预处理；使用词嵌入方法Word2vec训练提交语料库，得到词嵌入模型；利用词嵌入模型计算当前修改与历史提交的向量相似度，得到相似修改提交列表。第三步，使用关键类判定方法识别相似提交中的关键类，将关键类作为当前修改类的等价类；提取关键类与提交中其他类的耦合关系；使用传统影响分析方法得到当前修改的初始影响集，提取当前修改类与初始影响集中其他类的耦合关系；利用耦合关系的相似度将提交中关键类的修改模式映射回当前修改类，对初始影响集进行优化，得到最终影响集。}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=5.5in]{myfigure/2-1.png}
+\caption{基于历史修改模式的影响分析辅助方法总览}
+\label{fig:method}
+\end{figure}
+
+\subsection{提交语料库构建}
+\par{本文中用于构建提交语料库的数据来源于版本控制系统Github、Sourceforge中的开源项目，这些开源项目经过长期维护存在大量代码修改的提交数据。我们从版本控制系统中筛选出182个开源项目，并从这些开源项目中收集了94778个提交数据用于构建提交语料库。}
+\subsubsection{提交数据优化}
+\par{本文用于构建提交语料库及验证的数据来源于开源项目中，而开源项目中代码提交数据质量良莠不齐，为了防止质量较差的提交数据对影响分析产生负面的优化效果，我们需要对用于构建语料库的提交数据进行筛选。我们对大量提交数据进行观察后，发现开源项目中修改提交主要存在以下问题(如图\ref{fig:badcommit}所示)：（1）修改提交中注释信息缺失或过短(小于3个单词)，这类提交缺乏对修改内容的有效描述信息，将影响后续相似提交的检索；（2）提交注释信息过长（大于200个单词），这类提交的注释信息中往往罗列了该修改工作中大部门琐碎的修改内容，难以判断其核心修改部分；（3）提交中只涉及一个类的代码修改，这类提交数据由于只包含一个类不存在可借鉴的修改模式；（4）提交中涉及超过二十个类的代码修改，这类提交数据通常是由多个普通提交组合而成，一般出现在版本更新的代码提交中。
+\begin{figure}[!hbp]
+\centering
+\subfigure[提交注释信息过短]{
+\label{Fig.sub.1}
+\includegraphics[width=4in]{myfigure/shortcomment.png}}
+%\includegraphics[width = 4cm ]{1.jpg}
+\subfigure[提交注释信息过长]{
+\label{Fig.sub.5}
+\includegraphics[width=4in]{myfigure/longcomment.png}}
+\subfigure[提交只涉及一个类修改]{
+\label{Fig.sub.6}
+\includegraphics[width=4in]{myfigure/1class.png}}
+\subfigure[提交涉及超过二十个类修改]{
+\label{Fig.sub.2}
+\includegraphics[width=4in]{myfigure/20class.png}}
+\caption{提交涉及超过二十个类修改}
+\label{fig:badcommit}
+\end{figure}
+}
+\par{通过对存在问题的提交数据筛选后，我们收集的提交数据包含182个开源项目共94778条。一条提交数据主要包含：提交编号、作者、提交日期、提交注释文本、修改前版本代码和修改后代码版本代码等。在相似提交检索任务中，本文通过修改描述文本的相似度以及代码修改片段的相似度来衡量当前修改与提交的相似度，因此，我们收集的提交数据仅需保留提交注释文本、修改前版本代码和修改后版本代码。}
+\subsection{软件变化数据提取}
+\par{本节详细介绍了从版本控制库中提取软件变化的过程。我们从版本控制库中提取代码提交中相邻两个版本间的代码和注释，然后按照启发式规则确定注释的作用域。其中，注释作用域是指与注释所关联的代码段的集合。我们把变化前和变化后的注释、注释作用域中的代码片段以及注释作用域中变化的程序语句看作一个软件变化。在进行数据提取时，只关注注释作用域中包含程序语句变化的软件变化，过滤掉不包含程序语句变化的软件变化。}
+\subsubsection{注释类型介绍}
+\par{
+\begin{figure}[!hbp]
+\centering
+\subfigure[文档注释示例]{
+\label{Fig.sub.4}
+\includegraphics[width=0.67\textwidth]{figures/4.png}}
+%\includegraphics[width = 4cm ]{1.jpg}
+\subfigure[块注释示例]{
+\label{Fig.sub.5}
+\includegraphics[width=0.67\textwidth]{figures/5.png}}
+\subfigure[行注释示例]{
+\label{Fig.sub.6}
+\includegraphics[width=0.67\textwidth]{figures/6.png}}
+\caption{不同类型的注释示例}
+\label{fig:commenttype}
+\end{figure}
+在Java语言中，有三种类型的注释，分别为文档注释(Javadoc Comment)，块注释(Block Comment)和行注释(Line Comment)\cite{Reddy00}。如图\ref{fig:commenttype}所示\footnote{JDK,/java/lang/String.java,2018}。其中，图\ref{fig:commenttype}(a)中的第1-10行为方法 \emph{indexOf}的文档注释，图\ref{fig:commenttype}(b)中的第4-7行以及第15行为块注释，图\ref{fig:commenttype}(c)中的第6行以及第11-12行为行注释。由于文档注释具有良好的结构，有很多研究学者针对这一类型的注释与代码之间的一致性问题做了充分的研究\cite{Tan12,Tan07,Malik08,Ibrahim12}，且在一致性的判别中已有比较理想的结果。所以，本文主要关注块注释和行注释与代码的一致性问题。另外，在我们的实验过程中发现，开发人员在对代码编写注释时，块注释和行注释的选择界限往往比较模糊。对于单行注释的选择，可以以块注释的形式展现，如图\ref{fig:commenttype}(b)中的第15行所示。也可以以行注释的形式展现，如图\ref{fig:commenttype}(c)中的第6行所示。对于多行注释，图\ref{fig:commenttype}(b)中的第4-7行中使用了块注释，而图\ref{fig:commenttype}(c)中的第11-12行则使用了行注释。因此，我们在实验过程中将块注释和行注释看作同种类型的注释，并将多行的行注释合并为一个注释。
+}
+\subsubsection{注释作用域检测算法}
+\par{
+\begin{table}[!hbp]\small
+\centering
+\begin{tabular}{l} \hline
+\textbf{算法1: 注释作用域检测算法}\\ \hline
+1:~~\textbf{Input}: \emph{S}: Source code;  \emph{CM}: The set of comments;\\
+2:~~\textbf{Output}: \emph{CSSet}: The set of commentScopes; \\
+3:~~\textbf{CommentScopeExtraction} (\emph{S}, \emph{CM}):\\
+4:~~~\emph{CSSet}=\{\}\\
+5:~~~\emph{astTree} = \textbf{getASTTree}(\emph{S})\\
+6:~~~\emph{methodSet} = \textbf{getMethodSet}(\emph{astTree})\\
+7:~~~\textbf{foreach} \emph{comment} $\in$ \emph{C} \textbf{do}\\
+8:~~~~~~~\emph{CS}=(\emph{comment,null,0,0})\\
+9:~~~~~~~\textbf{foreach} \emph{method} $\in$ \emph{methodSet} \textbf{do}\\
+10:~~~~~~~~~~\textbf{if} \emph{comment} \textbf{in} \emph{method}\\
+11:~~~~~~~~~~~~~~\emph{codeSet}=\{\}; \emph{startLine}=0; \emph{endLine}=\emph{method.endLine}\\
+12:~~~~~~~~~~~~~~\emph{statementSet} = \textbf{getStatementSet}(\emph{method})\\
+13:~~~~~~~~~~~~~~\textbf{foreach} \emph{statement} $\in$ \emph{statementSet} \textbf{do}\\
+14:~~~~~~~~~~~~~~~~~~\textbf{if} \emph{statement.startLine}$>$\emph{comment.startLine} \textbf{\&} \emph{statement.endLine}$<$\emph{endLine} \textbf{do}\\
+15:~~~~~~~~~~~~~~~~~~~~~~\emph{codeSet}.\textbf{add}(\emph{statement})\\
+16:~~~~~~~~~~~~~~~~~~~~~~\textbf{if} \emph{startLine} == 0 \textbf{do:} \emph{startLine} == \emph{statement.startLine}\\
+17:~~~~~~~~~~~~~~~~~~~~~~\textbf{end if}\\
+18:~~~~~~~~~~~~~~~~~~\textbf{end if}\\
+19:~~~~~~~~~~~~~~~~~~\textbf{if} \emph{comment} \textbf{in} \emph{statement} \textbf{\&\&} \emph{statement.endLine} $<$ \emph{endLine} \textbf{do}\\
+20:~~~~~~~~~~~~~~~~~~~~~~\emph{endLine} = \emph{statement.endLine}\\
+21:~~~~~~~~~~~~~~~~~~\textbf{end if}\\
+22:~~~~~~~~~~~~~~\textbf{end foreach}\\
+23:~~~~~~~~~~~~~~\emph{next\_comment} = \textbf{getNextComment}(\emph{comment},\emph{C})\\
+24:~~~~~~~~~~~~~~\textbf{if} \emph{next\_comment.startLine}-1 $<$ endLine \textbf{do}\\
+25:~~~~~~~~~~~~~~~~~~\emph{endLine} = \emph{next\_comment.startLine}-1\\
+26:~~~~~~~~~~~~~~\textbf{end if}\\
+27:~~~~~~~~~~~~~~\emph{CS.c}=\emph{codeSet}; \emph{CS.s}=\emph{startLine}; \emph{CS.e}=\emph{endLine}\\
+28:~~~~~~~~~~~~~~\textbf{goto 7}\\
+29:~~~~~~~~~~\textbf{end if}\\
+30:~~~~~~\textbf{end foreach}\\
+31:~~~~~~\emph{CSSet}.\textbf{add}(\emph{CS})\\
+32:~~\textbf{end foreach}\\
+33:~~\textbf{return} \emph{CSSet}\\ \hline
+\end{tabular}
+\label{tab:algorithm1}
+\end{table}
+在对代码和注释的一致性问题研究中，以往研究工作的主要研究对象为文档注释及其相关代码的一致性。由于这类注释具有良好的结构信息，且其关联的程序对象通常为方法成员和属性成员，所以与注释关联的代码范围容易确定。而对于块注释和行注释而言，由于其具有结构松散，使用灵活的特点，确定它们所关联的代码范围往往比较困难。因此，本文提出了一种注释作用域检测的启发式算法，用于确定与注释相关联的代码范围。算法描述如算法 \textbf{1}所示。算法 \textbf{1}将源代码文件 \emph{S}，待检测的注释集合 \emph{CM}作为输入；将新生成的注释作用域集合 \emph{CSSet}作为输出。首先，使用源代码文件构造抽象语法树 (Abstract Syntax Tree,AST)\cite{Neamtiu05}，得到源代码的方法集合 \emph{methodSet} (第5，6行)。然后，对于 \emph{CM}中的每个注释 \emph{comment}，从 \emph{methodSet}中得到 \emph{comment}所在的方法 \emph{method}，并将注释作用域 \emph{CS}的结束行 \emph{endLine}设为 \emph{method}的结束行 (第9-11行)。紧接着获取 \emph{method}的语句集合 \emph{statementSet}，并遍历该语句集合 (第12-22行)。遍历时首先寻找到紧邻注释的 \emph{statement}，将该 \emph{statement}的起始行 \emph{startLine}作为 \emph{CS}的起始行 (第16，17行)。其次，对于在 \emph{CS}作用域范围内的 \emph{statement}，将其加入到 \emph{CS}的语句集合 \emph{codeSet}中 (第13-15行)。再次，如果 \emph{statement}包含了待检测作用域的注释，且该 \emph{statement}的结束行 \emph{endLine}小于 \emph{CS}当前的结束行，则将 \emph{CS}的结束行修改为\emph{statement}的\emph{endLine} (第21-23行)。最后，获得与 \emph{comment}处于同一语句块中且紧邻的下一个注释 \emph{next\_comment}，如果 \emph{next\_comment}的起始行小于 \emph{CS}的结束行，则将 \emph{CS}的结束行修改为 \emph{next\_comment}的起始行的前一行 (第23-26行)。如果该注释遍历完 \emph{statementSet}中的所有语句，则结束一个 \emph{comment}的作用域检测，跳出 \emph{methodSet}循环 (第28行)。当 \emph{CM}中的每个 \emph{comment}都完成作用域检测后，返回 \emph{CSSet}集合 (第33行)。}
+
+\par{图\ref{fig:scopeexample}为注释作用域划分示例。如图所示，该代码片段包含5个注释，其中，第3个注释包含在第二个注释的作用域内，我们在作出注释作用域检测后，将具有包含关系的注释合并为一个注释。最后，这段代码提取了4个代码-注释对，分别对应图\ref{fig:scopeexample}中的标签1至标签4。
+\begin{figure}[!t]
+\centering
+\includegraphics[width=4in]{figures/7.png}
+\caption{注释作用域检测示例}
+\label{fig:scopeexample}
+\end{figure}
+}
+\subsubsection{软件变化提取}
+\par{软件变化是指在两个提交版本间的注释和代码以及代码中的程序语句变化的集合，一个软件变化的代码范围实际上是由对应注释的作用域确定的。软件变化提取主要包含以下几步：(1)版本间注释配对。我们从两个版本的源代码中提取出注释信息，并对两个版本的注释进行一一匹配；(2)注释类型过滤。按照注释的类型对注释进行过滤，过滤掉文档注释和单行注释 (与代码处在同一行的行注释)；(3)注释作用域检测。按照算法\textbf{1}对注释进行作用域检测；(4)代码变化提取。对两个版本的注释作用域内的代码片段进行比较，提取代码变化，我们丢弃掉不包含代码变化的软件变化，例如两个版本的代码片段完全一致或者只涉及注释变化或代码格式的变化；(5)软件变化提取。根据获得的两个版本的注释信息，注释作用域信息，代码信息以及代码变化信息，进行软件变化的提取。}
+
+\par{
+\begin{figure}[!h]
+\centering
+\includegraphics[width=5.5in]{figures/9.png}
+\caption{删除语句块引起注释作用域缩小示例}
+\label{fig:deletescope}
+\end{figure}
+\begin{figure}[!h]
+\centering
+\includegraphics[width=5.5in]{figures/10.png}
+\caption{新增语句块引起注释作用域扩大示例}
+\label{fig:insertscope}
+\end{figure}
+在进行软件变化提取的过程中，由于语句块的引入或删除常造成注释作用域的扩大或缩小，如图
+\ref{fig:deletescope}所示，在代码变化过程中删除了\emph{try-finally}语句块，且在语句块内包含了注释。在代码变化后第一个注释的作用域(红色框部分)缩小到第二个注释所在位置的前一行，而实际上\emph{try-finally}内的代码并未删除。而在图\ref{fig:insertscope}所示的示例中，可以看到在新版本中增加了\emph{if}语句块(红色字体所示)，将第一个注释的作用域扩大到整段代码的末尾(红色框部分)。在对代码和注释的一致性评估时，这两种情况可能会让机器认为软件变化删除了一大段代码或者新增了一大段代码，从而对代码和注释的一致性作出错误的判断。为了尽量减少这两种情况对我们的一致性评估的影响，我们将对它们进行识别，并将图\ref{fig:deletescope}和图\ref{fig:insertscope}中的两个软件变化(红色框和蓝色框)进行合并，将它们看成是一个软件变化。
+}
+
+\subsection{多维度的可判别特征选择}
+\par{本节详细介绍了从软件变化中选取特征的过程。代码和注释的一致性可以由代码和代码的变化，注释的文本信息以及代码和注释的相关性决定。因此，我们从这三个维度进行特征选择，在本文中一共选择了64个特征。}
+\subsubsection{代码特征}
+\par{代码特征包括代码的上下文特征和代码变化的特征。我们分别从类级别和方法级别提取软件变化的上下文特征，从语句级别提取软件变化的代码特征。代码特征列表如表\ref{tab:codefeature}所示。
+\begin{table}[!t]\small
+  \centering
+ % \fontsize{8}{8}\selectfont
+  \caption{代码特征}
+  \label{tab:codefeature}
+  \setlength{\tabcolsep}{2.8mm}{
+   \begin{tabular}{|c|c|m{0.58\columnwidth}<{\centering}|}
+\hline
+\textbf{级别} &\textbf{名称}&\textbf{描述}\\
+\hline
+\multirow{2}{*}{\tabincell{c}{\textbf{类级别}}  \rule{0pt}{0.5cm}}&
+\tabincell{c}{属性成员变化} & 注释所在类中是否存在属性成员的变化?\\
+\cline{2-3}
+  & \tabincell{c}{属性成员与注\\释的相关性}& 注释作用域内是否引用了变化的类的属性成员?\\
+\hline
+\multirow{2}{*}{\tabincell{c}{\textbf{方法级别}} \rule{0pt}{0.8cm}} &
+\tabincell{c}{方法声明变化} & 注释所在方法中是否存在方法声明的变化?如方法名，方法返回类型，方法参数列表等\\
+\cline{2-3}
+  &\tabincell{c}{方法与注释的\\相关性}& 注释作用域内是否引用了变化的方法参数，或者在方法返回类型变化的情况下，包含返回语句?\\
+\hline
+\multirow{8}{*}{\tabincell{c}{\textbf{语句级别}}\rule{0pt}{3.5cm}}&
+\tabincell{c}{语句个数} & 注释作用域内包含的语句个数\\
+\cline{2-3}
+  &\tabincell{c}{变化语句个数}& 注释作用域内包含的语句中变化的个数\\
+  \cline{2-3}
+  &\tabincell{c}{变化语句比例} & 注释作用域内变化语句个数与总的语句个数的比例\\
+  \cline{2-3}
+  &\tabincell{c}{语句变化类型}& 注释作用域内每种语句变化类型的个数，本文关注的语句类型有12种，分别为：\emph{IF}语句，\emph{ELSE IF}语句，\emph{FOR}语句，\emph{Enhanced FOR} 语句，\emph{WHILE}语句，\emph{CATCH}语句，\emph{TRY}语句，\emph{THROW}语句，\emph{PRINT}语句，\emph{LOG}语句，方法调用语句和变量声明语句。其中，变化类型有：新增，删除和修改。共36种语句变化类型\\
+  \cline{2-3}
+  &代码重构& 代码变化是否为代码重构 (包含9种同构类型)\\
+\hline
+\end{tabular}}
+\end{table}
+}
+\par{在基于面向对象的程序语言中，类和方法作为软件变化的上下文环境存在。在包含软件变化的类中，如果存在类的属性成员的变化，并且在软件变化中引用了变化的类属性成员，则软件变化中的代码行为将有可能发生变化。这时与代码关联的注释有可能需要进行相应的修改。类似地，在包含软件变化的方法中，如果存在方法的声明变化，如方法名变更，方法参数列表变化，方法返回类型变化等，并且在软件变化中引用了变化的方法参数，或者包含了返回值语句，则软件变化中的代码行为也有可能发生变化。这时与代码关联的注释也可能需要进行相应的修改。所以，在我们的代码特征选择中，选取了类和方法两种类型的软件变化上下文特征。
+}
+\begin{table}[h]\small
+\caption{变化语句个数统计}
+\label{tab:changestatementstatistic}
+\begin{center}
+\setlength{\tabcolsep}{3.6mm}{
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\tabincell{c}{\textbf{变化语句个数}} & \textbf{1-3} & \textbf{4-6} & \textbf{7-9} & \textbf{10-12}&\textbf{13-15}&\textbf{$>$15} \\ \hline
+\tabincell{c}{\textbf{注释变化}} &1891&866&536&382&282&762 \\ \hline
+\tabincell{c}{\textbf{注释未变化}} &23933&3709&1287&593&283&526 \\  \hline
+\textbf{注释变化比例} &\textbf{7.3\%}&\textbf{18.9\%}&\textbf{29.4\%}&\textbf{39.1\%}&\textbf{49.9\%}&\textbf{59.2\%} \\ \hline
+\end{tabular}  }
+\end{center}
+\end{table}
+\begin{table}[!t]\small
+  \centering
+  %\fontsize{8}{8}\selectfont
+  \caption{语句变化类型统计}
+  \label{tab:changetypestatistic}
+  \resizebox{\textwidth}{!}{
+   \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+ &\textbf{注释}&\emph{If}&\emph{\tabincell{c}{Else\\ If}}&\emph{For}&\tabincell{c}{\emph{Enhanced-}\\\emph{For}}&\emph{While}&\emph{Catch}&\emph{--}\\
+\hline
+\multirow{3}{*}{\textbf{新增}}&\tabincell{c}{变化} &1752&212&147&121&172&596&-- \\
+\cline{2-9}
+  & 未变化&3404&379&219&332&206&991&--\\
+  \cline{2-9}
+   & \tabincell{c}{变化比例}&34\%&36\%&\textcolor[rgb]{1.00,0.00,0.00}{40\%}&27\%&\textcolor[rgb]{1.00,0.00,0.00}{46\%}&38\%&-- \\
+
+\hline
+\multirow{3}{*}{\textbf{修改}}&\tabincell{c}{变化} &868&180&71&40&109&238&-- \\
+\cline{2-9}
+  & \tabincell{c}{未变化}&3321&550&203&173&177&740&--\\
+  \cline{2-9}
+   & \tabincell{c}{变化比例}&21\%&25\%&26\%&19\%&38\%&24\%&-- \\
+\hline
+\multirow{3}{*}{\tabincell{c}{\textbf{删除}}}&\tabincell{c}{变化} &1071&153&118&55&173&472&-- \\
+\cline{2-9}
+  & \tabincell{c}{未变化}&1812&166&240&66&214&719&--\\
+  \cline{2-9}
+   & \tabincell{c}{变化比例}&37\%&\textcolor[rgb]{1.00,0.00,0.00}{48\%}&33\%&\textcolor[rgb]{1.00,0.00,0.00}{45\%}&\textcolor[rgb]{1.00,0.00,0.00}{45\%}&\textcolor[rgb]{1.00,0.00,0.00}{40\%}&-- \\
+\hline
+\hline
+ &\textbf{注释}&\emph{Try}&\emph{Throw}&\emph{Print}&\emph{Log}&\tabincell{c}{\emph{Method}\\\emph{Call}}&\tabincell{c}{\emph{Variable}\\\emph{Declaration}}&\textbf{均值}\\
+\hline
+\multirow{3}{*}{\textbf{新增}}&\tabincell{c}{变化}&432&360&72&840&3067&1690&-- \\
+\cline{2-9}
+  & 未变化&716&658&206&1994&8563&3663&--\\
+  \cline{2-9}
+   & \tabincell{c}{变化比例}&38\%&35\%&26\%&30\%&26\%&32\%&\textbf{33.72\%} \\
+\hline
+\multirow{3}{*}{\textbf{修改}}&\tabincell{c}{变化}&164&240&42&611&2299&1379&-- \\
+\cline{2-9}
+  & \tabincell{c}{未变化}&389&903&279&3289&20254&8694&--\\
+  \cline{2-9}
+   & \tabincell{c}{变化比例}&30\%&21\%&13\%&16\%&10\%&14\%&\textbf{20.58\%} \\
+\hline
+\multirow{3}{*}{\tabincell{c}{\textbf{删除}}}&\tabincell{c}{变化} &330&290&43&615&1944&1192&-- \\
+\cline{2-9}
+  & \tabincell{c}{未变化}&392&439&162&1123&5300&2514&--\\
+  \cline{2-9}
+   & \tabincell{c}{变化比例}&\textcolor[rgb]{1.00,0.00,0.00}{46\%}&\textcolor[rgb]{1.00,0.00,0.00}{40\%}&21\%&35\%&27\%&32\%&\textbf{36.50\%} \\
+\hline
+\end{tabular}}
+\end{table}
+
+\par{在代码特征中，另一类主要的特征为代码变化的特征。我们从语句的级别上提取代码变化特征。在软件变化中，语句变化的个数对代码和注释的一致性具有显著的影响，通常的表现为：修改范围越大的代码段，其对应的注释需要同步修改的概率越大\cite{Marin05}。如表\ref{tab:changestatementstatistic}所示，当语句变化的个数越多时，软件变化中的原注释越倾向于需要修改。因此，我们将软件变化的语句个数，语句变化个数以及语句变化占代码片段语句总数的比例加入到代码特征中。此外，不同类型的语句变化对代码和注释的一致性影响程度存在差异，为了量化不同类型的语句变化对代码和注释的一致性影响，我们对各种语句变化类型进行了统计，统计结果如表\ref{tab:changetypestatistic}所示。从表中可以看出，新增和删除 \emph{While}语句，删除 \emph{Else If}，\emph{Enhanced FOR}和 \emph{TRY}语句，注释变化的比例都超过了45\%。而新增或删除 \emph{FOR}语句，删除 \emph{IF}，\emph{CATCH}和 \emph{THROW}语句，注释需要变化的比例也超过了40\%。这些结果表明当软件变化的变化语句包含上述的变化类型时，注释需要修改的概率高于其他变化类型。另外，我们还发现当语句变化类型为新增或删除类型时，其注释的平均变化比例均高于修改类型。因此，我们将不同语句变化类型的个数以及它们所占比例加入到代码特征中。}
+\begin{table}[!ht]\small
+\caption{代码重构类型}
+\label{tab:refactor}
+\begin{center}
+\setlength{\tabcolsep}{4mm}{
+\begin{tabular}{|c|m{0.6\columnwidth}<{\centering}|}
+\hline
+\textbf{重构类型} & \textbf{描述}\\ \hline
+方法提取 & 将代码片段转换成一个方法，方法名称解释了该方法的作用 \\ \hline
+方法展开 & 将方法体展开到调用者中的代码块中，并移除该方法 \\  \hline
+方法重命名 & 改变方法的方法名\\ \hline
+增加方法参数 & 在方法的参数列表中增加参数\\ \hline
+减少方法参数 & 在方法的参数列表中移除参数\\ \hline
+临时变量展开 &使用简单的表达式代替临时变量，并将对临时变量的引用全都替换成表达式\\ \hline
+字段封装 & 将公有字段修改为私有字段，并提供访问方法\\ \hline
+断言引入 & 使用一段代码对程序状态进行设定，并使用断言判断程序是否符合预期\\ \hline
+\tabincell{c}{使用检测代替异常} & 当发生异常时，如果调用者可以使用条件语句检测进行避免，则使用条件语句代替异常捕获语句 \\ \hline
+\end{tabular}  }
+\end{center}
+\end{table}
+\par{当代码变化为代码重构时，代码变化的特征对代码和注释的一致性影响将会降低。其中，代码重构是指在不改变代码的功能和外部可见性的情况下，为了改善代码的结构，而对代码进行的修改。由于代码重构往往涉及范围较大的代码变化，而这些代码变化不会改变代码的行为。也就是说，虽然有很多语句发生了变化，如果在注释中只是对代码的功能进行描述，而没有关注具体的实现细节，这时注释往往不需要变化。另一种情形是在注释中提及了功能的具体实现细节，这时即使是代码重构构成的代码变化，如果实现细节变化了，注释也需要做相应的修改。因此，我们在进行特征选择时，选取了9种代码重构的特征(如表\ref{tab:refactor}所示)。}
+\subsubsection{注释特征}
+\par{
+\begin{table}[t]\small
+\caption{注释特征}
+\label{tab:commentfeature}
+\begin{center}
+\setlength{\tabcolsep}{4mm}{
+\begin{tabular}{|c|m{0.6\columnwidth}<{\centering}|}
+\hline
+\textbf{名称} & \textbf{描述}\\ \hline
+注释长度 & 对注释进行分词，并对分词列表进行计数 \\ \hline
+任务型注释 & 注释是否包含任务型标志 (``TODO", ``FIXME", ``XXX") \\  \hline
+\tabincell{c}{Bug 或者 版本类型\\注释}& 注释是否包含 ``bug" 或者版本类型的标志(``bug'', ``fixed bug'', ``version'')\\ \hline
+\tabincell{c}{软件变化所在类的\\注释和代码比例}& 软件变化所在类的注释行数占类的代码行数的比例\\ \hline
+\tabincell{c}{软件变化所在方法\\的注释和代码比例}& 软件变化所在方法的注释行数占方法的代码行数的比例\\ \hline
+\tabincell{c}{软件变化中注释和\\代码比例}& 软件变化中的注释行数占软件变化的代码行数的比例\\ \hline
+\end{tabular}  }
+\end{center}
+\end{table}
+注释特征如表\ref{tab:commentfeature}所示。其中，注释的长度影响注释对其关联的代码所实现功能的描述的有效性和准确性\cite{Fluri09}。如果注释包含关于代码的实现细节的描述，那么，当相应的代码发生变化时，注释需要修改的概率也将增大。因此，我们将注释长度加入到注释特征中。另外，软件变化所处的注释环境通常也会对注释是否需要修改造成影响。比如，在一个注释充分的类或方法中，注释的描述信息对代码的覆盖面比较大，这时当注释关联的代码发生变化时，注释需要作出相应修改的概率也将增大。在注释环境特征选择中，我们考虑三个级别的注释密度，分别为类，方法和代码片段。
+}
+\par{此外，在软件变化中，不同类型的注释是否需要修改受代码变化的影响是不同的。在注释中，一些特殊的关键词常用于标注不同目的的注释。这些标注信息对注释的类型分类具有重要作用\cite{Pascarella17}。我们将任务型注释关键字(``TODO", ``FIXME", ``XXX")和Bug及版本类型关键字(``bug'', ``fixed bug'', ``version'')加入到注释特征中。当这些类型的注释所关联的代码发生变化时，注释更倾向于需要修改。比如，对于``TODO"类型的注释，开发人员在其关联的代码中增加了代码实现，则在新版本中很有可能已经完成了``TODO"类型的注释所需要的功能。这时开发人员应删除注释中的``TODO"标志，以表明这项代码编写任务已经完成。}
+\subsubsection{代码和注释的关联特征}
+\par{在现有的研究工作中，不同的研究者提出了很多关于如何编写质量良好的注释的建议\cite{McBurney16,Steidl13}。注释通常被认为需要包含代码实现的功能和目标描述，以及可选的代码实现背后的原理描述\cite{Steidl13}。由此可知，注释的描述信息很可能会提及代码片段中包含的实体或者所调用的方法。此外，对于一个高质量的注释，注释的描述信息和代码之间应该具有较高的语义相似度。也就是说，注释和代码之间的相似度越高，注释和代码的关联性也将越高。
+}
+\par{通常来说，注释和其关联的代码具有较高的相似度\cite{McBurney16}。如果在代码变化过程中，注释和代码的相似度差异很明显，那么此时在新版本中，很有可能出现代码和注释不相一致的情况，这也就意味着注释需要作出相应的修改。这里出现的一个问题是应如何度量代码和注释之间的语义相似度。目前计算文本之间语义相似度的方法主要有两种：一种是基于\emph{WordNet}的语义相似度计算方法。\emph{WordNet}是一个庞大的英语词汇数据库，不同词性的英语词汇被组织成同义词的网络。其中，同义词通过概念-语义和词汇关系相互联系\footnote{http://wordnet.princeton.edu}。两个单词间的语义相似度则可以通过计算它们在\emph{WordNet}构成的单词网络中的所在位置的距离衡量\cite{Pedersen04}。另一种是基于\emph{Word Embedding}技术的语义相似度计算方法，其核心思想是通过嵌入一个线性的投影矩阵，将原始的\emph{One}-\emph{Hot}向量(除了一个词典索引的下标对应的方向上是1，其余方向上都是0)映射为一个稠密的连续向量，并通过一个语言模型的任务去学习向量的权重\cite{Bengio03}。该方法学习得到的词向量具有这样的性质：语义上相似的单词其对应的词向量也相似。因此，两个单词的语义相似度可以通过计算它们对应的词向量的距离得到。由于这两种方法都只是针对自然语言的文本的语义相似度计算方法，而在软件项目中，代码是通过编程语言编写的，注释则是采用自然语言的方式，两者之间存在语义的鸿沟。因此，我们需要一种可以有效衡量代码和注释之间的语义相似度的方法。在本文中选取了Ye等人提出的语义融合的词向量模型对代码和注释的相似度进行度量\cite{Ye16}。使用这种方式将有效消除代码和注释之间的语义鸿沟，具体步骤如下所示。}
+
+\par{
+首先，我们对注释和代码的文本进行预处理，包括分词，去除停用词以及取词根等处理。其次，对注释和代码的文本信息进行融合。对于每一条注释中的单词，从其关联的代码中随机选取两个单词加入到该单词的后面，组合成新的注释文本信息。对于每一个代码片段中的单词，从其关联的注释中随机选取两个单词加入到该单词的后面，组合成新的代码文本信息。最后，我们将重新生成的注释和代码作为词向量模型的语料库。图\ref{fig:wordembeddingexample}为语料库的文档生成示例(绿色字体为注释，蓝色字体为代码)。
+\begin{figure}[!tbp]
+\centering
+\includegraphics[width=5.2in]{figures/11.png}
+\caption{词向量模型的文档生成示例}
+\label{fig:wordembeddingexample}
+\end{figure}
+}
+\par{在获得语料库之后，我们利用语料库训练词向量模型。基于\emph{Word Embedding}技术的词向量模型主要分为两类，一类是\emph{Skip}-\emph{Gram}模型，另一类是\emph{CBOW}模型。这两类模型的主要不同之处在于在进行词向量模型训练时，前者是通过给定的目标单词来预测其上下文的概率分布，而后者则是通过上下文信息来预测目标单词的概率分布\cite{Mikolov13,Mikolov13-2}。在本文中，采用的词向量模型为\emph{Skip-Gram}模型，模型的学习目标为最大化以下目标函数：
+\begin{equation}
+\sum_{i = 1}^{n}\sum_{-k\leq j \leq k,j \neq 0}^{}\log p(w_{i+j}|w_{i})
+\end{equation}
+其中，$w_{i}$和$w_{i+j}$分别表示长度为$2k+1$的上下文窗口中的中心词和中心词的上下文(本文中取$k=2$，即上下文窗口大小为5)，n代表语句的长度。式子$\log p(w_{i+j}|w_{i})$表示一个条件概率, 该条件概率由softmax函数定义，如下所示:
+\begin{equation}
+\log p(w_{i+j}|w_{i}) = \frac{\exp(v_{w_{i+j}}^{'T}v_{w_{i}})}{\sum_{w \in W}\exp(v_{w}^{'T}v_{w_{i}})}
+\end{equation}
+其中，$v_{w}$表示输入向量，$v_{w}^{'}$表示模型中的单词$w$的输出向量。$W$表示所有单词的词汇。而$p(w_{i+j}|w_{i})$为在中心词$w_{i}$的上下文中出现的单词$w_{i+j}$的归一化概率。我们采用负抽样方法来计算这个概率\cite{Mikolov13}。
+}
+
+\begin{table}[!ht]\small
+\caption{代码和注释的关联特征}
+\label{tab:relationfeature}
+\begin{center}
+\setlength{\tabcolsep}{4mm}{
+\begin{tabular}{|m{0.3\columnwidth}<{\centering}|m{0.6\columnwidth}<{\centering}|}
+\hline
+\textbf{名称} & \textbf{描述}\\ \hline
+旧代码和注释的相似度&变化前的代码和注释的语义相似度\\ \hline
+新代码和注释的相似度&变化后的代码和注释的语义相似度\\ \hline
+变化前后的代码和注释的相似度之差&变化前的代码和注释的语义相似度减去变化后的代码和注释的语义相似度\\ \hline
+变化的语句变化前与注释的相似度&变化的语句在变化前与注释的语义相似度\\ \hline
+变化的语句变化后与注释的相似度&变化的语句在变化后与注释的语义相似度\\ \hline
+变化的语句在变化前后和注释的相似度之差&变化的语句在变化前和注释的语义相似度减去变化后和注释的语义相似度\\ \hline
+\end{tabular} }
+\end{center}
+\end{table}
+
+\par{通过以上方法得到词向量模型之后，就可以得到每个单词的词向量表示。而为了计算代码和注释之间的语义相似度，我们定义了以下三种相似度：
+\begin{enumerate}[(1)]
+\item 单词到单词：给定两个单词$w_{1}$和$w_{2}$，我们定义它们之间的语义相似度为这两个单词对应的词向量的余弦相似度:
+\begin{equation}
+sim(w_{1},w_{2}) = \cos (\textbf{w}_{1},\textbf{w}_{2}) = \frac {\textbf{w}_{1}^{T} \textbf{w}_{2}} {||\textbf{w}_{1}|| ||\textbf{w}_{2}||}
+\end{equation}
+\item 单词到语句：给定一个单词$w$和一条语句$S$，它们之间的语义相似度为单词$w$和语句$S$中的单词$w^{'}$相似度最大的单词之间的语义相似度:
+\begin{equation}
+sim(w,S) = \max_{w^{'} \in S} sim(w,w^{'})
+\end{equation}
+\item 语句到语句：两条语句$S_{1}$和$S_{2}$的语义相似度定义如下所示:
+\begin{equation}
+sim(S_{1},S_{2}) = \frac {sim(S_{1}\rightarrow S_{2}) + sim(S_{2}\rightarrow S_{1})}{2}
+\end{equation}
+其中，
+\begin{equation}
+sim(S_{1}\rightarrow S_{2}) = \frac {\sum_{w \in S_{1}}sim(w,S_{2})}{n}
+\end{equation}
+$n$为$S_{1}$中的单词个数。
+\end{enumerate}
+}
+
+
+\par{
+在代码和注释的关联特征选择过程中，我们分别计算变化前的代码和注释的语义相似度、变化后的代码和注释的语义相似度、变化的语句在变化前后和注释的语义相似度、代码在变化前后和注释的相似度之差、以及变化的语句在变化前后和注释的相似度之差。将这六个相似度度量作为代码和注释的关联特征。如果变化前后的代码与注释的相似度相差较大，则在新版本中，注释也很有可能需要更新。同理，如果变化的语句在变化前后和注释的相似度有很大差异，注释所描述的语句将有很大概率已经不存在或者修改过，则这个时候注释也往往需要进行更新。表\ref{tab:relationfeature}中展示了所有的代码和注释的关联特征。}
+\subsection{一致性检测实验设置与结果评估}
+\par{在本节中将介绍一致性检测的实验设计，首先介绍实验数据的选取过程，然后介绍一致性检测模型的训练过程，最后给出检测模型的性能评估标准以及实验结果。}
+\subsubsection{数据收集}
+\begin{table}[!ht]\small
+\caption{实验数据：5个开源项目}
+\label{tab:explementaldata}
+\begin{center}
+\setlength{\tabcolsep}{4mm}{
+\begin{tabular}{|c|c|p{0.1\columnwidth}<{\centering}|p{0.15\columnwidth}<{\centering}|c|m{0.1\columnwidth}<{\centering}|}
+\hline
+\multirow{2}{*}{\textbf{项目名}}&\multirow{2}{*}{\textbf{时间跨度}}&\multirow{2}{*}{\textbf{提交个数}}&\multirow{2}{*}{\tabincell{c}{\textbf{软件变化个数}}}\rule{0pt}{0.5cm} & \multicolumn{2}{c|}{\textbf{注释}}\\
+\cline{5-6}
+ & & & &\textbf{变化}&\textbf{未变化}\\
+\hline
+JEdit&\tabincell{c}{2000/01-\\2016/03}&2133&4750&662&4088\\
+\hline
+OpenNMS&\tabincell{c}{2002/05-\\2009/11}&1558&5585&941&4644\\
+\hline
+JAMWiki&\tabincell{c}{2006/06-\\2013/03}&1262&3756&467&3289\\
+\hline
+EJBCA&\tabincell{c}{2001/11-\\2017/01}&4705&19800&2442&17358\\
+\hline
+JHotDraw&\tabincell{c}{2000/10-\\2016/01}&251&1159&83&1076\\
+\hline
+\textbf{Total}&--&\textbf{9909}&\textbf{35050}&\textbf{4595}&\textbf{30455}\\
+\hline
+\end{tabular} }
+\end{center}
+\end{table}
+\par{我们从开源项目中选择了5个项目作为我们实验的数据，具体如表\ref{tab:explementaldata}所示。这5个开源项目在\emph{Sourceforge}\footnote{Sourceforge,https://sourceforge.net/,2018}中的评分均超过了4.8分(满分5分)，并且它们在软件工程领域经常被选作实验数据。此外，这5 个开源项目分别代表了不同的工程领域，包括文本编辑器(\emph{JEdit}\footnote{JEdit,http://www.jedit.org/,2018})，管理系统(\emph{OpenNMS}\footnote{OpenNMS,http://www.opennms.org/,2018})，维基百科搜索引擎(\emph{JAMWiki}\footnote{JAMWiki,http://www.jamwiki.org/,2018})，企业安全认证系统(\emph{EJBCA}\footnote{EJBCA,http://www.ejbca.org/，2018})，以及二维图像处理软件(\emph{JHotDraw}\footnote{JHotDraw,http://www.jhotdraw.org/,2018})。
+}
+\par{如表\ref{tab:explementaldata}所示，在这5个项目中，我们过滤掉注释质量低的软件变化，包括(1)注释单词个数小于3个；(2)注释内容为代码；(3)注释内容为无意义的符号。在过滤之后，一共收集了9909个提交共35050个软件变化。在这些软件变化中，注释随着代码一起变化的个数为4595个，注释未变化的个数为30455个。我们将这些软件变化分为两部分：(1)从每个项目中随机提取400个软件变化，共2000个软件变化作为一个数据集，标记为$Dataset_1$，用于方法的研究问题2的验证。(2)所有不在$Dataset_1$中的数据作为另一个数据集，标记为$Dataset_2$，用于模型的训练和验证(如表\ref{tab:dataset}所示)。
+}
+
+\begin{table}[]\small
+\caption{实验中使用的数据集}
+\label{tab:dataset}
+\begin{center}
+\setlength{\tabcolsep}{10mm}{
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multirow{2}{*}{\textbf{数据集}}&\multirow{2}{*}{\textbf{软件变化}} & \multicolumn{2}{c|}{\textbf{注释}}\\
+\cline{3-4}
+ &   &\textbf{变化}&\textbf{未变化}\\
+\hline
+ \tabincell{c}{$Dataset_1$}& 33050 & 4320 & 28730\\
+\hline
+\tabincell{c}{$Dataset_2$}& 2000& 275 & 1725\\
+\hline
+\end{tabular}}
+\end{center}
+\end{table}
+\subsubsection{模型训练}
+\par{我们将代码和注释的一致性检测问题当作一个二分类问题。在一个软件变化中，如果随着代码变化注释需要作出修改，则认为此时代码和注释是不一致的，即如果保留原有注释且不作任何修改的情况下，注释的描述与修改后的代码的实现功能不相符合。我们将这部分数据当作数据集的正样本。如果在代码修改的情况下，注释不需要作出任何修改，则认为此时代码和注释是一致的。我们将这部分数据作为数据集的负样本。我们的目标就是从这些数据集中学习得到一个分类模型，以区分正负样本。}
+\par{在传统的机器学习领域中，建立分类模型的算法主要有决策树算法，贝叶斯分类算法，支持向量机算法，增强学习算法以及集成学习算法等。其中，决策树算法和支持向量机受噪声影响明显\cite{Quinlan86,Cortes95}，而我们的数据集来源于开源项目，且时间跨度比较大(大于10年)，不可避免地会包含一些噪声。所以这两种类型的算法不适用于我们的模型学习。而贝叶斯分类算法的分类准确率比较低，所以在本文中也没有采用该方法。增强学习算法和集成学习算法对我们的模型学习有较好的效果，其中又以集成学习算法表现更佳。在集成学习算法中，使用比较普遍的为随机森林算法。随机森林算法模型是一种集成学习模型，采用决策树作为其基分类器，每个决策树由独立随机采样的样本和特征决定。在分类阶段由所有决策树共同投票决定最终结果，且随机森林具有很好的抗噪声能力以及不容易出现过拟合问题\cite{Breiman01}。所以，在实验中，我们选择随机森林算法进行模型训练。}
+\par{在随机森林算法中，可调节的参数主要有决策树数量，特征采样个数以及样本采样比例。我们通过参数迭代的方式选取出一组最优的参数。其中，决策树数量选择为300，特征采样个数为8，样本采样比例为30\%。}
+\subsubsection{模型评估标准}
+\par{本文的主要目标是在一次代码提交中，根据修改的代码自动判断原有的注释是否需要修改。因此，我们在对模型的评估中主要关注两个方面的问题：第一，一致性检测模型的准确率能达到多少？第二，代码和注释的一致性检测在实际应用中是否对开发和维护人员有所帮助。}
+\par{\textbf{1: 一致性检测模型的准确率能达到多少？}}
+\par{为了验证模型的准确率，我们选择$Dataset_1$作为模型训练和验证的数据集，并采用十折交叉验证的方法对模型进行评估。在对代码和注释的一致性判定模型的准确率评估中，我们主要考察6个度量指标：正例精确度(\emph{$precision_1$})，正例召回率(\emph{$recall_1$})和正例F1值(\emph{$F1-Score_1$})以及反例精确度(\emph{$precision_0$})，反例召回率(\emph{$recall_0$})和反例F1值(\emph{$F1-Score_0$})。其中，精确度表示当分类器将一个实例分类为某类时，有多大概率可以认为这次分类是准确的。召回率表示分类器对某种类别的实例集合可以正确分类的比例。F1值同时考虑精确度和召回率，通常是对精确度和召回率的一种折中的度量，常作为评价一个模型的综合性能被许多软件工程领域的论文中所采用。这6个度量指标定义如下：
+\begin{equation}
+precision_1=\frac{ActualPositiveIns\bigcap EstimatedPositiveIns}{EstimatedPositiveIns} \times 100\%
+\end{equation}
+\begin{equation}
+precision_0=\frac{ActualNegativeIns\bigcap EstimatedNegativeIns}{EstimatedNegativeIns} \times 100\%
+\end{equation}
+\begin{equation}
+recall_1=\frac{ActualPositiveIns\bigcap EstimatedPositiveIns}{ActualPositiveIns} \times 100\%
+\end{equation}
+\begin{equation}
+recall_0=\frac{ActualNegativeIns\bigcap EstimatedNegativeIns}{ActualNegativeIns} \times 100\%
+\end{equation}
+\begin{equation}
+F1-Score_1=\frac{precision_1\cdot recall_1}{precision_1+recall_1}
+\end{equation}
+\begin{equation}
+F1-Score_0=\frac{precision_0\cdot recall_0}{precision_0+recall_0}
+\end{equation}
+其中，\emph{ActualPositiveIns}表示正例的个数，\emph{ActualNegativeIns}表示反例的个数，\emph{EstimatedPositiveIns}表示分类器分类为正例的个数，\emph{EstimatedNegativeIns}表示分类器分类为反例的个数。
+}
+\par{\textbf{2: 代码和注释的一致性检测在实际应用中是否对开发和维护人员有所帮助？}}
+\par{为了验证我们的模型是否对开发和维护人员在现有项目中寻找不一致的注释是否有帮助，我们选择了数据集$Dataset_2$作为我们的验证集，通过模型对其进行分类，并邀请9位志愿者对模型识别为不一致的注释进行验证。}
+\subsubsection{一致性检测模型实验结果}
+\par{\textbf{1: 一致性检测模型的准确率能达到多少？}}
+\begin{table}[h]\small
+\caption{一致性模型评估结果}
+\label{tab:consistencymodelresult}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\textbf{特征}&$precision_1$&$recall_1$&\tabincell{c}{$F1-$\\$Score_1$}&$precision_0$&$recall_0$&\tabincell{c}{$F1-$\\$Score_0$}\\
+\hline
+\tabincell{c}{代码特征}&83.6\%&58.8\%&0.691&93.9\%&98.2\%&0.960\\
+\hline
+\tabincell{c}{注释特征}&47.3\%&12.6\%&0.199&87.8\%&97.8\%&0.925\\
+\hline
+\tabincell{c}{代码和注释\\关联特征}&66.5\%&38.1\%&0.381&91.0\%&97.0\%&0.939\\
+\hline
+\tabincell{c}{代码特征+\\关联特征}&86.8\%&60.6\%&0.713&94.1\%&98.6\%&0.956\\
+\hline
+\tabincell{c}{所有特征}&88.4\%&61.5\%&0.726&94.3\%&98.7\%&0.965\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\par{本节按照上一节中提出的6个模型评估度量给出代码和注释一致性检测模型的评估结果。首先，我们分别选择代码特征，注释特征以及代码和注释的关联特征作为模型的特征，观察不同类型的特征对模型评估结果的影响。然后，我们将不同类型的特征相结合，观察在考虑了多种维度的特征后，模型的检测效果是否有所提高。具体结果如表\ref{tab:consistencymodelresult}所示。从表中可知，在代码特征，注释特征以及代码和注释的关联特征中，代码特征在代码和注释的一致性检测中效果最好，代码和注释的关联特征次之，注释特征相对来说起到的作用较小。而从各种类型的特征的结合结果来看，同时考虑三种维度的特征，一致性检测效果最好，这说明了在特征选择中，同时考虑三种维度的特征，可以对代码和注释的一致性作出最好的检测。
+}
+\par{从表\ref{tab:consistencymodelresult}中，我们发现正例的召回率比较低 (61.5\%)，这主要是由于模型的训练样本不平衡导致的。如表\ref{tab:dataset}所示，正负样本比例约为 1:6.6。 由此可见，我们的二类别分类问题为不平衡数据集的分类问题。一般解决不平衡分类问题的方式有三种：第一种为对少数类的样本进行过采样，即在样本采样环节提高少数类样本的采样概率，来达到平衡数据集中正负样本的比例。这种采样方式由于是简单的对少数类的同一个样本进行多次提取，在模型训练中容易出现过拟合的现象；第二种是对多数类的样本进行欠采样，即在样本采样环节降低多数类样本的采样概率，以平衡数据集中正负样本的比例。这种采样方式缩小了进行模型训练的样本数量，不能充分利用数据集进行建模；最后一种为代价敏感方法，其通过调整少数类和多数类的误分类代价，即在模型构建过程中，增大少数类的误分类代价，使分类模型偏向于选择少数类的分类结果。由于这种方法没有直接对数据集进行操作，而是通过对不同类别的样本赋值不同的权重以达到数据集的平衡，所以可以很好地克服前两种方法的缺陷\cite{He09}。因此，在本文中选择最后一种方法作为我们的不平衡分类问题的解决方案。具体地，我们通过将代价矩阵引入模型训练中，并修改随机森林的决策树中不纯度度量和分类判别公式，将我们的分类模型修改为代价敏感的分类模型。其中，代价矩阵在形式上如下所示：}
+$$\begin{bmatrix}
+ C_{00}&C_{01} \\
+ C_{10}&C_{11}
+\end{bmatrix}$$
+\par{其中，$C_{ij}$表示分类器把类别为 $i$ 的样本误分类为 $j$ 的代价。一般来说，$C_{00} = C_{11} = 0$。
+我们修改随机森林的决策树的不纯度度量，由于在本实验中使用的是\emph{Gini}不纯度，具体到我们的二分类问题，修改后的不纯度度量公式为：
+\begin{equation}
+Gini(D) =1- \left(\frac{\left | c_{0} \right |\times C_{01}}{\left | D' \right |}\right )^{2}-\left(\frac{\left | c_{1} \right |\times C_{10}}{\left | D' \right |}\right )^{2}
+\end{equation}
+其中，
+\begin{equation}
+\left | D' \right |= \left | c_{0} \right |\times C_{01}+\left | c_{1} \right |\times C_{10}
+\end{equation}
+其中，\emph{D}为样本的集合，\emph{$|D|$} 为集合中样本的个数，$| c_0|$为集合中负样本的个数，$|c_1|$为集合中正样本的个数。}
+\par{决策树中叶子结点的分类标签计算公式修改为：
+\begin{equation}
+label = \underset{i}{argmax}\left (  \left | c_{i}  \right |\times C_{ij}\right )
+\end{equation}
+其中，
+\begin{equation}
+j= \left | 1-i \right |
+\end{equation}
+}
+\begin{figure}[!b]
+\centering
+\includegraphics[width=5in]{figures/13.eps}
+\caption{不同代价矩阵下的模型评估结果}
+\label{fig:costmatrixresult}
+\end{figure}
+\par{在实验中，我们将代价矩阵中的$C_{00}$和$C_{11} $设为0，并通过调整$C_{01}$和$C_{10}$的值，来观察正例的精确度，召回率和F1值的变化情况。具体如图\ref{fig:costmatrixresult}所示。其中，图\ref{fig:costmatrixresult}的横轴表示$C_{01}:C_{10}$的比值，纵轴表示准确率，蓝色折线表示正例的精确度，红色折线表示正例的召回率，绿色折线表示正例的F1值。
+}
+
+\par{从图\ref{fig:costmatrixresult}中可知，当$C_{01}:C_{10} = 1:6$时，正例的F1值达到最大值(0.759)，这时正例的精确度为77.2\%，召回率为74.6\%。模型评估的最终结果如表\ref{tab:consistencymodelresult2}所示，通过对比表\ref{tab:consistencymodelresult}中所有特征的评估结果和表\ref{tab:consistencymodelresult2}中的评估结果可知，虽然在正例的精确度上从88.4\%降到了77.2\%，但在正例的召回率上有明显的提升(从61.5\%提高到74.6\%)，并且正例的F1值也从0.726上升到0.759。而在反例的评估结果上则没有明显差别。这说明通过引入代价矩阵，可有效调节模型中训练集的不平衡性。}
+
+\begin{table}[]\small
+\caption{一致性模型评估结果（引入代价矩阵后）}
+\label{tab:consistencymodelresult2}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$precision_1$&$recall_1$&\tabincell{c}{$F1-Score_1$}&$precision_0$&$recall_0$&\tabincell{c}{$F1-Score_0$}\\
+\hline
+77.2\%&74.6\%&0.759&96.42\%&97.22\%&0.968\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\par{\textbf{2: 代码和注释的一致性检测在实际应用中是否对开发和维护人员有所帮助？}}
+
+
+\begin{figure}[!b]
+\centering
+\includegraphics[width=5.5in]{figures/12.png}
+\caption{数据验证界面}
+\label{fig:validatedpage}
+\end{figure}
+\par{对于第二个研究问题，我们使用数据集$Dataset_1$进行模型训练，并将数据集$Dataset_2$作为测试集，使用训练好的模型对这部分数据的注释进行一致性检测。在数据集$Dataset_2$中，包含275个变化的注释以及1725个未变化的注释。通过模型的分类，有279个注释检测为与代码不一致，其中有210个注释在原项目中已作了修改，另外69个注释在原项目中未作修改，我们邀请9个志愿者对这69个注释进行验证。首先，我们将这9个志愿者分为3组，每组对这69个注释进行一轮验证，即每个志愿者验证23个注释。对于每一个注释，我们可以收集到3个答案。在对每个注释进行验证时，我们采用在线验证的方式，验证页面如图 \ref{fig:validatedpage}所示，验证页面展示软件变化中变化前的注释，变化前的代码以及变化后的代码等信息。在验证选项中，有5个选项供参与者选择，具体说明如表\ref{tab:validatetype}所示。最后，对于每一个注释是否与代码一致的验证，采取少数服从多数的原则，验证结果如表\ref{tab:validateresult}所示。从结果中可以看出，我们的模型最后检测正确的与代码不一致的注释的个数为241 (210+19+6+6)个。在这241个不一致的注释中，有10\%的注释在原项目中未作修改。由此可以看出，我们的模型可以帮助开发和维护人员在现有项目中检测出不一致的注释。}
+
+\begin{table}[]\small
+  \centering
+ % \fontsize{8}{8}\selectfont
+  \caption{验证结果类型}
+  \label{tab:validatetype}
+  \setlength{\tabcolsep}{15mm}{
+   \begin{tabular}{|c|c|m{0.5\columnwidth}<{\centering}|}
+\hline
+\textbf{编号} &\textbf{描述}\\
+\hline
+$O_1$&\tabincell{c}{新增代码引起的注释与代码的不一致}\\ \hline
+$O_2$&\tabincell{c}{修改代码引起的注释与代码的不一致}\\ \hline
+$O_3$&\tabincell{c}{删除代码引起的注释与代码的不一致}\\ \hline
+$O_4$&\tabincell{c}{注释与代码保持一致}\\ \hline
+$O_5$&\tabincell{c}{无法确定注释与代码是否一致}\\
+\hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[]\small
+\renewcommand\arraystretch{1.8}
+\caption{验证结果}
+\label{tab:validateresult}
+\begin{center}
+\setlength{\tabcolsep}{8mm}{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\emph{Group}&\emph{$O_1$}&\emph{$O_2$}&\emph{$O_3$}&\emph{$O_4$}&\emph{$O_5$}\\ \hline
+\emph{Group 1}&15&7&7&36&4\\
+\hline
+\emph{Group 2}&17&6&5&33&8\\
+\hline
+\emph{Group 3}&20&7&4&32&3\\
+\hline
+\textbf{最终结果}&19&6&6&31&7\\
+\hline
+\end{tabular} }
+\end{center}
+\end{table}
+\subsubsection{一致性检测影响因素讨论}
+\par{在实验中，我们的训练集是直接从开源项目中提取的，且由于这部分数据数量较多，我们没有人力进行逐条验证。在训练集中不可避免地包含一部分噪声，这些噪声可能对模型的准确率造成影响。而在进行数据提取时，我们采用启发式规则检测注释作用域。在一些情况下，启发式规则倾向于扩大注释的作用域。在这种情况下，有可能将一些与注释不想关的代码加入到软件变化中，影响模型的准确率。另外，由于我们在实验中选择的项目的编程语言均为Java，没有验证在其他编程语言项目中模型的性能。}
+
+\subsection{本章小结}
+\par{在本章中，我们提出了一种数据驱动的代码和注释一致性检测方法。该方法采用随机森林算法进行模型构建，并从代码，注释以及代码和注释的关系等多个维度进行特征提取。实验中，我们采集了5个开源项目的代码提交数据进行模型训练和验证。实验结果显示我们的模型在正样本中精确度达到77.2\%，召回率达到74.6\%，F1值为0.759。此外，我们从2000个注释中找到了241个与代码不一致的注释，并有31个注释在原项目中未作出修改。这表明我们的模型可以有效地帮助开发和维护人员在现有项目中发现与代码不一致的注释，辅助开发和维护人员评估代码提交的质量。}

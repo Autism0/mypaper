@@ -378,4 +378,9 @@ A.~Zaidman, B.~Van~Rompaey, S.~Demeyer, and A.~Van~Deursen, ``Mining software
   Conference on}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE, 2008, pp.
   220--229.
 
+\bibitem{fluri2007change}
+B.~Fluri, M.~Wuersch, M.~PInzger, and H.~Gall, ``Change distilling: Tree
+  differencing for fine-grained source code change extraction,'' \emph{IEEE
+  Transactions on software engineering}, vol.~33, no.~11, 2007.
+
 \end{thebibliography}

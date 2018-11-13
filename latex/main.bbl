@@ -383,4 +383,20 @@ B.~Fluri, M.~Wuersch, M.~PInzger, and H.~Gall, ``Change distilling: Tree
   differencing for fine-grained source code change extraction,'' \emph{IEEE
   Transactions on software engineering}, vol.~33, no.~11, 2007.
 
+\bibitem{goldberg2014word2vec}
+Y.~Goldberg and O.~Levy, ``word2vec explained: deriving mikolov et al.'s
+  negative-sampling word-embedding method,'' \emph{arXiv preprint
+  arXiv:1402.3722}, 2014.
+
+\bibitem{mikolov2013distributed}
+T.~Mikolov, I.~Sutskever, K.~Chen, G.~S. Corrado, and J.~Dean, ``Distributed
+  representations of words and phrases and their compositionality,'' in
+  \emph{Advances in neural information processing systems}, 2013, pp.
+  3111--3119.
+
+\bibitem{mikolov2013efficient}
+T.~Mikolov, K.~Chen, G.~Corrado, and J.~Dean, ``Efficient estimation of word
+  representations in vector space,'' \emph{arXiv preprint arXiv:1301.3781},
+  2013.
+
 \end{thebibliography}

@@ -6,14 +6,9 @@ A level-1 auxiliary file: chapter/chap2.aux
 A level-1 auxiliary file: chapter/chap3.aux
 A level-1 auxiliary file: chapter/chap4.aux
 A level-1 auxiliary file: chapter/chap5.aux
-The style file: IEEEtran.bst
+The style file: unsrt.bst
 A level-1 auxiliary file: acknowledge.aux
 Database file #1: cite.bib
-Warning--I didn't find a database entry for "Reddy00"
-Warning--I didn't find a database entry for "Tan12"
-Warning--I didn't find a database entry for "Tan07"
-Warning--I didn't find a database entry for "Malik08"
-Warning--I didn't find a database entry for "Ibrahim12"
 Warning--I didn't find a database entry for "Neamtiu05"
 Warning--I didn't find a database entry for "Marin05"
 Warning--I didn't find a database entry for "Fluri09"
@@ -33,9 +28,6 @@ Warning--I didn't find a database entry for "Hassan04"
 Warning--I didn't find a database entry for "Hattori08"
 Warning--I didn't find a database entry for "fang11"
 Warning--I didn't find a database entry for "Conover98"
--- IEEEtran.bst version 1.13 (2008/09/30) by Michael Shell.
--- http://www.michaelshell.org/tex/ieeetran/bibtex/
--- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
-
-Done.
-(There were 24 warnings)
+Warning--there's a number but no volume in rovegaard2008empirical
+Warning--there's a number but no volume in holmes2006approximate
+(There were 21 warnings)

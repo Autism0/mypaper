@@ -90,12 +90,12 @@ Set(C\rightarrow S)=\left \{w_{c}\in C|sim(w_{c},S)\neq 0  \right \}
 }
 \par{文本$C$到文本$S$的相似度为：
 \begin{equation}
-sim(C\rightarrow S)=\frac{ \sum_{w_{c}\in Set(C\rightarrow S)}sim(w_{c},S)}{\left | Set(C\rightarrow S) \right |} 
+sim(C\rightarrow S)=\frac{ \sum_{w_{c}\in Set(C\rightarrow S)}sim(w_{c},S)}{\left | Set(C\rightarrow S) \right |}
 \end{equation}
 }
 \par{同理，文本$S$到文本$C$的相似度为：
 \begin{equation}
-sim(S\rightarrow C)=\frac{ \sum_{w_{s}\in Set(S\rightarrow C)}sim(w_{s},C)}{\left | Set(S\rightarrow C) \right |} 
+sim(S\rightarrow C)=\frac{ \sum_{w_{s}\in Set(S\rightarrow C)}sim(w_{s},C)}{\left | Set(S\rightarrow C) \right |}
 \end{equation}
 }
 \par{由此，我们可以得到文本$C$与文本$S$的相似度：
@@ -112,18 +112,19 @@ CommitSimi = \alpha \cdot CommentSimi + \beta \cdot OldCodeSimi+\gamma \cdot New
 \subsection{关键类判定方法}
 \par{本文提出的影响分析辅助方法中一个关键步骤是从相似提交中找出影响分析对象的等价类，使用等价类的修改模式对初始影响分析结果进行优化。本文通过关键类判定方法识别提交中核心修改的类，将关键类作为影响分析对象的等价类。我们从代码耦合、代码修改以及提交类型三个维度提取特征（如表\ref{tab:coreclass}所示），训练机器学习模型，通过机器学习模型判别提交中的关键类。本节主要介绍三个维度的特征提取方法。}
 \par{代码耦合特征是一次代码提交中，多个类修改之间的代码耦合关系。在代码耦合特征中，我们使用类的入度和出度来衡量一个类与其他类之间的耦合关系。一个类的入度是指提交中引用该类的其他类的个数；出度指的是提交中被该类引用的其他类的个数。同时，我们还考虑了提交中不同类之间的出度与入度的关系。假设当前类的入度为提交中所有类的入度的最大值，意味着当前类经常被其他类引用，那么这个类的修改很大概率会引起其他类的修改，更可能成为提交中的关键类。同理，如果一个类的出度很大，也就意味着这个类受其他类的修改影响比较大，这个类有比较高的概率是非关键类。一个类的入度和出度的不同组合也可能影响关键类的判别。如一个类的入度和出度都很大，说明这个类影响其他类的修改以及受其他类修改的影响都比较大。如果一个类的入度很大，而出度为0，这个类有很大概率成为关键类；相反地，如果一个类的出度很大，而入度为0，这个类更可能是非关键类。}
-\par{对于一个提交，类的代码修改量往往对应着这个类在提交中的重要程度，关键类在一次提交中往往是被主要修改的类。从修改代码量维度衡量，关键类修改的代码量通常要比非关键类多。类修改的代码量可以使用类中方法的修改个数和代码的修改行数来度量。同时，我们还在代码修改特征中引入代码相对修改量的概念，即在一次提交中，类中代码修改量与提交中涉及的类的平均代码修改量的比值。另外，类的修改类型可以分为新增，修改和删除三种。我们定义的代码修改特征如表。% Please add the following required packages to your document 
+\par{对于一个提交，类的代码修改量往往对应着这个类在提交中的重要程度，关键类在一次提交中往往是被主要修改的类。从修改代码量维度衡量，关键类修改的代码量通常要比非关键类多。类修改的代码量可以使用类中方法的修改个数和代码的修改行数来度量。同时，我们还在代码修改特征中引入代码相对修改量的概念，即在一次提交中，类中代码修改量与提交中涉及的类的平均代码修改量的比值。另外，类的修改类型可以分为新增，修改和删除三种。我们定义的代码修改特征如表。% Please add the following required packages to your document
 }
 \par{在一次提交中，代码修改的目标有几种类型：（1）添加新功能（前向工程）；（2）删除过时代码（逆向工程）；（3）修复代码缺陷（纠错工程）；（4）非可执行文件修改（非代码修改类型），如配置文件，说明文件等。根据提交的类型不同，提交中被核心修改的类也会有所不同。如：提交类型为添加新功能，关键类通常为新增的类。因此，如果已知一个提交的类型，可以将当前提交的关键类限定在一个更小的范围内。}
-\par{}
 % Please add the following required packages to your document preamble:
 % \usepackage{multirow}
-\begin{table}[ht]\small
+\begin{table}[ht]
+\small
  % \fontsize{8}{8}\selectfont
-  \caption{关键类判别特征}
-  \label{tab:coreclass}
-  \begin{center}
-  \setlength{\tabcolsep}{7mm}{
+\caption{关键类判别特征}
+\label{tab:coreclass}
+\begin{center}
+\begin{footnotesize}
+\setlength{\tabcolsep}{7mm}{
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{类型}                      & \textbf{编号} & \textbf{描述}                  \\ \hline
@@ -149,79 +150,151 @@ CommitSimi = \alpha \cdot CommentSimi + \beta \cdot OldCodeSimi+\gamma \cdot New
                         & 20 & 是否非代码类型修改           \\ \cline{2-3}
                         & 21 & 提交中类的个数             \\ \hline
 \end{tabular}}
+\end{footnotesize}
 \end{center}
 \end{table}
-\subsubsection{注释类型介绍}
-\par{
-\begin{figure}[!hbp]
-\centering
-\subfigure[文档注释示例]{
-\label{Fig.sub.4}
-\includegraphics[width=0.67\textwidth]{figures/4.png}}
-%\includegraphics[width = 4cm ]{1.jpg}
-\subfigure[块注释示例]{
-\label{Fig.sub.5}
-\includegraphics[width=0.67\textwidth]{figures/5.png}}
-\subfigure[行注释示例]{
-\label{Fig.sub.6}
-\includegraphics[width=0.67\textwidth]{figures/6.png}}
-\caption{不同类型的注释示例}
-\label{fig:commenttype}
-\end{figure}
-在Java语言中，有三种类型的注释，分别为文档注释(Javadoc Comment)，块注释(Block Comment)和行注释(Line Comment)\cite{Reddy00}。如图\ref{fig:commenttype}所示\footnote{JDK，/java/lang/String.java，2018}。其中，图\ref{fig:commenttype}(a)中的第1-10行为方法 \emph{indexOf}的文档注释，图\ref{fig:commenttype}(b)中的第4-7行以及第15行为块注释，图\ref{fig:commenttype}(c)中的第6行以及第11-12行为行注释。由于文档注释具有良好的结构，有很多研究学者针对这一类型的注释与代码之间的一致性问题做了充分的研究\cite{Tan12,Tan07,Malik08,Ibrahim12}，且在一致性的判别中已有比较理想的结果。所以，本文主要关注块注释和行注释与代码的一致性问题。另外，在我们的实验过程中发现，开发人员在对代码编写注释时，块注释和行注释的选择界限往往比较模糊。对于单行注释的选择，可以以块注释的形式展现，如图\ref{fig:commenttype}(b)中的第15行所示。也可以以行注释的形式展现，如图\ref{fig:commenttype}(c)中的第6行所示。对于多行注释，图\ref{fig:commenttype}(b)中的第4-7行中使用了块注释，而图\ref{fig:commenttype}(c)中的第11-12行则使用了行注释。因此，我们在实验过程中将块注释和行注释看作同种类型的注释，并将多行的行注释合并为一个注释。
-}
-\subsubsection{注释作用域检测算法}
-\par{
-\begin{table}[!hbp]\small
-\centering
-\begin{tabular}{l} \hline
-\textbf{算法1: 注释作用域检测算法}\\ \hline
-1:~~\textbf{Input}: \emph{S}: Source code;  \emph{CM}: The set of comments;\\
-2:~~\textbf{Output}: \emph{CSSet}: The set of commentScopes; \\
-3:~~\textbf{CommentScopeExtraction} (\emph{S}, \emph{CM}):\\
-4:~~~\emph{CSSet}=\{\}\\
-5:~~~\emph{astTree} = \textbf{getASTTree}(\emph{S})\\
-6:~~~\emph{methodSet} = \textbf{getMethodSet}(\emph{astTree})\\
-7:~~~\textbf{foreach} \emph{comment} $\in$ \emph{C} \textbf{do}\\
-8:~~~~~~~\emph{CS}=(\emph{comment,null,0,0})\\
-9:~~~~~~~\textbf{foreach} \emph{method} $\in$ \emph{methodSet} \textbf{do}\\
-10:~~~~~~~~~~\textbf{if} \emph{comment} \textbf{in} \emph{method}\\
-11:~~~~~~~~~~~~~~\emph{codeSet}=\{\}; \emph{startLine}=0; \emph{endLine}=\emph{method.endLine}\\
-12:~~~~~~~~~~~~~~\emph{statementSet} = \textbf{getStatementSet}(\emph{method})\\
-13:~~~~~~~~~~~~~~\textbf{foreach} \emph{statement} $\in$ \emph{statementSet} \textbf{do}\\
-14:~~~~~~~~~~~~~~~~~~\textbf{if} \emph{statement.startLine}$>$\emph{comment.startLine} \textbf{\&} \emph{statement.endLine}$<$\emph{endLine} \textbf{do}\\
-15:~~~~~~~~~~~~~~~~~~~~~~\emph{codeSet}.\textbf{add}(\emph{statement})\\
-16:~~~~~~~~~~~~~~~~~~~~~~\textbf{if} \emph{startLine} == 0 \textbf{do:} \emph{startLine} == \emph{statement.startLine}\\
-17:~~~~~~~~~~~~~~~~~~~~~~\textbf{end if}\\
-18:~~~~~~~~~~~~~~~~~~\textbf{end if}\\
-19:~~~~~~~~~~~~~~~~~~\textbf{if} \emph{comment} \textbf{in} \emph{statement} \textbf{\&\&} \emph{statement.endLine} $<$ \emph{endLine} \textbf{do}\\
-20:~~~~~~~~~~~~~~~~~~~~~~\emph{endLine} = \emph{statement.endLine}\\
-21:~~~~~~~~~~~~~~~~~~\textbf{end if}\\
-22:~~~~~~~~~~~~~~\textbf{end foreach}\\
-23:~~~~~~~~~~~~~~\emph{next\_comment} = \textbf{getNextComment}(\emph{comment},\emph{C})\\
-24:~~~~~~~~~~~~~~\textbf{if} \emph{next\_comment.startLine}-1 $<$ endLine \textbf{do}\\
-25:~~~~~~~~~~~~~~~~~~\emph{endLine} = \emph{next\_comment.startLine}-1\\
-26:~~~~~~~~~~~~~~\textbf{end if}\\
-27:~~~~~~~~~~~~~~\emph{CS.c}=\emph{codeSet}; \emph{CS.s}=\emph{startLine}; \emph{CS.e}=\emph{endLine}\\
-28:~~~~~~~~~~~~~~\textbf{goto 7}\\
-29:~~~~~~~~~~\textbf{end if}\\
-30:~~~~~~\textbf{end foreach}\\
-31:~~~~~~\emph{CSSet}.\textbf{add}(\emph{CS})\\
-32:~~\textbf{end foreach}\\
-33:~~\textbf{return} \emph{CSSet}\\ \hline
-\end{tabular}
-\label{tab:algorithm1}
-\end{table}
-在对代码和注释的一致性问题研究中，以往研究工作的主要研究对象为文档注释及其相关代码的一致性。由于这类注释具有良好的结构信息，且其关联的程序对象通常为方法成员和属性成员，所以与注释关联的代码范围容易确定。而对于块注释和行注释而言，由于其具有结构松散，使用灵活的特点，确定它们所关联的代码范围往往比较困难。因此，本文提出了一种注释作用域检测的启发式算法，用于确定与注释相关联的代码范围。算法描述如算法 \textbf{1}所示。算法 \textbf{1}将源代码文件 \emph{S}，待检测的注释集合 \emph{CM}作为输入；将新生成的注释作用域集合 \emph{CSSet}作为输出。首先，使用源代码文件构造抽象语法树 (Abstract Syntax Tree,AST)\cite{Neamtiu05}，得到源代码的方法集合 \emph{methodSet} (第5，6行)。然后，对于 \emph{CM}中的每个注释 \emph{comment}，从 \emph{methodSet}中得到 \emph{comment}所在的方法 \emph{method}，并将注释作用域 \emph{CS}的结束行 \emph{endLine}设为 \emph{method}的结束行 (第9-11行)。紧接着获取 \emph{method}的语句集合 \emph{statementSet}，并遍历该语句集合 (第12-22行)。遍历时首先寻找到紧邻注释的 \emph{statement}，将该 \emph{statement}的起始行 \emph{startLine}作为 \emph{CS}的起始行 (第16，17行)。其次，对于在 \emph{CS}作用域范围内的 \emph{statement}，将其加入到 \emph{CS}的语句集合 \emph{codeSet}中 (第13-15行)。再次，如果 \emph{statement}包含了待检测作用域的注释，且该 \emph{statement}的结束行 \emph{endLine}小于 \emph{CS}当前的结束行，则将 \emph{CS}的结束行修改为\emph{statement}的\emph{endLine} (第21-23行)。最后，获得与 \emph{comment}处于同一语句块中且紧邻的下一个注释 \emph{next\_comment}，如果 \emph{next\_comment}的起始行小于 \emph{CS}的结束行，则将 \emph{CS}的结束行修改为 \emph{next\_comment}的起始行的前一行 (第23-26行)。如果该注释遍历完 \emph{statementSet}中的所有语句，则结束一个 \emph{comment}的作用域检测，跳出 \emph{methodSet}循环 (第28行)。当 \emph{CM}中的每个 \emph{comment}都完成作用域检测后，返回 \emph{CSSet}集合 (第33行)。}
+\subsection{影响分析辅助方法}
+\par{本节详细介绍基于相似提交对传统影响分析的修改影响集进行优化的过程。我们先使用传统影响分析方法得到修改类的初始影响集，初始影响集中的类称之为初始影响类。从提交库中检索得到前20 个最相似的提交，提取提交中关键类与其他类的结构耦合关系以及修改类与初始影响类的结构耦合关系，计算结构耦合关系的相似度，对相似度高于指定阈值的初始影响类，调整其在初始影响集的位置，得到最终影响集。}
+\subsubsection{软件实体间结构耦合关系提取}
+\par{我们提出的基于历史修改模式的影响分析辅助方法中，通过类与类之间结构耦合关系的相似性，将历史修改模式映射回当前修改类中。当相似提交中关键类A和其他类B的结构耦合关系与当前修改类和初始影响类C的耦合关系的相似度很高时，我们认为修改类更可能将修改影响传播给初始影响类C。我们分析的软件实体包括类、方法和属性。对于两个类A和B（或者类A，接口B），我们从类层次、方法层次以及属性层次总结了A、B的18中耦合关系（如表\ref{coupleRelation}所示）：}
+\textbf{1)} A类的类层次。主要有2种耦合类型：A类继承B类、A类实现B接口。
 
-\par{图\ref{fig:scopeexample}为注释作用域划分示例。如图所示，该代码片段包含5个注释，其中，第3个注释包含在第二个注释的作用域内，我们在作出注释作用域检测后，将具有包含关系的注释合并为一个注释。最后，这段代码提取了4个代码-注释对，分别对应图\ref{fig:scopeexample}中的标签1至标签4。
-\begin{figure}[!t]
-\centering
-\includegraphics[width=4in]{figures/7.png}
-\caption{注释作用域检测示例}
-\label{fig:scopeexample}
-\end{figure}
+\textbf{2)} A类的方法层次（但没有使用B类定义局部变量或调用B类中的静态变量、静态方法、构造方法）。主要有5种耦合类型：强制类型转换、类型检查（instanceOf）、B作为方法返回值类型、类实例、方法抛异常（B为异常类）。
+
+\textbf{3)} A类的属性层次（成员属性、方法局部属性、方法参数），即，以B类定义A类的属性attr，attr有多种不同的使用方式，我们考虑以下三种：
+
+\quad\quad \textbf{3.1)} 在A类中（成员属性、方法局部属性、方法参数）直接使用attr；
+
+\quad\quad \textbf{3.2)} 在A类中（成员属性、方法局部属性、方法参数）调用attr（attr为B\\ 的实例）的某个属性；
+
+\quad\quad \textbf{3.3)} 在A类中（成员属性、方法局部属性、方法参数）调用attr（attr为B\\ 的实例）的某个方法；
+
+与属性层次的不同位置结合分析，可以总结出9种耦合关系。
+
+\textbf{4)} 其他情况：在A类的方法（也可能在A类的属性、静态代码块、非静态代码块，根据调研这三种情况较少见）调用B 的静态方法或B的构造方法，共两种耦合关系。
+\par{两个类之间的18种耦合关系我们通过一个1个18维的特征向量表示，每个维度对应表\ref{coupleRelation}的编码。如果两个类之间满足某种耦合关系，该维度表示为1，否则为0。}
+\begin{table}[ht]
+\begin{center}
+\begin{footnotesize}
+\caption{类与类（接口）耦合类型表}
+\label{coupleRelation}
+\begin{tabular}{|c|c|c|c|} \hline
+\textbf{层次} & \textbf{编码} & \multicolumn{2}{l|}{\textbf{耦合类型}} \\ \hline
+\multirow{2}{*}{类层次} & 01 & \multicolumn{2}{l|}{A类继承B类} \\ \cline{2-4}
+ & 02 & \multicolumn{2}{l|}{A类实现B接口} \\ \hline
+\multirow{5}{*}{方法层次} & 03 & \multicolumn{2}{l|}{强制类型转换} \\ \cline{2-4}
+ & 04 & \multicolumn{2}{l|}{类型检查instanceOf} \\ \cline{2-4}
+ & 05 & \multicolumn{2}{l|}{B类作为A方法返回值类型} \\ \cline{2-4}
+ & 06 & \multicolumn{2}{l|}{类实例b.Class} \\ \cline{2-4}
+ & 07 & \multicolumn{2}{l|}{方法抛异常（B为异常类）} \\ \hline
+\multirow{9}{*}{属性层次} & 08 & \multirow{3}{*}{A成员属性attr} & 直接调用attr \\ \cline{2-2} \cline{4-4}
+ & 09 &  & 通过attr调用其成员属性（attr为B类的实例） \\ \cline{2-2} \cline{4-4}
+ & 10 &  & 通过attr调用其成员方法（attr为B类的实例） \\ \cline{2-4}
+ & 11 & \multirow{3}{*}{A方法局部属性attr} & 直接调用attr \\ \cline{2-2} \cline{4-4}
+ & 12 &  & 通过attr调用其成员属性（attr为B类的实例） \\ \cline{2-2} \cline{4-4}
+ & 13 &  & 通过attr调用其成员方法（attr为B类的实例） \\ \cline{2-4}
+ & 14 & \multirow{3}{*}{A方法形参attr} & 直接调用attr \\ \cline{2-2} \cline{4-4}
+ & 15 &  & 通过attr调用其成员属性（attr为B类的实例） \\ \cline{2-2} \cline{4-4}
+ & 16 &  & 通过attr调用其成员方法（attr为B类的实例） \\ \hline
+\multirow{2}{*}{其他情况} & 17 & \multicolumn{2}{l|}{A类调用B类的静态方法} \\ \cline{2-4}
+ & 18 & \multicolumn{2}{l|}{A类调用B类的构造方法} \\ \hline
+\end{tabular}
+\end{footnotesize}
+\end{center}
+\vspace{-2mm}
+\end{table}
+\subsubsection{初始影响集优化}
+\par{通过传统影响分析方法获得初始影响集后，我们对影响集列表中的类赋予初始分数如表\ref{scoreinit}所示。影响集中类的排序代表着其受影响的概率，因此，我们记倒数第一个类为0分，逆序为排在前面的类依次增加20 分。}
+\par{对于初始影响集中的每个类，首先，提取其与修改类之间的结构耦合关系，记耦合关系为$V_{i}$（18维向量）；然后，提取每个相似提交中关键类与其他类的耦合关系，记为$V_{j}$；最后，计算$V_{i}$与所有$V_{j}$相似度，若$V_{i}$与提交中有$n$个$V_{j}$相似度大于指定阈值$\eta$（由实验测试得出），则$V_{i}$所对应的初始影响类分数增加$n*20$分，调整其在影响集中的位置。}
+\par{本文通过\emph{Jaccard}相似系数度量两组耦合关系向量之间的相似性，\emph{Jaccard}相似系数相对于其他相似性度量方法，更适合处理非对称二元变量。在两组结构耦合关系中，某一维度上的耦合关系编码正匹配（两者都取值为1）比负匹配（两者都取值为0）更有意义，在相似性度量上，负匹配的数量被认为是不重要的，\emph{Jaccard}相似系数可以忽略负匹配的影响。初始影响集优化公式如下：
+\begin{equation}
+JaccardSimi(V_{i},V_{j}) = \frac{V_{i}\cap V_{j}}{V_{i}\cup V_{j}}
+\end{equation}
+\begin{equation}
+Score_{i}=
+\begin{cases}
+Score_{i}+20,& \text{$JaccardSimi(V_{i},V_{j})>\eta $}\\
+Score_{i},& \text{$else$}
+\end{cases}
+\end{equation}
 }
+\begin{table}[t]
+\begin{center}
+\begin{footnotesize}
+\caption{初始影响集分数赋值示例}
+\label{scoreinit}
+\setlength{\tabcolsep}{7mm}{
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{排序} & \textbf{类名}                            & \textbf{影响概率}      & \textbf{初始分数} \\ \hline
+1  & \textit{Buffer.java}          & 0.7374193 & 240  \\ \hline
+2  & \textit{EditServer.java}      & 0.6746630 & 220  \\ \hline
+3  & \textit{Macros.java}          & 0.6488870 & 200  \\ \hline
+4  & \textit{EditPlugin.java}      & 0.6138285 & 180  \\ \hline
+5  & \textit{GUIUtilities.java}    & 0.5360856 & 160  \\ \hline
+6  & \textit{BeanShell.java}       & 0.5250749 & 140  \\ \hline
+7  & \textit{Abbrevs.java}         & 0.4440035 & 120  \\ \hline
+8  & \textit{BufferIORequest.java} & 0.3989099 & 100  \\ \hline
+9  & \textit{FileVFS.java}         & 0.3953681 & 80   \\ \hline
+10 & \textit{Mode.java}            & 0.2678907 & 60   \\ \hline
+11 & \textit{View.java}            & 0.1140896 & 40   \\ \hline
+12 & \textit{EditPane.java}        & 0.0990951 & 20   \\ \hline
+13 & \textit{HistoryModel.java}    & 0.0719621 & 0    \\ \hline
+\end{tabular}}
+\end{footnotesize}
+\end{center}
+\end{table}
+\subsubsection{基于历史修改模式的影响分析算法}
+\par{算法2-1是本文提出的影响分析辅助方法的算法整体流程，本节主要阐述算法的实现流程及细节。算法以当前修改目标的自然语言描述\emph{describe}，代码修改片段\emph{codefragList} 作为输入；输出目标为初始影响集优化后得到的最终影响集\emph{finImpctedSet}。}
+\par{算法3-15行为相似提交的检索过程。通过2.3节中提交相似度计算方法，对比提交库中的所有提交，得到一个大小为20的相似提交列表\emph{SimiCommits}。在检索提交库过程中，若相似提交列表中提交数量低于20，则直接加入当前检索的提交；若提交列表中提交数量为20，则对比提交列表中最后一个提交（相似度最低的提交）的相似系数与当前提交的相似系数的大小，如果当前提交的相似系数更大，则更新提交列表。}
+\par{算法16-30行为初始影响集\emph{initImpactedSet}的优化过程。\emph{initImpactedSet}由传统影响分析方法得到，并对影响集中的类根据受影响概率不同赋予不同的初始分数\emph{Score}。对于\emph{initImpactedSet}中一个受影响的类\emph{impactClass}，提取其与修改类的结构耦合关系\emph{impactClassCoupleVec}；然后遍历相似提交列表\emph{SimiCommits} 中所有提交\emph{commit}，识别提交中的关键类\emph{coreclass}，对于提交中的所有非关键类\emph{otherclass}，提取其与关键类的结构耦合关系\emph{otherClassCoupleVec}，再计算\emph{impactClassCoupleVec}与\emph{otherClassCoupleVec}的\emph{Jaccard}相似系数，若\emph{JaccardSimi}大于指定阈值（实验测试最优阈值为0.8），则当前受影响类\emph{impactClass} 对应的分数\emph{Score}增加20；最后对初始影响集根据分数进行重排序得到最终影响集\emph{finImpactedSet}。}
+\begin{table*}[!ht]
+\centering
+\begin{small}
+\label{algo1}
+{\footnotesize%
+\noindent\begin{tabular*}{135mm}{@{\extracolsep{\fill}}@{}l@{}}
+\toprule
+\textbf{算法2-1: 影响分析算法}\\
+\midrule%
+~~1:\quad \textbf{Input}: \emph{describe: 修改目标}， \emph{codefragList: 修改代码片段}; \\
+~~2:\quad \textbf{Output}: \emph{finImpactedSet: 最终影响集}; \\
+~~3:\quad \emph{SimiCommits} = \{\}\\
+~~4:\quad \textbf{ foreach} \emph{commit} $\in$ \emph{commitCorpus} \\
+~~5:\quad\quad \emph{simi} = \textbf{getTextSimi}(\emph{commit, describe, codefragList}) \\
+~~6:\quad\quad \textbf{if} \emph{SimiCommits}.\textbf{size()} $<$20 \textbf{do}\\
+~~7:\quad\quad\quad \emph{SimiCommits}.\textbf{add}(\emph{commit})\\
+~~8:\quad\quad\textbf{end if}\\
+~~9:\quad\quad \textbf{Sorted}(\emph{SimmiCommits})\\
+10:\quad\quad \textbf{if} \emph{SimiCommits}.\textbf{size()} $<$ 20 \textbf{\&\&} \emph{simi} $>$ \emph{SimiCommits}.\textbf{get}(\emph{SimiCommits}.\textbf{Size}()-1).\emph{simi} \textbf{do}\\
+11:\quad\quad\quad \emph{SimiCommits}.\textbf{add}(\emph{commit})\\
+12:\quad\quad\quad \textbf{Sorted}(\emph{SimmiCommits})\\
+13:\quad\quad\quad \emph{SimiCommits}.\textbf{remove}(\emph{SimiCommits}.\textbf{Size}()-1)\\
+14:\quad\quad\textbf{end if}\\
+15:\quad\textbf{end foreach}\\
+16:\quad \emph{initImpactedSet} $=$ \textbf{getInitImpactedSet}(\emph{describe}, \emph{codefragList})\\
+17:\quad \textbf{foreach} \emph{impactClass} $\in$ \emph{initImpactedSet} \textbf{do}\\
+18:\quad\quad \emph{impactClassCoupleVec} $=$ \textbf{getCoupleVec}(\emph{changeClass,impactClass})\\
+19:\quad\quad \textbf{foreach} \emph{commit} $\in$ \emph{SimiCommits} \textbf{do}\\
+20:\quad\quad\quad \emph{coreclass} $=$ \textbf{getCoreClass}(\emph{commit})\\
+21:\quad\quad\quad \textbf{foreach} \emph{otherclass} $\in$ \emph{commit} \textbf{do}\\
+22:\quad\quad\quad\quad \emph{otherClassCoupleVec} $=$ \textbf{getCoupleVec}(\emph{coreclass, otherclass})\\
+23:\quad\quad\quad\quad \emph{JaccardSimi} $=$ \textbf{getJaccard}(\emph{impactClassCoupleVec, otherClassCoupleVec})\\
+24:\quad\quad\quad\quad \textbf{if} \emph{JaccardSimi} $>$ \emph{0.8} \textbf{do}\\
+25:\quad\quad\quad\quad\quad \emph{impactClass}.\textbf{Score} $+=$ \emph{20}\\
+26:\quad\quad\quad\quad \textbf{end if}\\
+27:\quad\quad\quad \textbf{end foreach}\\
+28:\quad\quad \textbf{end foreach}\\
+29:\quad \textbf{end foreach}\\
+30:\quad \emph{finImpactedSet} $=$ \textbf{sorted}(\emph{initImpactedSet})\\
+31:\quad \textbf{return} \emph{finImpactedSet}\\
+\bottomrule
+\end{tabular*}
+} \vspace{-3mm}
+\end{small}
+\end{table*}
+\subsection{实验设置与评估}
+\par{在本文中将介绍影响分析辅助方法的实验设计与评估。首先介绍实验数据的选取过程，然后介绍实验的评估标注，最后给出实验结果。}
 \subsubsection{软件变化提取}
 \par{软件变化是指在两个提交版本间的注释和代码以及代码中的程序语句变化的集合，一个软件变化的代码范围实际上是由对应注释的作用域确定的。软件变化提取主要包含以下几步：(1)版本间注释配对。我们从两个版本的源代码中提取出注释信息，并对两个版本的注释进行一一匹配；(2)注释类型过滤。按照注释的类型对注释进行过滤，过滤掉文档注释和单行注释 (与代码处在同一行的行注释)；(3)注释作用域检测。按照算法\textbf{1}对注释进行作用域检测；(4)代码变化提取。对两个版本的注释作用域内的代码片段进行比较，提取代码变化，我们丢弃掉不包含代码变化的软件变化，例如两个版本的代码片段完全一致或者只涉及注释变化或代码格式的变化；(5)软件变化提取。根据获得的两个版本的注释信息，注释作用域信息，代码信息以及代码变化信息，进行软件变化的提取。}
 

@@ -9,25 +9,12 @@ A level-1 auxiliary file: chapter/chap5.aux
 The style file: unsrt.bst
 A level-1 auxiliary file: acknowledge.aux
 Database file #1: cite.bib
-Warning--I didn't find a database entry for "Neamtiu05"
-Warning--I didn't find a database entry for "Marin05"
-Warning--I didn't find a database entry for "Fluri09"
-Warning--I didn't find a database entry for "Pascarella17"
-Warning--I didn't find a database entry for "McBurney16"
-Warning--I didn't find a database entry for "Steidl13"
-Warning--I didn't find a database entry for "Pedersen04"
-Warning--I didn't find a database entry for "Bengio03"
-Warning--I didn't find a database entry for "Ye16"
-Warning--I didn't find a database entry for "Mikolov13"
-Warning--I didn't find a database entry for "Mikolov13-2"
-Warning--I didn't find a database entry for "Quinlan86"
-Warning--I didn't find a database entry for "Cortes95"
-Warning--I didn't find a database entry for "Breiman01"
-Warning--I didn't find a database entry for "He09"
 Warning--I didn't find a database entry for "Hassan04"
 Warning--I didn't find a database entry for "Hattori08"
+Warning--I didn't find a database entry for "Mikolov13"
+Warning--I didn't find a database entry for "Mikolov13-2"
 Warning--I didn't find a database entry for "fang11"
 Warning--I didn't find a database entry for "Conover98"
 Warning--there's a number but no volume in rovegaard2008empirical
 Warning--there's a number but no volume in holmes2006approximate
-(There were 21 warnings)
+(There were 8 warnings)

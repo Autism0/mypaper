@@ -36,11 +36,11 @@
 \contentsline {subsubsection}{\numberline {2.5.1}软件实体间结构耦合关系提取}{23}
 \contentsline {subsubsection}{\numberline {2.5.2}初始影响集优化}{24}
 \contentsline {subsubsection}{\numberline {2.5.3}基于历史修改模式的影响分析算法}{25}
-\contentsline {subsection}{\numberline {2.6}实验结果与分析}{26}
-\contentsline {subsubsection}{\numberline {2.6.1}数据集收集}{26}
-\contentsline {subsubsection}{\numberline {2.6.2}实验评估准则}{27}
+\contentsline {subsection}{\numberline {2.6}实验结果与分析}{27}
+\contentsline {subsubsection}{\numberline {2.6.1}数据集收集}{27}
+\contentsline {subsubsection}{\numberline {2.6.2}实验评估准则}{28}
 \contentsline {subsubsection}{\numberline {2.6.3}实验结果分析}{29}
-\contentsline {subsection}{\numberline {2.7}本章小结}{32}
+\contentsline {subsection}{\numberline {2.7}本章小结}{31}
 \contentsline {section}{\numberline {3}基于关键类判定的代码提交理解辅助方法}{33}
 \contentsline {subsection}{\numberline {3.1}关键类判定中的基本概念}{33}
 \contentsline {subsection}{\numberline {3.2}关键类判定模型的特征提取}{34}

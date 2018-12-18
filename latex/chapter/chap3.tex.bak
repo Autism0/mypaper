@@ -1,362 +1,49 @@
 
-\rhead{\xiaowuhao\sectionindex\quad基于关键类判定的代码提交理解辅助方法}
-\section{基于关键类判定的代码提交理解辅助方法}
-\par{软件代码的提交注释是开发人员理解代码提交的主要文档。开发人员通过阅读提交注释，来对代码提交进行快速理解。我们在对提交注释进行分析时发现，在一部分提交注释中，常会出现一个或几个在代码提交中涉及修改的类的类名。在我们的进一步研究中发现，在提交注释中被提及的类通常为被核心修改的类，本文中称其为关键类。关键类可有效引导开发者聚焦于在代码提交中需重点关注的修改，快速理解代码提交中的代码修改，从而提高代码提交理解的效率。在本文中，提出一种自动识别关键类的方法-\emph{ICC}(Identifying Core-Class)，辅助开发和维护人员理解代码提交。该方法从代码耦合，代码修改和提交类型三个维度共提取出21种特征，以及结合自然语言处理的技术，对类的代码修改进行向量化，加入到特征集中，用以关键类的判定。在方法中，我们从版本控制库中获取大量的代码提交数据，并将在提交注释中提及的类标记为关键类，未提及的类标记为非关键类，利用这些样本训练关键类判定模型。最后，将训练好的判定模型用于代码提交的关键类判定。}
-\subsection{关键类判定中的基本概念}
-\par{本节中，分别给出了提交，类，关键类和非关键类的定义，具体定义如下所示：}
-
-\par{\textbf{定义1(提交(Commit, \emph{Cm}))}：定义为四元组，\emph{Cm}=(\emph{m}, \emph{S}, \emph{K}, \emph{N})。其中，\emph{m}为提交注释；\emph{S}为一次代码提交中涉及修改的类的集合；\emph{K}表示一次代码提交中核心修改的类的集合；\emph{N}表示一次代码提交中非核心修改的类的集合。
-}
-
-\par{\textbf{定义2(类(Class, \emph{C}))}：定义为六元组，\emph{C}=(\emph{k}, \emph{i}, \emph{o}, \emph{l}, \emph{m}, \emph{mc})，其中，\emph{k}为关键类标识，指示当前类是否为关键类；\emph{i}表示类入度，指该类在本次提交中引用其他类的个数；\emph{o}为类出度，指该类在本次提交中引用它的类的个数；\emph{l}表示修改代码行数，为类中涉及修改的代码行数；\emph{m}为方法数，指示类中方法的数量；\emph{mc}表示修改方法数，为类中涉及修改的方法的数量。}
-
-\par{\textbf{定义3(关键类与非关键类集合(\emph{K},\emph{N}))}：关键类(\emph{K})是提交中被核心修改的类；非关键类(\emph{N})是为了完成关键类的修改而进行依赖性改动的类。在代码提交中，有可能存在一个或多个关键类。}
-
-\subsection{关键类判定模型的特征提取}
-\par{本节详细介绍了关键类判定模型的特征提取。我们从三个维度一共提取了21种特征，这些特征为：代码耦合特征，代码修改特征以及提交类型特征。代码耦合特征描述在一次提交修改中多个类之间的耦合关系，代码修改特征用以度量类中的代码修改的规模，提交类型特征将提交按照不同目的进行分类，用以刻画在不同类型的提交中，各种修改类型的类成为关键类的概率。在特征描述中所使用到的符号如表\ref{table 1}所示。
-\begin{table}[hbp]\small
+\rhead{\xiaowuhao\sectionindex\quad基于可判别特征的代码修改完成周期预测}
+\section{基于可判别特征的代码修改完成周期预测}
+\par{一项软件代码修改工作通常包含多次“修改-审核-再修改”的过程，开发人员在修改完代码后需提交给审核人员，即一项代码修改工作完成的标志是通过代码审核人员的审查。代码审核不通过，则开发人员需对代码进行再次改进。因此，一项代码修改任务往往经过了多次的代码审核环节，代码审核的次数也能体现该任务周期的长短。审核次数的预测有助于开发人员及时发现代码修改中存在的问题，以及有助于项目管理人员重新评估该代码修改任务的工作量和难度，并及时做出调整，如增加开发人员等，进而缩短代码修改任务的完成周期。本文以代码审核次数表示代码修改完成周期的长短，并从代码审核数据中提取可判别特征，训练机器学习模型，用于预测代码修改的审核次数。我们的方法从代码审核数据中提取代码审核信息、代码耦合信息以及代码修改信息作为可判别特征，再使用集成学习方法融合多个机器学习模型得到我们的分类模型。}
+\subsection{问题描述及方法总览}
+\par{代码修改完成周期指的是开发人员完成一项代码修改工作的时间周期，而开发人员将他们的代码提交到软件项目之前需要通过代码审核人员的审查，因此，在本文中，我们通过代码审核次数来评估代码修改完成周期。如图\ref{fig:review-day}所示，我们从1000条代码审核数据中调研了代码修改工作中代码审核次数与修改完成时间的关系，从中可以发现，代码审核次数与代码修改完成时间之间存在强相关性，代码审核次数增加意味着代码修改完成时间增加。图\ref{fig:review-day}中折线的点代表着该审核次数下修改任务完成时间的平均值，修改完成时间的平均值与代码审核次数存在同步增加的趋势，代码修改完成时间的长短可以由代码审核次数反应。
+\begin{figure}[h]
 \centering
-\caption{符号说明}
-\begin{tabular}{|c |c |c |} \hline
-\textbf{符号}&\textbf{形式化表示}&\textbf{描述}\\ \hline
-$I_{curr}$& $C.i$& 当前类的入度;\\ \hline
-$I_{max}$& $max\{C_j.i\},1 \leq j \leq |S| $& 提交中所有类中拥有的最大入度;\\ \hline
-$I_{ave}$& $\sum_{j=1}^{|S|}C_j.i \diagup |S|$& 提交中所有类的平均入度;\\ \hline
-$I_{zero}$& $boolean(I_{curr} == 0)$& 类的入度是否为0;\\ \hline
-$O_{curr}$& $C.o$& 当前类的出度;\\ \hline
-$O_{max}$& $max\{C_j.o\},1 \leq j \leq |S| $& 提交中所有类中拥有的最大出度;\\ \hline
-$O_{ave}$& $\sum_{j=1}^{|S|}C_j.o \diagup |S|$& 提交中所有类的平均出度;\\ \hline
-$O_{zero}$& $boolean(O_{curr} == 0)$& 类的出度是否为0;\\ \hline
-$S_{curr}$& $C.l$& 类修改的语句条数;\\ \hline
-$S_{max}$& $max\{C_j.l\},1 \leq j \leq |S| $& 提交中所有类中修改最多的语句条数;\\ \hline
-$S_{ave}$& $\sum_{j=1}^{|S|}C_j.l \diagup |S|$& 提交中所有类平均修改的语句条数;\\ \hline
-$M_{methincla}$&$C.m$ &类中方法的总数;\\ \hline
-$M_{changedmethincla}$&$C.mc$ &类中涉及修改的方法的数量;\\ \hline
-$M_{methincomm}$& $\sum_{j=1}^{|S|}C_j.m $& 提交中方法的总数;\\ \hline
-$M_{changedmethincomm}$&$\sum_{j=1}^{|S|}C_j.mc $& 提交中涉及修改的方法的总数;\\ \hline
-$CC_{type}$& $CC_{type}=\begin{cases}new\\changed\\remove\end{cases}$& 类的修改类型,取值为新增,修改,删除;\\ \hline
-$C_{forwardengineering}$& $--$& 提交的类型是否为前向工程;\\ \hline
-$C_{reengineering}$& $--$& 提交的类型是否为逆向工程;\\ \hline
-$C_{correctiveengineering}$& $--$& 提交的类型是否为纠错工程;\\ \hline
-$C_{management}$& $--$& 提交的类型是否为非代码修改类型;\\ \hline
+\includegraphics[width=5.5in]{myfigure/review-day.png}
+\caption{代码审核次数与修改完成周期关联图}
+\label{fig:review-day}
+\end{figure}}
+
+\par{图\ref{fig:method2}展示了本文方法的总览。该方法主要分为三个阶段：代码审核数据收集阶段、可判别特征提取阶段和机器学习模型构建阶段。代码审核软件的广泛使用，使得审核过程中的历史信息更加容易收集。本文从Gerrit代码审核软件中获取开源项目维护过程中代码审核信息，主要包括审核文本信息以及代码修改信息。在可判别特征提取阶段，我们从代码审核数据中提取审核文本特征、代码耦合特征以及代码修改特征。审核文本特征用于衡量代码审核过程中的非修改因素，包括审核人员信息、审核提交时间、项目信息等。代码耦合特征用于衡量修改代码实体之间的结构耦合特征，与修改复杂程度关联。代码修改特征用于衡量修改内容以及修改的工作量等。在模型构建阶段，本文测试多个机器学习模型的预测效果，并通过集成学习方法Stacking对多个模型进行融合，实现本文的修改完成周期预测模型。
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.5in]{myfigure/method2.pdf}
+\caption{基于可判别特征的代码修改完成周期预测方法总览}
+\label{fig:method2}
+\end{figure} } 
+\subsection{可判别特征的提取}
+\par{本节详细介绍了修改完成周期预测模型的特征提取方法，我们将从三个维度提取特征来描述代码修改工作，这些维度特征为：审核文本特征、代码耦合特征以及代码修改特征。审核文本特征描述代码审核过程中的因素对整个时间周期的影响；代码耦合特征可以刻画该修改工作的复杂度；代码修改特征用于衡量代码修改工作的工作量。}
+\subsubsection{代码审核文本特征提取}
+\par{代码修改的审核过程中存在诸多非修改因素，这些非修改因素对代码审核的通过率产生了直接的影响。审核人员的工作量和经验、开发人员的经验和参与度会直接关系着代码审核流程的质量\cite{kononenko2015investigating}。原则上，代码审核是一个透明的过程，审核人员的目标是及时评估提交代码的质量，然而，在实践中代码审核的执行过程会受到各种因素的影响\cite{baysal2016investigating}。本文从代码审核文本信息中提取了10种特征，用于描述代码审核过程中各种因素对代码修改完成时间的影响。}
+\par{本文提取的代码审核文本特征如表\ref{tf}所示。$MF_{0}$表示该修改提交的管理人员，$MF_{1}$表示该修改提交的作者，$MF_{2}$表示修改提交的审核人员，我们用这三个特征来描述人力因素对完成周期的影响。通常同个软件项目下的开发人员和审核人员数量有限，不同的审核人员和开发人员对于软件项目熟悉程度的差异会导致软件修改工作所需要时间产生很大差距。}
+
+\begin{table}[ht]
+\begin{center}
+\begin{footnotesize}
+\caption{代码审核文本特征及描述}
+\label{tf}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{类型}              & \textbf{特征}           & \textbf{符号} & \textbf{描述}             \\ \hline
+\multirow{10}{*}{审核文本特征} & Owner                 & $MF_{0}$         & 修改提交的管理人员                \\ \cline{2-4}
+                         & Author                & $MF_{1}$         & 修改提交的作者                 \\ \cline{2-4}
+                         & Reviewers             & $MF_{2}$         & 修改提交的审核人员               \\ \cline{2-4}
+                         & Project               & $MF_{3}$         & 修改所归属的项目                \\ \cline{2-4}
+                         & Branch                & $MF_{4}$         & 修改所归属的项目分支              \\ \cline{2-4}
+                         & Time                  & $MF_{5}$         & 修改提交的时间                 \\ \cline{2-4}
+                         & Revierws\_Num         & $MF_{6}$         & 审核人员的数量                 \\ \cline{2-4}
+                         & Author\_Sum           & $MF_{7}$         & 修改提交作者在项目中总的提交次数        \\ \cline{2-4}
+                         & Author\_Sum\_M        & $MF_{8}$         & 修改提交作者在项目中近一个月的提交次数     \\ \cline{2-4}
+                         & Reviewer\_Author\_Ave & $MF_{9}$         & 相同审核人员和作者的修改的平均审核次数 \\ \hline
 \end{tabular}
-\label{table 1}
+\end{footnotesize}
+\end{center}
 \end{table}
-}
-
-\subsubsection{代码耦合特征}
-\par{代码耦合特征是指在一次代码提交中，多个类的修改之间的代码耦合关系。由于代码修改具有传递性，当两个类之间存在耦合关系时，一个类的修改有可能会引起另一个类的修改\cite{Hassan04}。在一次代码提交中，非关键类的修改往往是由关键类的修改引起的。即关键类的代码修改向非关键类中传递，且这种修改传递具有方向性，其在类之间的代码结构关系中表现为代码耦合关系。因此，我们可以从多个类中的代码耦合关系出发，提取代码耦合特征进行关键类判定。}
-\par{在代码耦合特征中，我们使用类的入度和出度来衡量一个类与其他类之间的耦合关系。一个类的入度是指提交中引用该类的其他类的个数，出度是指在该类中引用提交中的其他类的个数。同时，我们还考虑了提交中不同类之间的出度和入度的关系。假设当前类的入度为提交中所有类的入度的最大值，意味着当前类经常被其他类引用，那么这个类的修改很大概率会引起其他类的修改，其很有可能作为此次提交的关键类存在。同理，如果一个类的出度很大，也就意味着这个类受其他类的修改的影响比较大，这个类有比较高的概率成为非关键类。一个类的入度和出度的不同组合也有可能影响关键类的判别。如一个类的入度和出度都很大，说明这个类影响其他类的修改以及受其他类的修改的影响都比较大，这时没有明显倾向说明一个类是否是关键类。如果一个类的入度很大，而出度为0，这个类有很大概率成为关键类；相反地，如果一个类的出度很大，而入度为0，这个类更倾向于非关键类。
-\begin{table}[hbp]\small
-\centering
-\caption{代码耦合特征}
-\begin{tabular}{|c|c|c|} \hline
-\textbf{类型}&\textbf{特征}&\textbf{描述}\\ \hline
-\multicolumn{1}{|l|}{\multirow{8}{2.5 cm}{代码耦合特征}}&$CF_1$&$I_{curr}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_2$&$I_{curr}$/$I_{max}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_3$&$I_{curr}$/$I_{ave}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_4$&$O_{curr}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_5$&$O_{curr}$/$O_{max}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_6$&$O_{curr}$/$O_{ave}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_7$&$if~I_{zero}=true,CF_7=1;otherwise,CF_7=0$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CF_8$&$if~O_{zero}=true,CF_8=1;otherwise,CF_8=0$\\\hline
-\end{tabular}
-\label{table 2}
-\end{table}
-}
-\par{表\ref{table 2}展示了所有的代码耦合特征。其中，\emph{$CF_1$}表示当前类的入度；\emph{$CF_4$}表示当前类的出度；\emph{$CF_2$}和\emph{$CF_3$}分别为当前类的入度与提交中类的最大入度的比值以及提交中类的平均入度的比值；\emph{$CF_5$}和\emph{$CF_6$}为当前类的出度与提交中类的最大出度的比值以及提交中类的平均出度的比值；\emph{$CF_7$}表示当前类的入度是否为0；\emph{$CF_8$}表示当前类的出度是否为0。}
-\subsubsection{代码修改特征}
-\par{
-在一次提交中，类的代码修改量对于关键类的判别具有很强的指向作用。关键类在一次提交中往往是被主要修改的类，非关键类中的代码修改通常是为了与关键类保持一致，而作出的辅助性修改。这种关系体现在代码修改量上则为关键类修改的代码量通常要比非关键类多。类的修改代码量可以使用类中方法的修改个数和代码的修改行数来度量。同时，我们还在代码修改特征中引入了代码相对修改量的概念，即在一次提交中，类中代码修改量与提交中涉及的类的平均代码修改量的比值。代码修改特征如表\ref{table 3}所示。
-}
-\begin{table}[hbp]\small
-\centering
-\caption{代码修改特征}
-\begin{tabular}{|c|c|c|} \hline
-\textbf{类型}&\textbf{特征}&\textbf{描述}\\ \hline
-\multicolumn{1}{|l|}{\multirow{12}{2.5 cm}{\emph{代码修改特征}}}&$MF_1$&\tabincell{l}{$1 \leq S_{curr} \leq 5, MF_1=1;6 \leq S_{curr} \leq 9, $\\$ MF_1=2; 10 \leq S_{curr} \leq 19, MF_1=3;$\\$ 20 \leq S_{curr} \leq 29, MF_1=4; 30 \leq S_{curr},$\\$ MF_1=5$}\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_2$&$S_{curr}$/$S_{max}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_3$&$S_{curr}$/$S_{ave}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_4$&\tabincell{l}{$1 \leq M_{changedmethincla} \leq 5, MF_4=1;6 \leq $\\$ M_{changedmethincla} \leq 9, MF_4=2;10 \leq $\\$ M_{changedmethincla} \leq 19, MF_4=3;20 \leq $\\$ M_{changedmethincla} \leq 29, MF_4=4;30$\\$ \leq M_{changedmethincla}, MF_4=5$}\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_5$&$M_{changedmethincla }$/$M_{methincla}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_6$&$M_{changedmethincla}$/$M_{changedmethincomm}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_7$&$M_{changedmethincla}$/$M_{methincomm}$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$MF_8$&\tabincell{l}{$if~CC_{type}=new,MF_8=0; else~if~$\\$CC_{type}=change, MF_8=1; else~if~$\\$CC_{type}=remove,MF_8=2$}\\\hline
-\end{tabular}
-\label{table 3}
-\vspace{-4mm}
-\end{table}
-\par{我们从代码修改维度选择了8个特征，如表\ref{table 3}中的特征\emph{$MF_1$}-\emph{$MF_8$}所示。其中，\emph{$MF_1$}表示当前类的修改代码行数，特征的值使用区间化表示。如当前类修改的代码行数为10行，则特征\emph{$MF_1$}的值为3。\emph{$MF_2$}表示当前类的代码修改行数与提交中类的最大代码修改行数的比值，该值也是当前类中的代码修改行数的归一化结果。\emph{$MF_3$}表示当前类的代码修改行数与提交中类的平均修改行数的比值，\emph{$MF_3$}用于衡量当前类的代码修改量的程度。\emph{$MF_4$}为当前类的修改方法的个数，与\emph{$MF_1$}相似，该特征的值也使用区间化表示。\emph{$MF_5$}用于衡量类中修改的方法占类中方法的比例。\emph{$MF_6$}和\emph{$MF_7$}分别为当前类的方法修改数与提交中类的平均方法修改数的比值以及类中平均方法数的比值，这两个特征用于衡量当前类的修改方法数在整个提交中的水平。最后，\emph{$MF_8$}代表当前类的修改类型，类的修改类型分为新增，修改和删除三种类型。
-}
-\subsubsection{提交类型特征}
-\par{在一次提交中，代码修改所要达到的目标有几种类型：(1)添加新功能(前向工程)；(2)删除过时代码(逆向工程)；(3)修复代码缺陷(纠错工程)；(4)非可执行文件修改(非代码修改类型)，如配置文件，说明文件等。根据提交的类型不同，提交中被核心修改的类也会有所不同。如：提交类型为添加新功能，关键类通常为新增的类。因此，如果已知一个提交的类型，可以将当前提交的关键类限定在一个更小的范围内，然后利用代码耦合特征和代码修改特征进一步判定一个类是否为关键类。}
-\begin{table}[hbp]\small
-\centering
-\caption{提交分类及关键字列表}
-\begin{tabular}{c c} \hline
-\textbf{提交分类}&\textbf{关键字}\\ \hline
-前向工程&implement,add,request,new,test,start,include,initial... \\ %\hline
-逆向工程&optimiz,adjust,update,delet,remov,chang,refactor... \\ %\hline
-纠错工程&bug,issue,error,correct,proper,deprecate,broke... \\ %\hline
-非代码修改类型&clean,license,merge,release,structure,style,copyright... \\ \hline
-\end{tabular}
-\label{table 4}
-\end{table}
-
-\begin{table}[hbp]\small
-\centering
-\caption{提交类型特征}
-\begin{tabular}{|c|c|c|} \hline
-\textbf{类型}&\textbf{特征}&\textbf{描述}\\ \hline
-\multicolumn{1}{|l|}{\multirow{6}{2.5 cm}{\emph{提交类型特征}}}&$TF_1$&$if~ C_{forwardengineering}=true,TF_1=1;otherwise,TF_1=0$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$TF_2$&$if~C_{reengineering}=true,TF_2=1;otherwise,TF_2=0$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$TF_3$&$if~C_{correctiveengineering}=true,TF_3=1;otherwise,TF_3=0$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$TF_4$&$if~C_{management }=true,TF_4=1;otherwise,TF_4=0$\\\cline{2-3}
-\multicolumn{1}{|l|}{}&$CI_1$&\tabincell{l}{$1 \leq |S| \leq 5, CI_1=1;6 \leq |S| \leq 9, CI_1=2;10 \leq |S|$\\$ \leq 19, CI_1=3;20 \leq |S| \leq 29, CI_1=4;30 \leq |S|, CI_1=5$}\\\hline
-\end{tabular}
-\label{table 5}
-\end{table}
-
-\par{本文参考了已有研究\cite{Hattori08}对提交进行分类的方法，该方法通过识别提交注释中的关键字对提交类型进行分类。比如，当提交注释中包含``new''，``add''，``create''等关键字时，则将该提交分类为添加新功能(前向工程)类别。本文采用相同的方法对提交进行分类，我们在表\ref{table 4}中给出了提交类型及对应的关键字列表。提交类型特征如表\ref{table 5}所示，其中，\emph{$TF_1$}-\emph{$TF_4$}四个特征分别对应提交的四个类别。\emph{$CI_1$}为提交中涉及的类的个数。}
-
-\subsubsection{词向量特征}
-\par{在自然语言处理领域中，常使用词向量表示单词的语义信息。词向量模型主要有两种：一种是\emph{Skip}-\emph{Gram}模型，另一种是\emph{CBOW}模型。这两类模型的主要不同之处在于在进行词向量模型训练时，前者是通过给定的目标单词来预测其上下文的概率分布，而后者则是通过上下文信息来预测目标单词的概率分布\cite{Mikolov13,Mikolov13-2}。在本文中，采用的词向量模型为\emph{Skip-Gram}模型作为我们的词向量模型。}
-\par{首先，我们选择代码提交中的源代码作为模型语料库。仿照自然语言处理的方法，将一个类看作是一篇文档，类中的字符串看作是由单词组成的序列。在对字符串进行分词时，有以下几个步骤：(1)根据分隔符将字符串切分成一个单词集合；(2)按照驼峰命名规则，将变量名切分成多个独立的单词；(3)对每个单词的字符，转化成小写字母，并提取单词词根。然后，我们根据\emph{Skip}-\emph{Gram}模型的训练方法训练词向量模型。我们设置模型的上下文窗口大小为5，词向量长度为100。得到词向量模型后，实际上，我们得到了语料库中每个单词的词向量表示。最后，我们从代码提交中提取每个类变化的语句，并对它们进行分词，得到每个类变化的单词集合。通过词向量模型，获得每个单词的词向量，并将它们进行累加操作，得到每个类的词向量表示。最终，将词向量加入到特征集中，词向量的每一维作为类的一个特征。}
-\subsection{机器学习算法选择及样本优化处理}
-\par{本文提出的关键类识别方法\emph{ICC}是基于有监督的机器学习算法。具体地，我们将提交中一个类是否为关键类视为二分类问题，类别``0''代表非关键类，类别``1''代表关键类。在开源项目的提交中，我们提取代码耦合特征，代码修改特征以及提交类型特征用以关键类的识别。然后选择一种分类模型根据提取的特征进行训练。最后根据训练好的模型对提交中的类进行关键类判定。}
-\subsubsection{机器学习算法选择}
-\par{机器学习的分类模型中，包含多种类型的分类算法，包括决策树，贝叶斯网络，支持向量机，随机森林等。我们通过比较各种算法在数据集中的分类表现，选择分类效果最好的随机森林作为我们的分类模型。随机森林利用bootstrap重抽样方法从原始样本中抽取多个样本，对每个样本进行决策树建模，然后组合多棵决策树的预测，通过投票得出最终预测结果\cite{fang11}。它在分类中有比其他分类器更好的分类效果，且对噪声具有良好的鲁棒性。由于我们的数据集来源于众多的开源项目，不可避免地存在一些噪声。因此，随机森林良好的鲁棒性是我们选择它作为分类器建模的一个重要因素。另外，由于随机森林最终的决策综合了多个独立的分类器的预测结果，这使得随机森林不容易出现过拟合，在对未知数据的预测中具有良好的泛化能力。且随机森林只需调整少数几个参数，就可以得到一个表现良好的分类模型，这降低了模型调参的复杂度。综上所述，我们选择使用随机森林对我们的分类器进行建模。}
-\subsubsection{样本优化处理}
-\par{本文中用于模型训练及验证的数据来源于开源项目的代码提交数据。而由于项目间的代码提交数据质量参差不齐，在进行模型训练之前，我们需要对数据进行预处理。我们在对大量的代码提交进行观察，设置了以下几条过滤规则：(1)过滤掉提交注释中没有提到关键类信息的代码提交；(2)过滤掉在提交注释中提到的类数量等于代码提交中涉及修改的类的总数的代码提交；(3)过滤掉只涉及一个类修改的代码提交；(4)过滤掉超过二十个类修改的代码提交，此类提交通常是由多个普通的提交组合而成，一般出现在版本更新的代码提交中；(5)过滤掉注释信息过短的提交(小于3个单词)，这类提交注释由于缺乏有效信息，难以判断出现在注释中的类是否为关键类；(6)过滤掉注释信息过长的提交(大于200个单词)，这类提交中往往提到多个类，并罗列了提交中大部分琐碎的修改，无法判断在注释中出现的类为关键类。}
-
-\par{在机器学习算法的应用中，``坏样本''对于模型的性能影响很大。其中，``坏样本''是指在样本集中存在两个特征向量完全相同的样本，但它们的类标签却不相同。其有可能是因为数据集的特征细分的粒度不够或者是数据集本身包含错误数据等原因造成的。在我们的实验中发现，``坏样本''对模型的分类准确率造成很大的影响，因此，必须剔除掉样本集中的``坏样本''。``坏样本''的过滤算法如算法\textbf{2}所示。}
-\begin{table}[!ht]\small
-\centering
-%\caption{提交分类及关键字列表}
-\begin{tabular}{l } \hline
-\textbf{算法 2: 坏样本过滤算法}\\ \hline
-1:~\textbf{Input}: \emph{N}: The set of negative samples;  \emph{P}: The set of positive samples;\\
-2:~~~~~~~~~~\emph{T}: Total sample set, \emph{T} = $N \cup P$; \emph{C}: Total commit set;\\
-3:~~\textbf{Output}: \emph{new\_SampleSet}; \emph{new\_CommitSet};\\
-4:~~\textbf{BadSampleOptimization} (\emph{N}, \emph{P}, \emph{T}, \emph{C}):\\
-5:~~~\textbf{foreach} \emph{ps} $\in$ \emph{P} \textbf{do}\\
-6:~~~~~~~\textbf{foreach} \emph{ns} $\in$ \emph{N} \textbf{do}\\
-7:~~~~~~~~~~~\emph{cosineSimilar} $\leftarrow$ \textbf{cosine}(\emph{ps}.\emph{featureVector}, \emph{ns}.\emph{featureVector});\\
-8:~~~~~~~~~~~\textbf{if} \emph{cosineSimilar} == 1 \textbf{do}\\
-9:~~~~~~~~~~~~~~\emph{badSample\_Set}.\textbf{add}(\emph{ps}); \emph{badSample\_Set}.\textbf{add}(\emph{ns});\\
-10:~~~~~~~~~~\textbf{end if};\\
-11:~~~~~~\textbf{end foreach}\\
-12:~~~\textbf{end foreach}\\
-13:~~~\textbf{if} \emph{badSample\_Set} != null \textbf{do}\\
-14:~~~~~~\textbf{foreach} \emph{Commit} \textbf{do}\\
-15:~~~~~~~~~~~\textbf{if} \emph{Commit.S} $\subset$ \emph{badSample\_Set} \textbf{do}\\
-16:~~~~~~~~~~~~~~\emph{C}.remove(\emph{Commit});\\
-17:~~~~~~~~~~~\textbf{end if}\\
-18:~~~~~~\textbf{end foreach}\\
-19:~~~~~~~\textbf{foreach} \emph{bs} $\in$ \emph{badSample\_Set} \textbf{do}\\
-20:~~~~~~~~~~~\emph{T}.remove(\emph{bs});\\
-21:~~~~~~~\textbf{end foreach}\\
-22:~~~\textbf{end if};\\
-23:~~~\emph{new\_SampleSet} $\leftarrow$ \emph{T}; \emph{new\_CommitSet} $\leftarrow$ \emph{C};\\
-24:~\textbf{return} \emph{new\_SampleSet} and \emph{new\_CommitSet};\\ \hline
-\end{tabular}
-\label{tab:algorithm}
-\end{table}
-\par{在算法\textbf{2}中，将负样本\emph{N}，正样本\emph{P}，总样本\emph{T}以及总的提交集合\emph{C}作为输入，输出为过滤后的样本集合\emph{new\_SampleSet}以及提交集合\emph{new\_CommitSet}。对于每一个正样本\emph{ps}以及每一个负样本\emph{ns}(第5，6行)，计算两者的余弦相似度\emph{cosineSimilar}(第7行)，如果相似度为1，则将这一对样本加入到坏样本集合\emph{badSample\_Set}中(第8，9行)。遍历完所有的正样本和负样本后，如果坏样本集合不为空(第13行)，则对于每一个提交\emph{Commit}，如果提交中涉及修改的类的集合为坏样本集合的子集，则在提交集合中移除当前提交(第14-16行)。然后，在样本集合中移除坏样本(第19，20行)。最后，将过滤之后的样本集合\emph{new\_SampleSet}以及提交集合\emph{new\_CommitSet}作为输出返回(第23，24行)。}
-\subsection{关键类判定实验设置与结果评估}
-\par{本文的实验数据来源于开源项目中的代码提交。在本节中，我们首先介绍实验数据的收集过程，然后介绍关键类判定模型的参数设置，最后给出关键类判定模型的评估标准以及实验结果。
-}
-\subsubsection{数据收集}
-\begin{table}[bh]\small
-\centering
-\caption{数据集}
-\begin{tabular}{c c c c c c c} \hline
-\textbf{\tabincell{l}{开源项 \\ 目数量}}&\textbf{编程语言}&\textbf{\tabincell{l}{有效提 \\ 交数量}}&\textbf{\tabincell{l}{训练集提 \\ 交数量}}&\textbf{\tabincell{l}{测试集提 \\ 交数量}}&\textbf{训练样本}&\textbf{测试样本}\\ \hline
-120&Java&4611&3081&1530&14780&7409 \\ \hline
-\end{tabular}
-\label{table 6}
-\end{table}
-\par{我们从\emph{Sourceforge}的SVN库中收集了120个开源项目的提交，通过前文提及的过滤规则及坏样本过滤算法，多滤掉不满足条件的提交，最后得到4611个有效提交，我们从这4611个提交中生成实验数据。我们将在注释中提到的类标记为关键类，作为正样本集合；未提到的类标记为非关键类，作为负样本集合。在这4611个提交中，生成的数据集大小为22189条。我们按照2：1的比例，将这些数据划分为训练集和测试集。训练集中含有3081个提交，共14780条样本。测试集中包含1530个提交，共7409条样版本。数据集统计信息如表\ref{table 6}所示。}
-
-\subsubsection{模型参数设置}
-\par{在关键类判定中，我们选择随机森林作为模型训练算法。随机森林主要的调整参数包括：(1)基分类器个数；(2)每个基分类器的样本采样比例；(3)每个基分类器的特征采样比例。其中，基分类器个数越多，模型的分类效果越好，但与此同时模型训练的复杂度也越高。基分类器的样本采样比例越高，基分类器训练时可使用的数据也就越多，但基分类器受噪声影响的概率也越大。基分类器的特征采样比例越高，单个基分类器的分类效果越好，但各个基分类器之间的关联也就越强。我们在对这三种参数进行优化时，采用网格搜索的方式，选择在测试集中分类效果最好的一组参数作为我们的模型参数。最后的优化结果为：基分类器个数=300；基分类器的样本采样比例=30\%；基分类器的特征采样比例=30\%。
-}
-\subsubsection{模型评估标准}
-\par{本文的一个主要目标是从代码提交涉及修改的类中自动识别出关键类，并验证在识别出关键类后，对开发和维护人员理解提交中的代码修改是否有所帮助。因此，我们从两个方面对模型进行评估：
-}
-\par{1：关键类判定模型的精确度和召回率分别为多少？}
-\par{为验证我们的模型分类效果，我们主要考察两个度量指标：精确度(precision)和召回率(recall)。精确度用来衡量我们识别的关键类的准确性，召回率用来度量模型分类结果的安全性，即模型识别的关键类可覆盖实际的关键类集合的程度。同时，为了考察我们的模型在判定关键类和非关键类的综合效果，我们还度量了模型的综合准确率(accuracy)。这三个度量指标定义如下所示：
-\begin{equation}
-precision = \frac{|ActualCoreClasses \cap EstimatedCoreClasses|}{|EstimatedCoreClasses|} \times 100\%
-\end{equation}
-\begin{equation}
-recall = \frac{|ActualCoreClasses \cap EstimatedCoreClasses|}{|ActualCoreClasses|} \times 100\%
-\end{equation}
-\begin{equation}
-accuracy = \frac{|CorrectJudgedClasses|}{|TotalClasses|} \times 100\%
-\end{equation}
-其中，\emph{ActualCoreClasses}表示数据集中真实的关键类集合；\emph{EstimatedCoreCl-}\emph{asses}表示被分类器分类为关键类的集合；\emph{CorrectJudgedClasses}表示被分类器分类正确的类的数量；\emph{TotalClasses}表示数据集中类的总数量。
-}
-\par{我们以提交为单位衡量我们模型的分类效果时，当且仅当提交中所有的关键类和所有的非关键类均分类正确时，我们才认为模型正确分类了一个提交。因此，我们选择了关键类判定的绝对准确率作为模型评估的其中一个度量标准，其定义如下：
-\begin{equation}
-absoluteaccuracy = \frac{|CorrectJudgedCommit|}{|TotalCommit|} \times 100\%
-\end{equation}
-其中，\emph{CorrectJudgedCommit}表示数据集中被分类模型正确分类的提交数量；\emph{TotalCommit}表示数据集中的提交总数。
-}
-\par{2：关键类的判定是否对开发和维护人员对理解代码提交有积极作用？}
-\par{为了验证关键类判定方法是否对理解代码提交具有积极作用，我们从数据集中选取了30条代码提交，并邀请具有开发经验的程序员进行问卷调查。我们根据提交中修改类的数量对提交进行分类，选取的修改类数量及提交个数分别为2(12条)，3(8条)，4(5条)，5(3条)，7(1条)和 9(1条)个。我们针对这30个提交设置了30道问卷调查题目，每道题目分为两种类型，分别为包含关键类提示类型和不包含关键类提示类型。每个参与者被分配到的题目中，包含提示与不包含提示的问题各占一半。对于每道题目，我们给出修改类的源代码，并且把涉及修改的代码高亮处理。参与者通过阅读代码修改及关键类提示信息(对于包含关键类信息的问题)，理解代码修改后手写出注释信息，并记录下理解提交的开始时间和结束时间，以及理解当前提交所花费的总时间。}
-
-\par{
-\begin{table}\small
-\centering
-\caption{问卷调查}
-\begin{tabular}{|l| l| l|} \hline
-\multicolumn{3}{|c|}{问卷调查}\\ \hline
-\textbf{项目名:jEdit}&\textbf{版本号:24039}&\textbf{提交作者:dal}\\ \hline
-参与人姓名:&\multicolumn{2}{c|}{}\\\hline
-开始时间:&\multicolumn{2}{c|}{\_:\_}\\\hline
-关键类信息:&\multicolumn{2}{c|}{LookAndFeelPlugin.java}\\\hline
-源代码:&\multicolumn{2}{c|}{\tabincell{l}{LookAndFeelOptionPane.java \\
-LookAndFeelPlugin.java \\
-SystemLookAndFeelInstaller.java
-}}\\\hline
-手写注释:&\multicolumn{2}{c|}{}\\\hline
-结束时间:&\multicolumn{2}{c|}{\_:\_}\\\hline
-所用时间:&\multicolumn{2}{c|}{\_\_\_(分钟)}\\\hline
-\end{tabular}
-\label{tab:wenjuan}
-\end{table}
-
-我们采用本地调查和网络调查两种方式进行问卷调查。在本地调查中，有8位志愿者参与。其中包括1位高校教师，2位博士研究生，以及5位硕士研究生。所有参与者均具有计算机专业的背景以及实际的开发经验。在网络调查中，我们将调查问卷发布在猪八戒网\footnote{猪八戒网,http://www.zbj.com,2018}上，并要求参与问卷调查的志愿者提供专业背景等资料。在收到的网络调查问卷中，志愿者均具有计算机专业相关的背景，且有三年及以上的Java编程经验。调查问卷的格式如表\ref{tab:wenjuan}所示。}
-
-\par{在调查问卷中，我们隐藏了提交注释信息。我们要求志愿者通过阅读代码修改，编写出此次代码提交的提交注释。调查结束后，我们将代码提交的原始提交注释与志愿者编写的提交注释进行对比，如果它们表达的意思相同或者相近，我们则认为该问卷为有效问卷。}
-
-\par{最后，通过对比提示关键类与不提示关键类这两类调查问卷在理解代码修改所耗费的时间，来评估关键类判定方法是否能减少代码提交的理解时间；同时，通过比较提示关键类与不提示关键类这两种调查方式产生的有效调查问卷的数量，考察关键类判定方法是否能提高代码提交的理解准确率。}
-
-\par{\textbf{3：}\textbf{关键类的判定在代码评审中是否具有积极作用？}}
-\par{关键类的判定在现实项目的代码评审中是否具有积极作用？为了验证这个问题，我们选择了5个开源项目，分别是：\emph{Eclipse CDT}，\emph{Eclipse JDT Core}，\emph{Eclipse Platform UI}，\emph{OpenDaylight Controller}以及\emph{Vaadin}。然后对这些开源项目的代码评审人员进行了问卷调查。问卷包含11个问题，其中的10个问题是关于代码评审人员的背景以及开发经验，剩余的一个问题为关键类判定的准确率评估。最后，我们一共收回了16份问卷结果。通过分析调查问卷的结果，评估关键类判定方法在代码评审中是否具有积极作用。}
-\subsubsection{关键类判定模型实验结果}
-\par{1：关键类判定模型的精确度和召回率分别为多少？}
-
-\begin{table}[hbp]\small
-\centering
-\caption{判定结果}
-\begin{tabular}{|c| c| c|c| c| c|c| c|} \hline
-\multicolumn{2}{|c|}{提交数量}&\multicolumn{2}{c|}{样本数量}&\multicolumn{2}{c|}{正确分类的样本数量}&\multicolumn{2}{c|}{错误分类的样本数量}\\\hline
-\tabincell{l}{正确判定的 \\ 提交数量}&\tabincell{l}{错误判定的 \\ 提交数量}&\tabincell{l}{正样 \\ 本(1)}&\tabincell{l}{负样 \\ 本(0)}&\tabincell{l}{正确分 \\ 类为1}& \tabincell{l}{正确分 \\ 类为0}&\tabincell{l}{错误分 \\ 类为1}&\tabincell{l}{错误分 \\ 类为0}\\\hline
-1127&403&1714&5695&1285&5266&429&429\\\hline
-\multicolumn{2}{|c|}{合计：1530}&\multicolumn{2}{c|}{合计：7409}&\multicolumn{2}{c|}{合计：6551}&\multicolumn{2}{c|}{合计：858}\\\hline
-\end{tabular}
-\label{table 7}
-\end{table}
-\par{
-分类模型在测试集中的分类结果如表\ref{table 7}所示。测试集中的提交数量总共为1530个，其中，1127个被分类正确，403个被分类错误。在这1530个提交中，总共包含7409个涉及修改的类，其中，关键类为1714个，非关键类为5695个。被正确分类的关键类个数为1285，正确分类为非关键类的个数为5266。被错误分类为关键类的个数为429，被错误分类为非关键类的个数为429。
-}
-
-\begin{table}[!h]\small
-\centering
-\caption{精确度与召回率}
-\begin{tabular}{c c c} \hline
-\textbf{~~~~样本类型~~~~}&\textbf{~~~~precision~~~~}&\textbf{~~~~recall~~~~}\\ \hline
-正样本&74.97\%&74.97\% \\ %\hline
-负样本&92.47\%&92.47\% \\ \hline
-\end{tabular}
-\label{table 8}
-\end{table}
-\par{表\ref{table 8}为分类模型的精确度和召回率结果。其中，对于关键类，精确度为74.97\%，召回率为74.97\%；对于非关键类，精确度为92.47\%，召回率为92.47\%。从表\ref{table 8}中可以发现，我们的分类模型进行关键类和非关键类的分类时，结果差异较大。这主要是因为正负样本的不平衡造成的。在数据集中，正负样本的比例大概为1：3，原本为负样本的样本被分类器误分类为正样本后(或者原本为正样本的样本被分类器误分类为负样本后)，在正负样本总数不变的前提下，分类器的分类结果的精确度和召回率的下降幅度的比值大约为3：1。
-}
-
-\begin{table}[!h]\small
-\centering
-\caption{综合准确率}
-\begin{tabular}{c c c} \hline
-\textbf{~~~~TotalClasses~~~~}&\textbf{~~~~CorrectJudgedClasses~~~~}&\textbf{~~~~accuracy~~~~}\\ \hline
-7409&6551&88.42\% \\ \hline
-\end{tabular}
-\label{table 9}
-\end{table}
-
-\begin{table}[!h]\small
-\centering
-\caption{绝对准确率}
-\begin{tabular}{c c c} \hline
-\textbf{~~~~TotalCommit~~~~}&\textbf{~~~~CorrectJudgedCommit~~~~}&\textbf{~~~~absoluteaccuracy~~~~}\\ \hline
-1530&1127&73.66\% \\ \hline
-\end{tabular}
-\label{table 10}
-\end{table}
-\par{
-表\ref{table 9}和表\ref{table 10}分别为分类模型的综合准确率和绝对准确率的结果。从表\ref{table 9}中，可以看到分类模型在关键类和非关键类的分类结果的综合准确率达到88.42\%，表示分类模型可以正确的分类出大部分的关键类和非关键类。从表\ref{table 10}的结果看到，在以提交为单位时，得到的绝对准确率为73.66\%。
-}
-
-\par{2：关键类的判定是否对开发人员理解代码提交有积极作用？}
-\par{我们通过本地调查和网络调查两种方式进行问卷调查。最后一共收到了218份问卷。统计结果如图 \ref{Fig}(a)所示。其中，带关键类信息的有效问卷为103份，不带关键类信息的有效问卷为86份，有效问卷总数为189份；带关键类信息的无效问卷为6份，不带关键类信息的无效问卷为23份，无效问卷总数为29份。}
-\begin{figure}[!h]
-\centering
-%%\includegraphics[]{}
-\subfigure[有效答题与无效答题数量统计]{
-\label{Fig.sub1}
-\includegraphics[height=45mm]{figures/25.png}
-}
-\subfigure[理解提交时指定关键类与不指定关键类所用时间对比]{
-\label{Fig.sub2}
-\includegraphics[height=45mm]{figures/26.png}
-}
-\caption[图注]{问卷调查结果统计}
-\label{Fig}
-\end{figure}
-\par{从问卷答题数量的统计结果中可以看出，在有效答题的问卷中，带关键类提示信息的问卷比不带关键类的问卷多17份；在无效答题的问卷中，带关键类提示信息的问卷比不带关键类提示信息的问卷少17份。说明了通过提示关键类信息，可以提高开发人员理解代码提交的准确度。与此同时，我们还对参与问卷调查的志愿者进行了回访。在进行问卷调查过程中，有一些志愿者感受到：``通过提示关键类信息，可以帮助开发人员把握代码修改的整体逻辑''，还有一些人觉得：``在代码提交中，常会由于关键类的修改，而引起非关键类的修改''；另外，还有一些人觉得``在没有关键类信息的情况下，也可通过对代码修改的理解推测出关键类，只是相比于有关键类信息的情况下，需要花费更多的时间''。综上所述，从问卷调查的结果统计以及对志愿者的回访结果中可以得出一个结论：关键类判定方法可以有效地辅助开发人员理解代码提交。}
-
-
-
-
-\par{此外，我们还对关键类判定方法是否可以缩短开发人员理解代码提交的时间进行了研究。我们将有效答题问卷分为两部分，分别为带关键类信息的问卷以及不带关键类信息的问卷。并对这两类问卷中对代码提交的理解时间进行了统计。如图 \ref{Fig}(b)所示，带关键类提示的有效问卷的答题时间平均为3.96分钟；不带关键类提示的有效问卷的答题时间平均为5.76分钟。从该统计结果可以看出，通过提供关键类信息，每个代码提交的理解时间平均可以缩短1.8分钟。且图 \ref{Fig}(b)还显示，带关键类信息的问卷最长答题时间为10分钟，最短为1分钟；不带关键类信息的问卷最长答题时间为18分钟，最短为1分钟。为了验证提示关键类与不提示关键类对代码提交的理解时间是否有显著性差异，我们采用\emph{Wilcoxon}假设检验方法\cite{Conover98}检验如下的空假设：}
-
-\par{假设$H_0$：提示关键类与不提示关键类对代码提交的理解时间没有显著性差异。
-
-\begin{table}[htbp]\small
-\centering
-\caption{假设检验结果}
-\begin{tabular}{c c c c} \hline
-\textbf{~~~~点估计值~~~~}&\textbf{~~~~95\%置信区间~~~~}&\textbf{~~~~w~~~~}&\textbf{~~~~p~~~~}\\ \hline
--2.0&(-2.0,-1.0)&8546.5&$<$0.0001 \\ \hline
-\end{tabular}
-\label{table 13}
-\end{table}
-
-
-检验结果如表\ref{table 13}所示，检验统计量\emph{w}等于8546.5的\emph{p}值在对结调整时小于0.0001，由于\emph{p}值小于所选水平0.05，因此有充分的证据否定原假设$H_0$，认为提示关键类与不提示关键类对代码提交的理解时间具有显著性差异。因此，我们可以得出结论：关键类信息对于代码提交的理解具有重要作用。}
-
-\par{3:关键类的判定在代码评审中是否具有积极作用？}
-\par{我们从5个开源项目的代码评审人员中，共收回16份问卷调查结果。首先，为了验证关键类的判定在代码评审中是否具有积极作用，我们从这5个开源项目中随机选择最近两个月的代码提交，并使用关键类判定方法识别出代码提交中的关键类。然后，我们将这个代码提交及关键类信息加入到调查问卷中。在调查问卷中，我们提问代码评审人员，在问卷中给出的关键类是否为代码提交的关键类。从收到的16份问卷调查结果中，有14人认为关键类判定方法识别的关键类是代码提交中的关键类，有2人认为方法识别的关键类不是代码提交的关键类。如在其中一个参与者的问卷结果：代码提交的关键类不是方法识别的\emph{OpenSshConfigTest}，而是类\emph{OpenSshConfig}。我们通过查看这两个类的源代码发现，这两个类没有直接的关系，也就是说，这个代码提交并非是原子提交，它们中不存在关键类。}
-
-\begin{figure*}[htbp]
-		\centering
-		\begin{minipage}{1\textwidth}
-		\centering
-\subfigure[代码评审所花费的时间]{\includegraphics[height=32mm]{figures/reviewtime1.png}}
-\subfigure[代码提交的类小于5个]{\includegraphics[height=32mm]{figures/less511.png}}
-\subfigure[5 $\leq$ 代码提交的类 $<$ 10]{\includegraphics[height=32mm]{figures/greater511.png}}
-\subfigure[代码提交的类 $\geq$ 10]{\includegraphics[height=32mm]{figures/greater101.png}}
-\subfigure[阅读顺序的重要性]{\includegraphics[height=32mm]{figures/readingorder1.png}}
-\subfigure[ICC方法有助于代码评审]{\includegraphics[height=32mm]{figures/valid2.png}}
-		\end{minipage}\hfill
-		\caption[]{问卷调查结果}
-        \label{Fig2}
-        \vspace{-3mm}
-	\end{figure*}
-
-\par{另外，我们还对参与我们问卷调查的代码评审人员作了回访，并提了几个问题，第一个问题是平均一个代码提交所花费的评审时间为多少？结果如图\ref{Fig2}(a)所示，其中有一半的参与者的答案在10-20分钟之间，有两个参与者的答案大于40分钟，另外6个参与者的答案在1-10分钟之间。我们发现需要40分钟评审一个代码提交的两个参与者，其所在的项目是\emph{Eclipse CDT}和\emph{Eclipse JDT Core}，这两个项目的代码提交涉及的类的修改范围都比较大。我们还发现评审时间还随着参与者的开发经验的增加而减少。}
-
-\par{第二个问题是代码评审难度与代码提交中的修改类个数是否相关。结果如图\ref{Fig2}(b)，\ref{Fig2}(c)和\ref{Fig2}(d)所示，当代码提交涉及的类小于5个时，评审人员普遍认为这个代码提交是容易理解的。而当代码提交的类在5个到10个之间时，将近一半的评审人员认为代码提交不易于理解。当代码提交的类为10个及以上时，超过90\%的评审人员认为代码提交不易于理解。另外，评审人员还认为代码提交的理解不仅受到代码提交的类的个数的影响，还受到类的修改范围等的影响。}
-
-\par{第三个问题是合理的阅读顺序是否有助于代码提交的理解。结果如图\ref{Fig2}(e)所示，16个评审人员中，有15个认为合理的阅读顺序有助于代码提交的理解，只有一个评审人员持怀疑态度，他认为合理的阅读顺序与按照代码修改行数从多到少阅读代码对代码提交的理解并无太大不同。但实际上，在很多时候代码修改行数并不能很好的衡量修改类的重要性，如：在一个类中多处调用了一个修改的方法，如果从代码修改行数的多少来衡量类的重要性，那么会认为涉及方法调用的类对理解代码提交更为重要。然而，实际情况是因为方法实现的变化，才引起了方法调用的变化。所以，修改的方法所在的类才是代码提交的关键类。}
-
-\par{最后一个问题是关键类判定方法是否有助于代码提交的代码评审。从图\ref{Fig2}(f)中可以看出，有15个评审人员认为关键类判定方法可以帮助评审人员对代码提交进行代码评审，只有一个评审人员持反对态度，而该评审人员与在第三个问题中持怀疑态度的是同一个人。我们的猜测是该评审人员或许没有很好的利用好关键类信息，而是按照他原有的方式对代码提交进行代码评审。}
-\par{综上所述，从调查问卷的结果可以看出，代码评审一项费时费力的工作，代码评审的复杂度与代码提交的类的数量及类的代码修改复杂度关系密切。且大多数评审人员认为合理的阅读顺序有助于代码提交的理解，而通过提供关键类的信息，有助于提高代码评审的效率。}
-
-\subsubsection{关键类判定影响因素讨论}
-\par{在实验中，我们的数据来源为开源项目的代码提交数据。这些代码提交数据质量参差不齐，为了保证数据质量，我们设置了多种数据过滤规则，包括：(1)过滤掉不含代码修改的代码提交；(2)过滤掉没有提交注释的代码提交；(3)过滤掉没有在提交注释中提及修改的类的代码提交。在经过过滤之后，有效的代码提交数量为4611个。在进行关键类判别模型训练时，训练集相对较小。这有可能会影响模型的性能。在数据集的采集过程中，我们将提交注释中提到的类作为关键类，未提到的类作为非关键类。这在大多数时候可有效地对数据添加标签，但也有可能存在一些噪声。另外，在我们采集的数据集中，正负样本比例为1:3。数据集的不平衡性也有可能影响到模型的性能。}
-
-\subsection{本章小结}
-\par{代码提交是软件工程过程中的重要数据。帮助开发人员快速理解代码提交，可以有效提高软件维护的效率。本文将代码提交中涉及修改的类按照其重要程度的不同分为关键类与非关键类。关键类信息有助于开发人员理解代码提交。为了自动识别代码提交中的关键类，本文提出了一种基于机器学习的关键类判别方法。该方法从代码提交中提取可判别特征，并使用带监督的机器学习算法进行建模和评估。实验结果表明，该方法判定关键类的综合准确率达到了88.4\%。且在研究问题二与问题三中，验证了使用关键类判定方法可以帮助开发和评审人员理解代码提交。}
+\par{Eyolfson等人\cite{eyolfson2011time}研究了修改的提交时间与提交代码的正确性之间的关系，他们发现在深夜到凌晨4点之间提交的代码更容易出错，同时，在早上7点到中午之间提交的代码错误更少。另外，该研究还发现开发人员提交代码的频率也影响着代码的正确率。参考该研究的结论，我们从代码审核数据中提取了代码提交时间以及开发人员在项目中的活跃度特征，活跃度特征通过开发人员在项目中总的提交次数和近一个月的提交次数来衡量。}

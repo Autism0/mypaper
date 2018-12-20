@@ -420,4 +420,10 @@ Jon Eyolfson, Lin Tan, and Patrick Lam.
 \newblock In {\em Proceedings of the 8th Working Conference on Mining Software
   Repositories}, pages 153--162. ACM, 2011.
 
+\bibitem{hassan2004predicting}
+Ahmed~E Hassan and Richard~C Holt.
+\newblock Predicting change propagation in software systems.
+\newblock In {\em Software maintenance, 2004. proceedings. 20th ieee
+  international conference on}, pages 284--293. IEEE, 2004.
+
 \end{thebibliography}

@@ -82,12 +82,12 @@
 \include{chapter/chap1}
 \include{chapter/chap2}
 \include{chapter/chap3}
-\include{chapter/chap4}
-\include{chapter/chap5}
+%\include{chapter/chap4}
+%\include{chapter/chap5}
 
 %%%参考文献%%%
 \addcontentsline{toc}{part}{参考文献}
-\bibliographystyle{IEEEtran}
+\bibliographystyle{unsrt}
 \bibliography{cite}
 
 %\include{bib}

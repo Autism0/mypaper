@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2017.10.27)  25 DEC 2018 19:40
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2017.10.27)  26 FEB 2019 11:11
 entering extended mode
 **main.tex
 (E:\paper\paper\latex\main.tex
@@ -20,16 +20,7 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
-)
-(C:\CTEX\CTeX\tex\latex\ccmap\ccmap.sty
-Package: ccmap 2006/11/18
-
-(C:\CTEX\MiKTeX\tex\generic\oberdiek\ifpdf.sty
-Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in PDF mode is detected.
-)
-\CCT@hooka@@=\toks14
-)
+) (E:\paper\paper\latex\ccmap.sty)
 (C:\CTEX\MiKTeX\tex\latex\caption\caption.sty
 Package: caption 2011/11/10 v3.2e Customizing captions (AR)
 
@@ -38,7 +29,7 @@ Package: caption3 2011/11/01 v1.4a caption3 kernel (AR)
 
 (C:\CTEX\MiKTeX\tex\latex\graphics\keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
-\KV@toks@=\toks15
+\KV@toks@=\toks14
 )
 \captionmargin=\dimen103
 \captionmargin@=\dimen104
@@ -73,11 +64,11 @@ Pictures in Paragraphs. Version 1.2a, July 13, 1993
 \lwindowsep=\dimen118
 \rwindowsep=\dimen119
 \cumpar=\dimen120
-\twa=\toks16
-\la=\toks17
-\ra=\toks18
-\ha=\toks19
-\pictoc=\toks20
+\twa=\toks15
+\la=\toks16
+\ra=\toks17
+\ha=\toks18
+\pictoc=\toks19
 \rawtext=\box26
 \holder=\box27
 \windowbox=\box28
@@ -97,7 +88,7 @@ Package: paralist 2002/03/18 v2.3b Extended list environments (BS)
 \plpartopsep=\skip44
 \plitemsep=\skip45
 \plparsep=\skip46
-\pl@lab=\toks21
+\pl@lab=\toks20
 )
 (C:\CTEX\MiKTeX\tex\latex\booktabs\booktabs.sty
 Package: booktabs 2005/04/14 v1.61803 publication quality tables
@@ -121,7 +112,7 @@ Package: booktabs 2005/04/14 v1.61803 publication quality tables
 )
 (C:\CTEX\MiKTeX\tex\latex\footmisc\footmisc.sty
 Package: footmisc 2011/06/06 v5.5b a miscellany of footnote facilities
-\FN@temptoken=\toks22
+\FN@temptoken=\toks21
 \footnotemargin=\dimen134
 \c@pp@next@reset=\count102
 \c@@fnserial=\count103
@@ -140,7 +131,7 @@ Package: amssymb 2009/06/22 v3.00
 
 (C:\CTEX\MiKTeX\tex\latex\amsfonts\amsfonts.sty
 Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
-\@emptytoks=\toks23
+\@emptytoks=\toks22
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
@@ -156,7 +147,7 @@ Package: amstext 2000/06/29 v2.01
 
 (C:\CTEX\MiKTeX\tex\latex\ams\math\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks24
+\@emptytoks=\toks23
 \ex@=\dimen135
 ))
 (C:\CTEX\MiKTeX\tex\latex\ams\math\amsbsy.sty
@@ -186,21 +177,21 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \dotsspace@=\muskip10
 \c@parentequation=\count111
 \dspbrk@lvl=\count112
-\tag@help=\toks25
+\tag@help=\toks24
 \row@=\count113
 \column@=\count114
 \maxfields@=\count115
-\andhelp@=\toks26
+\andhelp@=\toks25
 \eqnshift@=\dimen138
 \alignsep@=\dimen139
 \tagshift@=\dimen140
 \tagwidth@=\dimen141
 \totwidth@=\dimen142
 \lineht@=\dimen143
-\@envbody=\toks27
+\@envbody=\toks26
 \multlinegap=\skip48
 \multlinetaggap=\skip49
-\mathdisplay@stack=\toks28
+\mathdisplay@stack=\toks27
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
 )
@@ -289,7 +280,7 @@ Package: CJKulem 2008/12/29 4.8.2
 \UL@box=\box42
 \UL@hyphenbox=\box43
 \UL@skip=\skip56
-\UL@hook=\toks29
+\UL@hook=\toks28
 \UL@height=\dimen148
 \UL@pe=\count121
 \UL@pixel=\dimen149
@@ -315,6 +306,10 @@ Package: setspace 2011/12/19 v6.7a set line spacing
 (C:\CTEX\MiKTeX\tex\latex\geometry\geometry.sty
 Package: geometry 2010/09/12 v5.6 Page Geometry
 
+(C:\CTEX\MiKTeX\tex\generic\oberdiek\ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
 (C:\CTEX\MiKTeX\tex\generic\oberdiek\ifvtex.sty
 Package: ifvtex 2010/03/01 v1.5 Switches for detecting VTeX and its modes (HO)
 Package ifvtex Info: VTeX not detected.
@@ -333,7 +328,7 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layoutheight=\dimen157
 \Gm@layouthoffset=\dimen158
 \Gm@layoutvoffset=\dimen159
-\Gm@dimlist=\toks30
+\Gm@dimlist=\toks29
 
 (C:\CTEX\MiKTeX\tex\latex\geometry\geometry.cfg))
 (C:\CTEX\MiKTeX\tex\latex\titlesec\titlesec.sty
@@ -343,7 +338,7 @@ Package: titlesec 2011/12/15 v2.10.0 Sectioning titles
 \aftertitleunit=\skip59
 \ttl@plus=\dimen160
 \ttl@minus=\dimen161
-\ttl@toksa=\toks31
+\ttl@toksa=\toks30
 \titlewidth=\dimen162
 \titlewidthlast=\dimen163
 \titlewidthfirst=\dimen164
@@ -386,8 +381,8 @@ Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
 )
 (C:\CTEX\MiKTeX\tex\latex\tools\verbatim.sty
 Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks32
-\verbatim@line=\toks33
+\every@verbatim=\toks31
+\verbatim@line=\toks32
 \verbatim@in@stream=\read1
 )
 (C:\CTEX\MiKTeX\tex\latex\fancyhdr\fancyhdr.sty
@@ -458,13 +453,13 @@ Package: rotating 2009/03/28 v2.16a rotated objects in LaTeX
 \rotFPtop=\skip74
 \rotFPbot=\skip75
 \rot@float@box=\box72
-\rot@mess@toks=\toks34
+\rot@mess@toks=\toks33
 )
 (C:\CTEX\MiKTeX\tex\latex\tools\array.sty
 Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 \col@sep=\dimen177
 \extrarowheight=\dimen178
-\NC@list=\toks35
+\NC@list=\toks34
 \extratabsurround=\skip76
 \backup@length=\skip77
 )
@@ -484,12 +479,12 @@ nment
 (C:\CTEX\MiKTeX\tex\latex\float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count148
-\float@exts=\toks36
+\float@exts=\toks35
 \float@box=\box73
-\@float@everytoks=\toks37
+\@float@everytoks=\toks36
 \@floatcapt=\box74
 )
-\@float@every@algorithm=\toks38
+\@float@every@algorithm=\toks37
 \c@algorithm=\count149
 )
 (C:\CTEX\MiKTeX\tex\latex\ltxmisc\url.sty
@@ -499,7 +494,7 @@ Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 (C:\CTEX\MiKTeX\tex\latex\listings\listings.sty
 \lst@mode=\count150
 \lst@gtempboxa=\box75
-\lst@token=\toks39
+\lst@token=\toks38
 \lst@length=\count151
 \lst@currlwidth=\dimen179
 \lst@column=\count152
@@ -540,7 +535,7 @@ Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
 )
 (C:\CTEX\MiKTeX\tex\latex\tools\enumerate.sty
 Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
-\@enLab=\toks40
+\@enLab=\toks39
 ))
 (E:\paper\paper\latex\sys/han_zi.tex) (E:\paper\paper\latex\sys/format.tex)
 
@@ -646,7 +641,7 @@ LaTeX Font Info:    Try loading font information for OT1+ptm on input line 33.
 
 (C:\CTEX\MiKTeX\tex\latex\psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
-)<<ot1.cmap>>
+)
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: listings package is loaded.
@@ -662,12 +657,12 @@ Package caption Info: End \AtBeginDocument code.
 \scratchbox=\box77
 \nofMPsegments=\count159
 \nofMParguments=\count160
-\everyMPshowfont=\toks41
+\everyMPshowfont=\toks40
 \MPscratchCnt=\count161
 \MPscratchDim=\dimen184
 \MPnumerator=\count162
 \makeMPintoPDFobject=\count163
-\everyMPtoPDFconversion=\toks42
+\everyMPtoPDFconversion=\toks41
 )
 *geometry* detected driver: dvips
 *geometry* verbose mode - [ preamble ] result:
@@ -722,13 +717,11 @@ File: extended.chr 2008/12/29 4.8.2
 LaTeX Font Info:    Try loading font information for C19+song on input line 5.
  (C:\CTEX\CTeX\tex\latex\CJK\GB\c19song.fd
 File: c19song.fd 2009/09/23 4.8.2
-)<<c1964.cmap>><<c1954.cmap>><<c1939.cmap>><<c1960.cmap>><<c1956.cmap>><<c1955.
-cmap>><<c1958.cmap>><<c1949.cmap>>
+)
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <28> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 8.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <21> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 8.
-<<c1957.cmap>><<c1951.cmap>>
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <15.75> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 10.
 LaTeX Font Info:    Calculating math sizes for size <28> on input line 11.
@@ -745,7 +738,6 @@ LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <19.59991> not available
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <28> not available
 (Font)              size <24.88> substituted on input line 11.
 
-<<oml.cmap>>
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <19.59991> not available
 (Font)              size <20.74> substituted on input line 11.
@@ -754,20 +746,16 @@ LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <19.59991> not available
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <28> not available
 (Font)              size <24.88> substituted on input line 11.
 
-<<oms.cmap>>
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <19.59991> not available
 (Font)              size <20.74> substituted on input line 11.
 
-<<omx.cmap>>
 LaTeX Font Info:    Try loading font information for U+msa on input line 11.
- (C:\CTEX\MiKTeX\tex\latex\amsfonts\umsa.fd
+(C:\CTEX\MiKTeX\tex\latex\amsfonts\umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-
-LaTeX Warning: File u.cmap not found on input line 11.
-
 LaTeX Font Info:    Try loading font information for U+msb on input line 11.
+
 (C:\CTEX\MiKTeX\tex\latex\amsfonts\umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
@@ -787,21 +775,18 @@ LaTeX Font Warning: Font shape `U/rsfs/m/n' in size <19.59991> not available
 LaTeX Font Info:    Try loading font information for C19+kai on input line 12.
 (C:\CTEX\CTeX\tex\latex\CJK\GB\c19kai.fd
 File: c19kai.fd 2009/09/23 4.8.2
-)<<c1953.cmap>><<c1926.cmap>>
+)
 Package CJKpunct Info: use punctuation spaces for family 'kai' with punctstyle 
 (quanjiao) on input line 12.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 12.
-<<c1940.cmap>><<c1946.cmap>><<c1965.cmap>><<c1961.cmap>><<c1950.cmap>><<c1938.c
-map>><<c1945.cmap>><<c1942.cmap>><<c1937.cmap>><<c1963.cmap>><<c1944.cmap>><<c1
-959.cmap>>
 LaTeX Font Info:    Calculating math sizes for size <14> on input line 19.
 
 Underfull \hbox (badness 10000) in paragraph at lines 19--25
 
  []
 
-<<c1941.cmap>><<c1936.cmap>> [1
+[1
 Non-PDF special ignored!
 
 {C:/CTEX/UserData/pdftex/config/pdftex.map{Unicode.sfd}{UGBK.sfd}}]) (E:\paper\
@@ -810,8 +795,7 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <18> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 11.
 Package CJKpunct Info: use punctuation spaces for family 'song' with punctstyle
  (quanjiao) on input line 15.
-<<c1948.cmap>><<c1943.cmap>><<c1925.cmap>><<c1962.cmap>><<c1952.cmap>><<c1947.c
-map>>)
+)
 (E:\paper\paper\latex\changeformat.tex) [2
 
 ]
@@ -939,32 +923,37 @@ Overfull \hbox (3.0pt too wide) detected at line 50
  []
 
 
-Overfull \hbox (3.0pt too wide) detected at line 54
+Overfull \hbox (3.0pt too wide) detected at line 52
+\OT1/ptm/m/n/12 3.4 
+ []
+
+
+Overfull \hbox (3.0pt too wide) detected at line 56
 \OT1/ptm/m/n/12 4.1 
  []
 
 
-Overfull \hbox (3.0pt too wide) detected at line 59
+Overfull \hbox (3.0pt too wide) detected at line 61
 \OT1/ptm/m/n/12 4.2 
  []
 
 
-Overfull \hbox (3.0pt too wide) detected at line 63
+Overfull \hbox (3.0pt too wide) detected at line 65
 \OT1/ptm/m/n/12 4.3 
  []
 
 
-Overfull \hbox (3.0pt too wide) detected at line 64
+Overfull \hbox (3.0pt too wide) detected at line 66
 \OT1/ptm/m/n/12 4.4 
  []
 
 
-Overfull \hbox (3.0pt too wide) detected at line 66
+Overfull \hbox (3.0pt too wide) detected at line 68
 \OT1/ptm/m/n/12 5.1 
  []
 
 
-Overfull \hbox (3.0pt too wide) detected at line 67
+Overfull \hbox (3.0pt too wide) detected at line 69
 \OT1/ptm/m/n/12 5.2 
  []
 
@@ -1012,17 +1001,17 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX Warning: No positions in optional float specifier.
                Default added (so using `tbp') on input line 13.
 
-<myfigure/1-11.png, id=127, 377.2494pt x 316.0608pt>
+<myfigure/1-11.png, id=91, 377.2494pt x 316.0608pt>
 File: myfigure/1-11.png Graphic file (type png)
  <use myfigure/1-11.png>
 Package pdftex.def Info: myfigure/1-11.png used on input line 15.
 (pdftex.def)             Requested size: 289.07999pt x 242.21011pt.
-<<c1984.cmap>>
+
 
 LaTeX Warning: No positions in optional float specifier.
                Default added (so using `tbp') on input line 21.
 
-<myfigure/1-2.png, id=130, 930.8376pt x 731.8542pt>
+<myfigure/1-2.png, id=93, 930.8376pt x 731.8542pt>
 File: myfigure/1-2.png Graphic file (type png)
  <use myfigure/1-2.png>
 Package pdftex.def Info: myfigure/1-2.png used on input line 23.
@@ -1042,7 +1031,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX Warning: No positions in optional float specifier.
                Default added (so using `tbp') on input line 29.
 
-<myfigure/1-3.png, id=135, 962.6364pt x 348.3414pt>
+<myfigure/1-3.png, id=98, 962.6364pt x 348.3414pt>
 File: myfigure/1-3.png Graphic file (type png)
  <use myfigure/1-3.png>
 Package pdftex.def Info: myfigure/1-3.png used on input line 31.
@@ -1069,13 +1058,13 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/1-2.png): larg
 e interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)
 
->] <myfigure/1-5.png, id=144, 429.10312pt x 344.03531pt>
+>] <myfigure/1-5.png, id=107, 429.10312pt x 344.03531pt>
 File: myfigure/1-5.png Graphic file (type png)
 
 <use myfigure/1-5.png>
 Package pdftex.def Info: myfigure/1-5.png used on input line 46.
 (pdftex.def)             Requested size: 195.18329pt x 156.49014pt.
- <myfigure/1-4.png, id=145, 532.23843pt x 462.97969pt>
+ <myfigure/1-4.png, id=108, 532.23843pt x 462.97969pt>
 File: myfigure/1-4.png Graphic file (type png)
 
 <use myfigure/1-4.png>
@@ -1109,9 +1098,6 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 ng>]
 Underfull \vbox (badness 3179) has occurred while \output is active []
 
-
-
-LaTeX Warning: File ot156.cmap not found on input line 66.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1160,7 +1146,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/method.pdf): P
 DF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<myfigure/method.pdf, id=174, 699.93495pt x 384.11504pt>
+<myfigure/method.pdf, id=137, 699.93495pt x 384.11504pt>
 File: myfigure/method.pdf Graphic file (type pdf)
 
 <use myfigure/method.pdf>
@@ -1179,29 +1165,28 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 [12
 
 
-]<<c1969.cmap>>
-<myfigure/shortcomment.png, id=179, 824.8416pt x 397.0032pt>
+] <myfigure/shortcomment.png, id=141, 824.8416pt x 397.0032pt>
 File: myfigure/shortcomment.png Graphic file (type png)
 
 <use myfigure/shortcomment.png>
 Package pdftex.def Info: myfigure/shortcomment.png used on input line 21.
 (pdftex.def)             Requested size: 289.07999pt x 139.14099pt.
 
-<myfigure/longcomment.png, id=180, 825.8052pt x 401.8212pt>
+<myfigure/longcomment.png, id=142, 825.8052pt x 401.8212pt>
 File: myfigure/longcomment.png Graphic file (type png)
 
 <use myfigure/longcomment.png>
 Package pdftex.def Info: myfigure/longcomment.png used on input line 25.
 (pdftex.def)             Requested size: 289.07999pt x 140.66405pt.
 
-<myfigure/1class.png, id=181, 825.3234pt x 213.4374pt>
+<myfigure/1class.png, id=143, 825.3234pt x 213.4374pt>
 File: myfigure/1class.png Graphic file (type png)
 
 <use myfigure/1class.png>
 Package pdftex.def Info: myfigure/1class.png used on input line 28.
 (pdftex.def)             Requested size: 289.07999pt x 74.75957pt.
 
-<myfigure/20class.png, id=182, 767.0256pt x 542.025pt>
+<myfigure/20class.png, id=144, 767.0256pt x 542.025pt>
 File: myfigure/20class.png Graphic file (type png)
 
 <use myfigure/20class.png>
@@ -1246,7 +1231,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[16] <myfigure/corpus.png, id=223, 543.4704pt x 271.2534pt>
+[16] <myfigure/corpus.png, id=185, 543.4704pt x 271.2534pt>
 File: myfigure/corpus.png Graphic file (type png)
 
 <use myfigure/corpus.png>
@@ -1272,7 +1257,7 @@ C19/song/m/n/12/44 ƒ \C19/song/bx/n/12/62 u\OT1/ptm/m/n/12 WordNet[][]\C19/song
 /m/n/12/40 
  []
 
-<myfigure/word2vec.png, id=233, 779.16093pt x 417.81094pt>
+<myfigure/word2vec.png, id=195, 779.16093pt x 417.81094pt>
 File: myfigure/word2vec.png Graphic file (type png)
 
 <use myfigure/word2vec.png>
@@ -1286,9 +1271,6 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [18]
-
-LaTeX Warning: File ot162.cmap not found on input line 86.
-
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -1315,7 +1297,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[21]<<c1974.cmap>>
+[21]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -1384,9 +1366,6 @@ Underfull \vbox (badness 3601) has occurred while \output is active []
 
 
 
-LaTeX Warning: File ot137.cmap not found on input line 337.
-
-
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
@@ -1417,7 +1396,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/eta1.pdf): PDF
  inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<myfigure/eta1.pdf, id=296, 963.6pt x 428.19975pt>
+<myfigure/eta1.pdf, id=257, 963.6pt x 428.19975pt>
 File: myfigure/eta1.pdf Graphic file (type pdf)
  <use myfigure/eta1.pdf>
 Package pdftex.def Info: myfigure/eta1.pdf used on input line 438.
@@ -1445,28 +1424,14 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 [32 <E:/paper/paper/latex/myfigure/eta1.pdf>]
 (E:\paper\paper\latex\chapter/chap3.tex
-<myfigure/review-day.png, id=332, 1084.05pt x 578.16pt>
+<myfigure/review-day.png, id=293, 1084.05pt x 578.16pt>
 File: myfigure/review-day.png Graphic file (type png)
 
 <use myfigure/review-day.png>
 Package pdftex.def Info: myfigure/review-day.png used on input line 9.
 (pdftex.def)             Requested size: 397.48499pt x 211.99265pt.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-
-pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/method2.pdf): 
-PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<myfigure/method2.pdf, id=333, 796.77673pt x 398.32814pt>
-File: myfigure/method2.pdf Graphic file (type pdf)
-
-<use myfigure/method2.pdf>
-Package pdftex.def Info: myfigure/method2.pdf used on input line 17.
-(pdftex.def)             Requested size: 397.48499pt x 198.7138pt.
-
-Underfull \vbox (badness 4303) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
@@ -1480,35 +1445,43 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 
+pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/method2.pdf): 
+PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<myfigure/method2.pdf, id=297, 796.77673pt x 398.32814pt>
+File: myfigure/method2.pdf Graphic file (type pdf)
+
+<use myfigure/method2.pdf>
+Package pdftex.def Info: myfigure/method2.pdf used on input line 17.
+(pdftex.def)             Requested size: 397.48499pt x 198.7138pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[34 <E:/paper/paper/latex/myfigure/review-day.png> <E:/paper/paper/latex/myfigu
-re/method2.pdf>]
+[34 <E:/paper/paper/latex/myfigure/review-day.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[35]
+[35 <E:/paper/paper/latex/myfigure/method2.pdf>]
 
 pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/featurecode.pd
 f): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<myfigure/featurecode.pdf, id=377, 640.19174pt x 184.89075pt>
+<myfigure/featurecode.pdf, id=338, 640.19174pt x 184.89075pt>
 File: myfigure/featurecode.pdf Graphic file (type pdf)
 
 <use myfigure/featurecode.pdf>
 Package pdftex.def Info: myfigure/featurecode.pdf used on input line 52.
 (pdftex.def)             Requested size: 397.48499pt x 114.7947pt.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1132) has occurred while \output is active []
 
 
 
@@ -1519,12 +1492,18 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 [36]
 
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
 [37 <E:/paper/paper/latex/myfigure/featurecode.pdf>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -1532,6 +1511,9 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [38]
+Underfull \vbox (badness 3260) has occurred while \output is active []
+
+
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -1540,21 +1522,28 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 [39]
 
-Package caption Warning: \label without proper \caption on input line 128.
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[40]
+
+Package caption Warning: \label without proper \caption on input line 138.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `algo2' on page 40 undefined on input line 124.
+LaTeX Warning: Reference `algo2' on page 41 undefined on input line 134.
 
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 136.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 146.
 
-Underfull \hbox (badness 10000) in alignment at lines 130--148
+Underfull \hbox (badness 10000) in alignment at lines 140--158
 [] 
  []
 
 
-Overfull \hbox (1.20464pt too wide) in paragraph at lines 124--152
+Overfull \hbox (1.20464pt too wide) in paragraph at lines 134--162
 []\OT1/ptm/m/n/12 Bagging\C19/song/bx/n/12/43 ⁄\OT1/ptm/m/n/12 Boosting\C19/son
 g/bx/n/12/41 ê { \C19/song/bx/n/12/40 — \C19/song/bx/n/12/55 ¥ \C19/song/bx/n/1
 2/65 | \C19/song/bx/n/12/43 ‹ \C19/song/bx/n/12/57 ” \C19/song/bx/n/12/48 a \C1
@@ -1565,30 +1554,6 @@ n/12 Boosting\C19/song/bx/n/12/37 ÿ
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 14.49998pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
-
-[40]
-
-pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/stacking.pdf):
- PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<myfigure/stacking.pdf, id=409, 497.94029pt x 113.82526pt>
-File: myfigure/stacking.pdf Graphic file (type pdf)
-
-<use myfigure/stacking.pdf>
-Package pdftex.def Info: myfigure/stacking.pdf used on input line 157.
-(pdftex.def)             Requested size: 397.48499pt x 90.86058pt.
-)
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
@@ -1596,14 +1561,31 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 [41]
 
+pdfTeX warning: pdflatex.exe (file E:/paper/paper/latex/myfigure/stacking.pdf):
+ PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<myfigure/stacking.pdf, id=375, 497.94029pt x 113.82526pt>
+File: myfigure/stacking.pdf Graphic file (type pdf)
+
+<use myfigure/stacking.pdf>
+Package pdftex.def Info: myfigure/stacking.pdf used on input line 167.
+(pdftex.def)             Requested size: 397.48499pt x 90.86058pt.
+)
+
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[42 <E:/paper/paper/latex/myfigure/stacking.pdf>]
+[42]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[43 <E:/paper/paper/latex/myfigure/stacking.pdf>]
 (E:\paper\paper\latex\chapter/chap4.tex
-<figures/14.png, id=427, 816.80156pt x 615.80063pt>
+<figures/14.png, id=392, 816.80156pt x 615.80063pt>
 File: figures/14.png Graphic file (type png)
  <use figures/14.png>
 Package pdftex.def Info: figures/14.png used on input line 7.
@@ -1615,23 +1597,23 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[43
+[44
 
 
  <E:/paper/paper/latex/figures/14.png>]
-<figures/16.png, id=432, 955.31906pt x 636.87938pt>
+<figures/16.png, id=397, 955.31906pt x 636.87938pt>
 File: figures/16.png Graphic file (type png)
  <use figures/16.png>
 Package pdftex.def Info: figures/16.png used on input line 21.
 (pdftex.def)             Requested size: 397.48499pt x 264.98999pt.
 
-<figures/17.png, id=433, 478.03593pt x 380.17032pt>
+<figures/17.png, id=398, 478.03593pt x 380.17032pt>
 File: figures/17.png Graphic file (type png)
  <use figures/17.png>
 Package pdftex.def Info: figures/17.png used on input line 34.
 (pdftex.def)             Requested size: 196.77647pt x 156.49014pt.
 
-<figures/18.png, id=434, 477.28313pt x 379.4175pt>
+<figures/18.png, id=399, 477.28313pt x 379.4175pt>
 File: figures/18.png Graphic file (type png)
  <use figures/18.png>
 Package pdftex.def Info: figures/18.png used on input line 38.
@@ -1643,8 +1625,8 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[44 <E:/paper/paper/latex/figures/16.png>]
-<figures/19.png, id=439, 1252.68pt x 2152.29094pt>
+[45 <E:/paper/paper/latex/figures/16.png>]
+<figures/19.png, id=404, 1252.68pt x 2152.29094pt>
 File: figures/19.png Graphic file (type png)
  <use figures/19.png>
 Package pdftex.def Info: figures/19.png used on input line 51.
@@ -1663,20 +1645,20 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[45 <E:/paper/paper/latex/figures/17.png> <E:/paper/paper/latex/figures/18.png>
-] <figures/15.png, id=445, 1296.34312pt x 1053.9375pt>
+[46 <E:/paper/paper/latex/figures/17.png> <E:/paper/paper/latex/figures/18.png>
+] <figures/15.png, id=410, 1296.34312pt x 1053.9375pt>
 File: figures/15.png Graphic file (type png)
  <use figures/15.png>
 Package pdftex.def Info: figures/15.png used on input line 61.
 (pdftex.def)             Requested size: 411.93877pt x 334.90288pt.
 
-<figures/24.png, id=446, 514.92375pt x 735.49782pt>
+<figures/24.png, id=411, 514.92375pt x 735.49782pt>
 File: figures/24.png Graphic file (type png)
  <use figures/24.png>
 Package pdftex.def Info: figures/24.png used on input line 73.
 (pdftex.def)             Requested size: 310.76122pt x 443.88335pt.
 
-<figures/33.png, id=447, 1246.6575pt x 1600.47937pt>
+<figures/33.png, id=412, 1246.6575pt x 1600.47937pt>
 File: figures/33.png Graphic file (type png)
  <use figures/33.png>
 Package pdftex.def Info: figures/33.png used on input line 79.
@@ -1688,7 +1670,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[46] <figures/23.png, id=451, 1257.19687pt x 1086.30844pt>
+[47] <figures/23.png, id=417, 1257.19687pt x 1086.30844pt>
 File: figures/23.png Graphic file (type png)
 
 <use figures/23.png>
@@ -1704,49 +1686,49 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[47])
+[48])
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[48]
+[49]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[49 <E:/paper/paper/latex/figures/19.png>]
+[50 <E:/paper/paper/latex/figures/19.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[50 <E:/paper/paper/latex/figures/15.png>]
+[51 <E:/paper/paper/latex/figures/15.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[51 <E:/paper/paper/latex/figures/24.png>]
+[52 <E:/paper/paper/latex/figures/24.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[52 <E:/paper/paper/latex/figures/33.png>]
+[53 <E:/paper/paper/latex/figures/33.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[53 <E:/paper/paper/latex/figures/23.png>]
+[54 <E:/paper/paper/latex/figures/23.png>]
 (E:\paper\paper\latex\chapter/chap5.tex
 Underfull \vbox (badness 4303) has occurred while \output is active []
 
@@ -1757,7 +1739,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[54
+[55
 
 
 ]
@@ -1770,30 +1752,23 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[55])
+[56])
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[56] (E:\paper\paper\latex\main.bbl
+[57] (E:\paper\paper\latex\main.bbl
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[57
+[58
 
 ]
-
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 14.49998pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
-
-[58]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -1822,6 +1797,13 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [62]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[63]
 Underfull \hbox (badness 2478) in paragraph at lines 317--322
 []\OT1/ptm/m/n/12 Mario Linares-V[]asquez, Collin M-cMil-lan, Denys Poshy-vanyk
 , and Mark
@@ -1833,28 +1815,28 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[63]
+[64]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[64])
+[65])
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[65] (E:\paper\paper\latex\acknowledge.tex)
+[66] (E:\paper\paper\latex\acknowledge.tex)
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[66
+[67
 
 ] (E:\paper\paper\latex\main.aux (E:\paper\paper\latex\abstract_CN.aux)
 (E:\paper\paper\latex\abstract_EN.aux) (E:\paper\paper\latex\chapter/chap1.aux)
@@ -1875,10 +1857,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 11278 strings out of 495354
- 168398 string characters out of 3183858
- 255249 words of memory out of 3000000
- 13654 multiletter control sequences out of 15000+200000
+ 10842 strings out of 495354
+ 161811 string characters out of 3183858
+ 248431 words of memory out of 3000000
+ 13599 multiletter control sequences out of 15000+200000
  109957 words of font info for 328 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
  38i,16n,47p,1976b,837s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1935,9 +1917,9 @@ fonts/cm/cmsy10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C
 pe1/public/amsfonts/cm/cmsy8.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmb8a.p
 fb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/CTEX/MiKTeX/fonts/type
 1/urw/times/utmr8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (74 pages, 4779371 bytes).
+Output written on main.pdf (75 pages, 4720841 bytes).
 PDF statistics:
- 806 PDF objects out of 1000 (max. 8388607)
+ 771 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 287 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 131 words of extra memory for PDF output out of 10000 (max. 10000000)
 

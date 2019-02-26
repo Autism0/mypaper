@@ -10,7 +10,7 @@
 \usepackage{picinpar}%绕排宏包
 \usepackage{paralist}%列表宏包
 \usepackage{booktabs}
-
+\usepackage[UTF8]{ctex}
 \usepackage[perpage,hang]{footmisc}% 脚注每页编号
 \footnotemargin=10pt%脚注左对齐
 \renewcommand{\thefootnote}{\textcircled{\protect\raisebox{-0.5pt}{\tiny\arabic{footnote}}}}% 定义带圈的脚注
@@ -82,8 +82,8 @@
 \include{chapter/chap1}
 \include{chapter/chap2}
 \include{chapter/chap3}
-%\include{chapter/chap4}
-%\include{chapter/chap5}
+\include{chapter/chap4}
+\include{chapter/chap5}
 
 %%%参考文献%%%
 \addcontentsline{toc}{part}{参考文献}

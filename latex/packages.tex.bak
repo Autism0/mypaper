@@ -1,5 +1,5 @@
 %\usepackage{picinpar}
-
+\usepackage{color}
 \usepackage{amssymb,amsmath} % 各种数学符号
 \usepackage{mathrsfs} % 哥特体
 \usepackage[dvips]{color} % 字体和背景颜色
@@ -22,10 +22,20 @@
 \usepackage{fancyhdr} %设置页眉页脚
 \usepackage{booktabs}%表格类宏包
 \usepackage{multirow}%表行合并
+\usepackage{multicol}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+
 \usepackage{rotating}
 \usepackage{array}
 \usepackage{algorithmic,algorithm}
 \usepackage{url} % 支持脚注网址
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\normalem
+
+
 %%% 超链接和PDF书签宏包hyperref
 %\usepackage[dvipdfm, CJKbookmarks=true, bookmarks=true, bookmarksnumbered=true, ]{hyperref}
 %

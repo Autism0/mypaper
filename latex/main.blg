@@ -6,9 +6,100 @@ A level-1 auxiliary file: chapter/chap2.aux
 A level-1 auxiliary file: chapter/chap3.aux
 A level-1 auxiliary file: chapter/chap4.aux
 A level-1 auxiliary file: chapter/chap5.aux
-The style file: unsrt.bst
+The style file: TJUThesis.bst
 A level-1 auxiliary file: acknowledge.aux
 Database file #1: cite.bib
-Warning--there's a number but no volume in rovegaard2008empirical
-Warning--there's a number but no volume in holmes2006approximate
-(There were 2 warnings)
+-- BUPTThesis.bst version 0.2 (2009/01/25) by Yu Zhang.
+-- http://code.google.com/p/buptthesis/
+-- See the "userguide.pdf" manual for usage information.
+Warning--The editor in szabo2015novice is missing.
+Warning--empty editor in szabo2015novice
+Warning--The editor in kim2007prioritizing is missing.
+Warning--empty editor in kim2007prioritizing
+Warning--The editor in bradley2011supporting is missing.
+Warning--empty editor in bradley2011supporting
+Warning--The editor in wittenhagen2016chronicler is missing.
+Warning--empty editor in wittenhagen2016chronicler
+`editor' is a missing field, not a string, for entry d2008analysing
+while executing---line 2538 of file TJUThesis.bst
+Warning--there's a publisher but no address in d2008analysing
+Warning--The editor in gousios2008measuring is missing.
+Warning--empty editor in gousios2008measuring
+Warning--The editor in dabbish2012social is missing.
+Warning--empty editor in dabbish2012social
+Warning--The editor in canfora2005impact is missing.
+Warning--empty editor in canfora2005impact
+Warning--The editor in kagdi2010blending is missing.
+Warning--empty editor in kagdi2010blending
+Warning--The editor in wong2015clocom is missing.
+Warning--empty editor in wong2015clocom
+Warning--The editor in huang2017mining is missing.
+Warning--empty editor in huang2017mining
+Warning--The editor in bouktif2006extracting is missing.
+Warning--empty editor in bouktif2006extracting
+Warning--The editor in bohner1991software is missing.
+Warning--empty editor in bohner1991software
+Warning--The editor in apiwattanapong2005efficient is missing.
+Warning--empty editor in apiwattanapong2005efficient
+Warning--The editor in huang2007precise is missing.
+Warning--empty editor in huang2007precise
+Warning--The editor in cai2016distia is missing.
+Warning--empty editor in cai2016distia
+Warning--The editor in breech2006integrating is missing.
+Warning--empty editor in breech2006integrating
+Warning--The editor in law2003whole is missing.
+Warning--empty editor in law2003whole
+Warning--The editor in cai2014diver is missing.
+Warning--empty editor in cai2014diver
+Warning--The editor in briand2002automating is missing.
+Warning--empty editor in briand2002automating
+Warning--The editor in diaz2011change is missing.
+Warning--empty editor in diaz2011change
+Warning--The editor in beszedes2007dynamic is missing.
+Warning--empty editor in beszedes2007dynamic
+Warning--The editor in rolfsnes2016generalizing is missing.
+Warning--empty editor in rolfsnes2016generalizing
+Warning--The editor in hattori2008mining is missing.
+Warning--empty editor in hattori2008mining
+Warning--The editor in thongtanunam2015should is missing.
+Warning--empty editor in thongtanunam2015should
+Warning--The editor in kononenko2015investigating is missing.
+Warning--empty editor in kononenko2015investigating
+Warning--The editor in vaucher2008discovering is missing.
+Warning--empty editor in vaucher2008discovering
+Warning--The editor in fluri2008discovering is missing.
+Warning--empty editor in fluri2008discovering
+Warning--The editor in michail1999data is missing.
+Warning--empty editor in michail1999data
+Warning--The editor in lin2013check is missing.
+Warning--empty editor in lin2013check
+Warning--The editor in bruch2009learning is missing.
+Warning--empty editor in bruch2009learning
+Warning--The editor in zaidman2008mining is missing.
+Warning--empty editor in zaidman2008mining
+Warning--The editor in murali2017bayesian is missing.
+Warning--empty editor in murali2017bayesian
+Warning--The editor in mills2017automating is missing.
+Warning--empty editor in mills2017automating
+Warning--The editor in rath2018traceability is missing.
+Warning--empty editor in rath2018traceability
+Warning--The editor in karim2017software is missing.
+Warning--empty editor in karim2017software
+Warning--The editor in shimonaka2016identifying is missing.
+Warning--empty editor in shimonaka2016identifying
+Warning--The editor in nguyen2014statistical is missing.
+Warning--empty editor in nguyen2014statistical
+Warning--empty pages in fluri2007change
+Warning--empty pages in goldberg2014word2vec
+Warning--The editor in mikolov2013distributed is missing.
+Warning--empty editor in mikolov2013distributed
+Warning--empty pages in mikolov2013efficient
+Warning--The editor in huang2018salient is missing.
+Warning--empty editor in huang2018salient
+Warning--The editor in eyolfson2011time is missing.
+Warning--empty editor in eyolfson2011time
+Warning--The editor in hassan2004predicting is missing.
+Warning--empty editor in hassan2004predicting
+
+Done.
+(There was 1 error message)

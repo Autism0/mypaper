@@ -4,14 +4,8 @@
 \rhead{\xiaowuhao Abstract}
 \begin{ENabstract}
 \begin{spacing}{1.5}
-As the pretreatment technology of image processing and display, edge-aware filtering methods play an important role in the visual media applications. It needs to filter the detail while preserving the salient structure, which could improve the effect of image visual and could be applied in structure-texture separation. With the deepening of research, how to achieve structure-texture separation of image thoroughly challenge edge-preserving methods, especially various textured images. In order to overcome the limitations of conventional structure-aware filtering in decomposing texture and structure, it need to discover a novel structure-aware decomposition model.
-
-Inspired by the theory of kernel regression, we propose a novel sparsity-guided bilateral kernel regression structure-aware smoothing filter based on local total variation related reductive descriptor. Taking advantage of fast joint bilateral filtering, we present the accelerated form of the bilateral kernel regression filtering, and develop to the structure-aware filtering application. In the experiments, we prove that bilateral kernel regression could remove textures and it is an efficient structure-aware filtering. 
-
-Besides, we propose a novel structure-texture separation method by incorporating the signal remapping function into the rolling guidance framework. Our method inherits the benefits of the efficient framework and effective signal remapping strategy. Our experiments show that our method could remove different scales of texture while preserving salient structure. 
-
-Finally, we describe the applications of the structure-aware. Compared with the state-of-the-art methods, we prove that our structure-aware filtering method is efficient.
-
+\par{As an effective method to guarantee the quality of software, software maintenance is the most labor intensive and time consuming work in the software life cycle. When developers make code modification, some code modifications may affect other entities of the software due to the complex relationships between code entities. How to determine the scope of the modification, so that developers can quickly determine the software entities that need to be modified, becomes an important factor affecting the efficiency of code modification. Furthermore, the code changes made by developers needed to be reviewed before  integrating the changes to software depository. If the code change submitted by developers is not accepted, the code change will be sent back to developers. The number of "modification-review" is directly related to the code modification time and efficiency. In this papers, we study the scope and time cycle of the code modification, and proposed some solutions to help developers improve software maintenance efficiency. We focus on how to assist developers to quickly and accurately determine the scope of impact of code change, as well as the change period. }
+\par{With the rapid development of open source software, the Internet has accumulated a huge amount of software maintenance data, such as code change commits. These data record how the elements interact with each other in modification and software review process. Using the rules hiding in these data can help to more accurately predict the scope of the code change and the change period. In this paper, we proposed an impact analysis method based on historical change mode. We collected a large number of historical commit data from open source projects. Then, we search the similar commits based on the similarity of code change fragment and comment (modify target). Finally, we use the change mode of commits to optimize the impact set. Our results indicated that our method have better effect than other impact analysis tools in term of recall and precision with more than 15\% improvement on average. Regarding the predicion of code change time cycle, our paper proposed a method based on multi-dimension discriminative features. We extracted multi-dimensional features from code modification data, and then employ machine learning methods to train predictive models. We tested the model on the datasets from two open source projects. The results indicated that our model achieved high accuracy in predicting the length of the code change period.}
 \end{spacing}
 \end{ENabstract}
 
@@ -21,8 +15,9 @@ Finally, we describe the applications of the structure-aware. Compared with the 
 % 每一个关键词调用一次 \enkeywd 命令。命令的闭合花括号后面应当紧跟着注释符号（即
 % "%"），否则会在顿号前面增加一个空格。
 \begin{spacing}{1.5}
-\enkeywd{Edge-preserving filter}% 填入一条关键词
-\enkeywd{Structure-aware filter}%
-\enkeywd{Structure-texture separation method}%
-\enkeywd{Rolling guidance framework}%
-\end{spacing} 
+\enkeywd{Impact Analysis}% 填入一条关键词
+\enkeywd{Code Commit}%
+\enkeywd{Code Review}
+\enkeywd{Code Change Period}
+\enkeywd{Machine Learning}
+\end{spacing}

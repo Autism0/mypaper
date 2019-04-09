@@ -87,9 +87,9 @@
 
 
 
-\renewcommand{\figurename}{\song\wuhao 图}
+\renewcommand{\figurename}{\song\xiaowuhao 图}
 \numberwithin{figure}{section}\renewcommand\thefigure{\song \arabic{section}-\arabic{figure}} %设置图标编号格式
-\renewcommand\tablename{\song\wuhao 表}
+\renewcommand\tablename{\song\xiaowuhao 表}
 \numberwithin{table}{section}\renewcommand\thetable{\song \arabic{section}-\arabic{table}}%设置表格编号格式
 \renewcommand{\arraystretch}{1.5}%修改行间距
 \newcommand{\ncaption}{%设置标题上下间距

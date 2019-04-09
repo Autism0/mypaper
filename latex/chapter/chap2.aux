@@ -1,9 +1,9 @@
 \relax 
-\@writefile{toc}{\contentsline {section}{\numberline {2}基于历史修改模式的影响分析辅助方法}{12}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}基于历史修改模式的影响分析辅助方法概述}{12}}
-\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-1}{\ignorespaces 基于历史修改模式的影响分析辅助方法总览\relax }}{13}}
-\newlabel{fig:method}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-1}{13}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}提交库构建}{13}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}基于历史修改模式的影响分析方法}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}基于历史修改模式的影响分析方法概述}{12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}2-1}{\ignorespaces 基于历史修改模式的影响分析方法总览\relax }}{13}}
+\newlabel{fig:method}{{\CJKfamily  {song}2-1}{13}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}历史提交语料库构建方法}{13}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}提交数据筛选}{13}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}文本预处理}{14}}
 \newlabel{Fig.sub.1}{{2(a)}{15}}
@@ -14,69 +14,44 @@
 \newlabel{sub@Fig.sub.6}{{(c)}{15}}
 \newlabel{Fig.sub.2}{{2(d)}{15}}
 \newlabel{sub@Fig.sub.2}{{(d)}{15}}
-\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-2}{\ignorespaces 存在问题的提交图例\relax }}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}2-2}{\ignorespaces 存在问题的提交图例\relax }}{15}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {提交注释信息过短}}}{15}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {提交注释信息过长}}}{15}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {提交只涉及一个类修改}}}{15}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {提交涉及超过二十个类修改}}}{15}}
-\newlabel{fig:badcommit}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-2}{15}}
+\newlabel{fig:badcommit}{{\CJKfamily  {song}2-2}{15}}
 \citation{fluri2007change}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}提交语料库构建}{16}}
-\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-3}{\ignorespaces 提交文本语料库构建方式图示\relax }}{17}}
-\newlabel{fig:corpus}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-3}{17}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}相似提交的检索}{17}}
+\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}2-3}{\ignorespaces 提交文本语料库构建方式图示\relax }}{17}}
+\newlabel{fig:corpus}{{\CJKfamily  {song}2-3}{17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}基于词嵌入的相似提交检索}{17}}
 \citation{goldberg2014word2vec}
-\citation{mikolov2013distributed}
-\citation{mikolov2013efficient}
+\citation{mikolov2013distributed,mikolov2013efficient}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}词向量模型训练}{18}}
-\FN@pp@footnote@aux{10}{18}
-\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-4}{\ignorespaces CBOW与Skip-Gram模型区别\relax }}{19}}
-\newlabel{fig:word2vec}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-4}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}获取相似提交列表}{19}}
+\FN@pp@footnote@aux{11}{18}
+\newlabel{skip_gram}{{2.1}{18}}
 \citation{mikolov2013distributed}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}关键类判定方法}{21}}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-1}{\ignorespaces 关键类判别特征\relax }}{22}}
-\newlabel{tab:coreclass}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-1}{22}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}影响分析辅助方法}{22}}
+\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}2-4}{\ignorespaces CBOW与Skip-Gram模型区别\relax }}{19}}
+\newlabel{fig:word2vec}{{\CJKfamily  {song}2-4}{19}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}相似提交列表获取}{19}}
+\citation{huang2017coreclass,huang2018salient}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}代码修改提交关键类判定方法}{21}}
+\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}2-1}{\ignorespaces 关键类判别特征\relax }}{22}}
+\newlabel{tab:coreclass}{{\CJKfamily  {song}2-1}{22}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}基于结构耦合相似性的修改影响集优化}{22}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}软件实体间结构耦合关系提取}{23}}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-2}{\ignorespaces 类与类（接口）耦合类型表\relax }}{24}}
-\newlabel{coupleRelation}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-2}{24}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}初始影响集优化}{24}}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-3}{\ignorespaces 初始影响集分数赋值示例\relax }}{25}}
-\newlabel{scoreinit}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-3}{25}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}初始影响集优化}{23}}
+\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}2-2}{\ignorespaces 类与类（接口）耦合类型表\relax }}{24}}
+\newlabel{coupleRelation}{{\CJKfamily  {song}2-2}{24}}
+\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}2-3}{\ignorespaces 初始影响集分数赋值示例\relax }}{25}}
+\newlabel{scoreinit}{{\CJKfamily  {song}2-3}{25}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.3}基于历史修改模式的影响分析算法}{25}}
-\newlabel{algo1}{{\caption@xref {algo1}{ on input line 253}}{26}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}实验结果与分析}{27}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.6.1}数据集收集}{27}}
-\FN@pp@footnote@aux{11}{27}
-\FN@pp@footnote@aux{12}{27}
-\FN@pp@footnote@aux{13}{27}
-\FN@pp@footnote@aux{14}{27}
-\FN@pp@footnote@aux{15}{27}
-\FN@pp@footnote@aux{16}{27}
-\FN@pp@footnote@aux{17}{27}
-\FN@pp@footnote@aux{18}{27}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-4}{\ignorespaces 实验项目数据信息\relax }}{28}}
-\newlabel{data1}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-4}{28}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.6.2}实验评估准则}{28}}
-\newlabel{recall}{{2.12}{28}}
-\newlabel{precision}{{2.13}{28}}
-\newlabel{recall_cut}{{2.14}{28}}
-\newlabel{precision_cut}{{2.15}{28}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.6.3}实验结果分析}{29}}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-5}{\ignorespaces 基于$JRipples$的影响分析辅助结果\relax }}{30}}
-\newlabel{jrriples}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-5}{30}}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-6}{\ignorespaces 基于$Impact Miner$的影响分析辅助结果\relax }}{30}}
-\newlabel{ImpactMiner}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-6}{30}}
-\@writefile{lot}{\contentsline {table}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-7}{\ignorespaces 不同相似阈值$\eta $下实验结果\relax }}{31}}
-\newlabel{yuzhi}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-7}{31}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}本章小结}{31}}
-\@writefile{lof}{\contentsline {figure}{\numberline {\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-5}{\ignorespaces 不同$\eta $下影响集优化示例\relax }}{32}}
-\newlabel{fig:eta}{{\CJKfamily  {song}\fontsize  {12pt}{\baselineskip }\selectfont  2-5}{32}}
+\newlabel{algo1}{{\caption@xref {algo1}{ on input line 245}}{26}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}本章小结}{27}}
 \FN@pp@footnotehinttrue 
 \@setckpt{chapter/chap2}{
-\setcounter{page}{33}
-\setcounter{equation}{15}
+\setcounter{page}{28}
+\setcounter{equation}{11}
 \setcounter{enumi}{0}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
@@ -85,15 +60,15 @@
 \setcounter{mpfootnote}{0}
 \setcounter{part}{0}
 \setcounter{section}{2}
-\setcounter{subsection}{7}
+\setcounter{subsection}{6}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
-\setcounter{figure}{5}
-\setcounter{table}{7}
+\setcounter{figure}{4}
+\setcounter{table}{3}
 \setcounter{ContinuedFloat}{0}
-\setcounter{pp@next@reset}{19}
-\setcounter{@fnserial}{18}
+\setcounter{pp@next@reset}{12}
+\setcounter{@fnserial}{11}
 \setcounter{parentequation}{0}
 \setcounter{subfigure}{0}
 \setcounter{lofdepth}{1}
@@ -107,6 +82,7 @@
 \setcounter{float@type}{16}
 \setcounter{algorithm}{0}
 \setcounter{lstnumber}{1}
+\setcounter{NAT@ctr}{0}
 \setcounter{lstlisting}{0}
 \setcounter{cnkeywdaccepted}{1}
 \setcounter{numcnkeywds}{5}

@@ -29,6 +29,10 @@
 
 \pagestyle{fancy}
 
+\DeclareCaptionFont{wuhao}{\wuhao}
+\captionsetup{font={wuhao},labelfont={wuhao}}
+\captionsetup[algorithm]{font={wuhao},labelfont={wuhao}}
+
 \begin{document}
 \begin{CJK*}{GBK}{song}
 \CJKtilde
@@ -86,7 +90,12 @@
 
 %%%参考文献%%%
 \addcontentsline{toc}{part}{参考文献}
-\bibliographystyle{unsrt}
+\rhead{\xiaowuhao 参考文献}
+\renewcommand{\refname}{\song\xiaoerhao 参考文献}
+\renewcommand\baselinestretch{1.0}\selectfont
+\bibliographystyle{TJUThesis}
+\setlength{\bibsep}{0.5ex}
+\wuhao
 \bibliography{cite}
 
 %\include{bib}

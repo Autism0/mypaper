@@ -1,39 +1,373 @@
 
-\rhead{\xiaowuhao\sectionindex\quad代码修改影响分析与修改周期预测系统}
-\section{代码修改影响分析与修改周期预测系统}
-\par{本章结合第二章与第三章的研究内容，通过本文提出的修改影响分析辅助方法和修改完成预测方法构建我们的代码修改影响分析与周期预测系统。系统的实现采用MVC(Model-View-Controller)模式，实现平台为Java，采用Spring Boot框架进行系统构建，前端使用Thymeleaf引擎，后台数据库为MongoDB数据库。其中，该系统主要分为三大模块：(1)代码修改影响分析模块；(2)代码修改周期预测模块；(3)基础服务模块。
-系统功能模块图如图所示。}
+\rhead{\xiaowuhao\sectionindex\quad实验分析及工具应用}
+\section{代码修改影响分析与修改周期预测实验分析及工具应用}
+\par{本章结合第二章与第三章的研究内容，介绍代码修改影响分析与修改周期预测的实验设计与评估，以及从技术角度讨论相关应用工具的设计与实现。在修改影响分析实验中，我们对两个传统影响分析工具在8个项目上的影响分析结果进行优化调整，实验结果证实了我们方法的有效性。在代码修改周期预测实验中，我们收集了两个开源项目的修改历史信息，通过两个数据集训练模型，实验结果也表明了我们的方法对修改周期预测的可行性。另外，工具应用的实现采用MVC（Model-View-Controller） 模式，实现平台为Java，系统框架为Spring Boot，系统前端则使用Thymeleaf引擎，后端数据库采用MongoDB。}
+\subsection{代码修改影响分析实验设计与评估}
+\par{在本节中将介绍影响分析辅助方法的实验设计与评估。分别介绍实验数据的收集和去噪过程，实验的评估方法，以及实验结果。}
+\subsubsection{数据集收集}
+\par{我们从开源项目中选取8个项目进行影响分析实验。这些项目均保持着长期维护，有大量优质提交信息，并且是在软件工程领域常用的开源项目。这些项目分别是FreeCol\footnote{http://www.freecol.org/}，HSQLDB\footnote{http://hsqldb.org/}，HtmlUnit\footnote{http://htmlunit.sourceforge.net/}，JAMWiki\footnote{http://www.jamwiki.org/}，
+jEdit\footnote{http://www.jedit.org/}，jHotDraw\footnote{http://www.jhotdraw.org/}，Makagiga\footnote{https://makagiga.sourceforge.io/}，OmegaT\footnote{https://omegat.org/}。
+这些开源项目代表了不同的应用领域和开发环境。
+\begin{table}[ht]
+\begin{center}
+\begin{footnotesize}
+\caption{实验项目数据统计信息}
+\label{data1}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{项目名} & \textbf{版本跨度} & \textbf{提交个数} & \textbf{项目名} & \textbf{版本跨度} & \textbf{提交个数} \\ \hline
+FreeCol      & 0.7-1.0       & 1150          & HSQLDB       & 2.20-2.33     & 637           \\ \hline
+HtmlUnit     & 2.0-2.21      & 737           & JAMWiki      & 0.82-1.3      & 499           \\ \hline
+jEdit        & 4.0-4.5       & 1601          & JHotDraw     & 7.1-7.5       & 378           \\ \hline
+Makagiga     & 3.82-4.12     & 2072          & OmegaT       & 2.3-3.54      & 627           \\ \hline
+\end{tabular}
+\end{footnotesize}
+\end{center}
+\end{table}}
+\par{同时，为了保证实验的可靠性，需要使用本文2.2.1节中提出的提交数据优化方法对实验数据集进行优化，去除只涉及一个修改类的提交（这种类型的提交不包含影响集）以及涉及20个修改类的提交（该类提交通常由多个普通提交组合而成）。项目的详细信息如表\ref{data1}所示。}
+\subsubsection{实验评估准则}
+\par{影响分析研究中广泛使用召回率和精确率作为结果的度量指标，这两个指标能评估实验产生的预估影响集与真实修改产生的实际影响集之间的差异。给定软件实体$e_{s}$（本文影响分析实体为类），用$E_{imp}$表示影响分析结果中软件实体的集合（预估影响集），用$R_{imp}$ 表示实际修改中被影响的软件实体的集合（实际影响集）。则实验结果的召回率由公式\ref{recall}定义，精确率由公式\ref{precision}定义。此外，为了更细致的评估实验结果，我们对预估影响集按不同截断点进行划分，分别评估实验影响集前5、前10、前20、前50的召回率和精确率，如公式\ref{recall_cut}和公式\ref{precision_cut}定义。
+\begin{equation}\label{recall}
+  Recall=\frac{1}{n}\sum_{i=1}^{n}\frac{\left | E_{imp} \bigcap R_{imp}\right |}{\left | R_{imp} \right |}\times100\%
+\end{equation}
+\begin{equation}\label{precision}
+  Precision=\frac{1}{n}\sum_{i=1}^{n}\frac{\left | E_{imp} \bigcap R_{imp}\right |}{\left | E_{imp} \right |}\times100\%
+\end{equation}
+\begin{equation}\label{recall_cut}
+Recall(cutpoint)=\frac{1}{n}\sum_{i=1}^{n}\frac{\left | E_{imp} (cutpoint)\bigcap R_{imp}\right |}{ \left |R_{imp}\right |}\times100\%
+\end{equation}
+\begin{equation}\label{precision_cut}
+  Precision(cutpoint)=\frac{1}{n}\sum_{i=1}^{n}\frac{\left | E_{imp} (cutpoint)\bigcap R_{imp}\right |}{ cutpoint }\times100\%
+\end{equation}
+}
+\par{为了验证本文提出的影响分析辅助方法的有效性，我们选取两个影响分析工具$JRipples$和$Impact Miner$作为传统影响分析方法，用于产生初始影响集。$JRipples$ 工具是Eclipse官方插件，该插件是Java代码影响分析领域中被广泛使用的工具，也是实际开发中开发人员常用的影响分析工具。而$Impact Miner$则是可用工具中影响分析效果较好的一款工具，另外，$Impact Miner$工具结合了多种影响分析中的研究方法，包括：信息检索，软件历史库挖掘以及动态影响分析。}
+\par{本文实验中的验证数据为开源项目中提交数据，无法直观判断其修改集和影响集。因此，我们通过关键类判定方法识别提交中的关键类，将关键类作为实验的修改集，提交中所有非关键类作为影响集。}
+\par{在实验中，我们主要关注以下四个方面的问题：}
+\par{\textbf{研究问题1:我们的方法是否能提高传统影响分析的效果？}该研究问题是本文工作的出发点，我们试图通过相似的历史修改信息来指导当前修改工作的影响分析。}
+\par{\textbf{研究问题2：相似提交检索中加入修改后代码片段是否能提高召回率和精确率？}在本文提出的影响分析方法的相似提交检索步骤中，默认是通过代码修改前片段及修改注释信息（修改目标描述）的相似度来衡量提交与当前修改的相似度。在研究问题2中，我们考虑在相似提交检索中加入修改后代码片段的相似度，研究影响分析的效果是否有提升。若效果提升，则在可使用代码修改后片段（需完成目标修改）的影响分析中，加入修改后代码片段的相似度。}
+\par{\textbf{研究问题3：以关键类作为修改的等价类是否能提高影响分析的效果？}相似提交检索以及相似耦合关系的检索中，本文方法都是以提交中的关键类作为修改的等价类进行相似性的测量，研究问题3目标是测试关键类是否能提高影响分析的效果。}
+\par{\textbf{研究问题4：结构耦合关系相似程度是否影响召回率和精确率？}在影响集的优化调整过程中，我们基于结构耦合关系的相似性实现对相似提交中关键类的修改模式的映射。结构耦合关系相似度指的是相似提交中关键类与非关键类的耦合关系和当前修改类与初始影响集中类的耦合关系的相似度。若相似度大于阈值$\eta$，则调整初始影响集中该类的位置。研究问题4关注于结构耦合关系相似程度是否影响召回率和精确率，即阈值$\eta$对影响分析结果的影响。}
+\subsubsection{实验结果分析}
+\par{\textbf{研究问题1:我们的方法是否能提高传统影响分析的效果？}}
+\begin{table}[t]
+\begin{center}
+\begin{scriptsize}
+\caption{基于$JRipples$的影响分析辅助结果}
+\label{jrriples}
+\begin{tabular}{cccccccccccc}
+\toprule
+\multirow{2}{*}{\textbf{项目名}} & \multirow{2}{*}{\textbf{方法}} & \multicolumn{5}{c}{\textbf{召回率（\%）}}                                               & \multicolumn{5}{c}{\textbf{精确率（\%）}}                                              \\ \cline{3-12}
+                              &                              & \textbf{5}     & \textbf{10}    & \textbf{20}    & \textbf{30}    & \textbf{50}    & \textbf{5}     & \textbf{10}    & \textbf{20}    & \textbf{30}    & \textbf{50}   \\ \midrule
+\multirow{2}{*}{FreeCol}      & JRipples                     & 13.68          & 20.52          & 25.50          & 28.15          & 28.72          & 12.65          & 9.53           & 6.01           & 4.37           & 2.68          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method         & \cellcolor[HTML]{E3E3E3}14.65 & \cellcolor[HTML]{E3E3E3}20.42 & \cellcolor[HTML]{E3E3E3}25.49 & \cellcolor[HTML]{E3E3E3}28.72 & \cellcolor[HTML]{E3E3E3}28.72 & \cellcolor[HTML]{E3E3E3}13.65 & \cellcolor[HTML]{E3E3E3}9.70  & \cellcolor[HTML]{E3E3E3}28.72  & \cellcolor[HTML]{E3E3E3}28.72  & \cellcolor[HTML]{E3E3E3}2.68 \\
+\multirow{2}{*}{HSQLDB}       & JRipples                     & 16.43          & 24.76          & 42.03          & 55.67          & 61.05          & 22.56          & 18.33          & 15.13          & 13.04          & 8.93          \\
+                              &\cellcolor[HTML]{E3E3E3} Our Method          & \cellcolor[HTML]{E3E3E3}18.10 & \cellcolor[HTML]{E3E3E3}30.53 &\cellcolor[HTML]{E3E3E3}47.12 & \cellcolor[HTML]{E3E3E3}55.67 & \cellcolor[HTML]{E3E3E3}61.05 & \cellcolor[HTML]{E3E3E3}24.56 & \cellcolor[HTML]{E3E3E3}21.14 &\cellcolor[HTML]{E3E3E3} 16.18 & \cellcolor[HTML]{E3E3E3}13.04 &\cellcolor[HTML]{E3E3E3}8.93 \\
+\multirow{2}{*}{HtmlUnit}     & JRipples                     & 15.17          & 18.93          & 25.19          & 26.76          & 28.63          & 11.55          & 7.25           & 4.79           & 3.48           & 2.28          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}17.00 & \cellcolor[HTML]{E3E3E3}19.89 & \cellcolor[HTML]{E3E3E3}25.91 & \cellcolor[HTML]{E3E3E3}27.30 & \cellcolor[HTML]{E3E3E3}28.63 & \cellcolor[HTML]{E3E3E3}13.14 & \cellcolor[HTML]{E3E3E3}8.74  & \cellcolor[HTML]{E3E3E3}4.82  & \cellcolor[HTML]{E3E3E3}3.52  & \cellcolor[HTML]{E3E3E3}2.28 \\
+\multirow{2}{*}{JAMWiki}      & JRipples                     & 24.08          & 34.12          & 38.60          & 40.07          & 40.16          & 16.30          & 12.35          & 7.35           & 5.15           & 3.11          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}32.27 & \cellcolor[HTML]{E3E3E3}36.36 & \cellcolor[HTML]{E3E3E3}38.90 & \cellcolor[HTML]{E3E3E3}40.07 & \cellcolor[HTML]{E3E3E3}40.16 & \cellcolor[HTML]{E3E3E3}23.19 & \cellcolor[HTML]{E3E3E3}13.69 & \cellcolor[HTML]{E3E3E3}13.69  & \cellcolor[HTML]{E3E3E3}13.69  & \cellcolor[HTML]{E3E3E3}3.11 \\
+\multirow{2}{*}{jEdit}        & JRipples                     & 23.59          & 34.18          & 43.77          & 47.28          & 50.10          & 16.15          & 11.15          & 6.90           & 5.19           & 3.31          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}29.41 & \cellcolor[HTML]{E3E3E3}37.23 & \cellcolor[HTML]{E3E3E3}44.83 & \cellcolor[HTML]{E3E3E3}48.34 & \cellcolor[HTML]{E3E3E3}50.10 & \cellcolor[HTML]{E3E3E3}18.07 & \cellcolor[HTML]{E3E3E3}12.12 & \cellcolor[HTML]{E3E3E3}7.02  & \cellcolor[HTML]{E3E3E3}5.32  & \cellcolor[HTML]{E3E3E3}3.11 \\
+\multirow{2}{*}{JHotDrow}     & JRipples                     & 12.82          & 16.86          & 17.29          & 18.34          & 18.82          & 11.07          & 8.39           & 4.38           & 3.21           & 2.04          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}15.10 & \cellcolor[HTML]{E3E3E3}18.45 & \cellcolor[HTML]{E3E3E3}17.39 & \cellcolor[HTML]{E3E3E3}18.34 & \cellcolor[HTML]{E3E3E3}18.82 & \cellcolor[HTML]{E3E3E3}13.77 & \cellcolor[HTML]{E3E3E3}13.77  & \cellcolor[HTML]{E3E3E3}4.44  & \cellcolor[HTML]{E3E3E3}3.21  & \cellcolor[HTML]{E3E3E3}2.04 \\
+\multirow{2}{*}{Makagiga}     & JRipples                     & 21.78          & 30.67          & 39.54          & 46.34          & 51.74          & 24.04          & 17.41          & 12.13          & 9.78           & 6.99          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}23.22 & \cellcolor[HTML]{E3E3E3}31.32 & \cellcolor[HTML]{E3E3E3}40.09 & \cellcolor[HTML]{E3E3E3}49.83 & \cellcolor[HTML]{E3E3E3}51.48 & \cellcolor[HTML]{E3E3E3}25.74 & \cellcolor[HTML]{E3E3E3}17.93 & \cellcolor[HTML]{E3E3E3}12.30 & \cellcolor[HTML]{E3E3E3}9.91  & \cellcolor[HTML]{E3E3E3}6.99 \\
+\multirow{2}{*}{OmegaT}       & JRipples                     & 39.78          & 43.93          & 44.54          & 44.54          & 44.54          & 22.04          & 12.04          & 6.02           & 6.02           & 6.02          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method         & \cellcolor[HTML]{E3E3E3}41.41 & \cellcolor[HTML]{E3E3E3}44.03 & \cellcolor[HTML]{E3E3E3}44.54 & \cellcolor[HTML]{E3E3E3}44.54 & \cellcolor[HTML]{E3E3E3}44.54 & \cellcolor[HTML]{E3E3E3}23.65 & \cellcolor[HTML]{E3E3E3}13.04 & \cellcolor[HTML]{E3E3E3}6.02  & \cellcolor[HTML]{E3E3E3}6.02  & \cellcolor[HTML]{E3E3E3}6.02 \\  \bottomrule
+\end{tabular}
+\end{scriptsize}
+\end{center}
+\end{table}
+\begin{table}[t]
+\begin{center}
+\begin{scriptsize}
+\caption{基于$Impact Miner$的影响分析辅助结果}
+\label{ImpactMiner}
+\begin{tabular}{cccccccccccc}
+\toprule
+\multirow{2}{*}{\textbf{项目名}} & \multirow{2}{*}{\textbf{方法}} & \multicolumn{5}{c}{\textbf{召回率（\%）}}                                               & \multicolumn{5}{c}{\textbf{精确率（\%）}}                                               \\ \cline{3-12}
+                              &                              & \textbf{5}     & \textbf{10}    & \textbf{20}    & \textbf{30}    & \textbf{50}    & \textbf{5}     & \textbf{10}    & \textbf{20}    & \textbf{30}    & \textbf{50}    \\ \midrule
+\multirow{2}{*}{FreeCol}      & ImpactMiner                     & 18.22          & 24.78          & 31.23          & 34.78          & 38.39          & 18.15          & 14.63          & 12.92          & 9.63           & 5.31           \\
+                              &\cellcolor[HTML]{E3E3E3} Our Method          & \cellcolor[HTML]{E3E3E3}22.47 & \cellcolor[HTML]{E3E3E3}28.68 & \cellcolor[HTML]{E3E3E3}33.21 & \cellcolor[HTML]{E3E3E3}35.98 & \cellcolor[HTML]{E3E3E3}38.39 & \cellcolor[HTML]{E3E3E3}22.12 & \cellcolor[HTML]{E3E3E3}17.35 & \cellcolor[HTML]{E3E3E3}14.21 & \cellcolor[HTML]{E3E3E3}10.39 & \cellcolor[HTML]{E3E3E3}5.31  \\
+\multirow{2}{*}{HSQLDB}       & ImpactMiner                     & 34.33          & 39.03          & 47.99          & 58.33          & 63.87          & 30.13          & 24.11          & 21.69          & 17.56          & 14.02          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}41.09 & \cellcolor[HTML]{E3E3E3}45.42 &\cellcolor[HTML]{E3E3E3} 51.08 & \cellcolor[HTML]{E3E3E3}60.77 & \cellcolor[HTML]{E3E3E3}63.87 & \cellcolor[HTML]{E3E3E3}33.77 & \cellcolor[HTML]{E3E3E3}27.65 & \cellcolor[HTML]{E3E3E3}23.00 & \cellcolor[HTML]{E3E3E3}18.14 &\cellcolor[HTML]{E3E3E3} 14.02 \\
+\multirow{2}{*}{HtmlUnit}     & ImpactMiner                     & 18.33          & 22.43          & 28.06          & 29.97          & 31.70          & 15.48          & 11.98          & 9.97           & 7.53           & 5.89           \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}20.17 & \cellcolor[HTML]{E3E3E3}24.08 &\cellcolor[HTML]{E3E3E3} 29.61 & \cellcolor[HTML]{E3E3E3}31.15 & \cellcolor[HTML]{E3E3E3}31.70 & \cellcolor[HTML]{E3E3E3}17.44 & \cellcolor[HTML]{E3E3E3}13.70 & \cellcolor[HTML]{E3E3E3}11.31 & \cellcolor[HTML]{E3E3E3}9.65  & \cellcolor[HTML]{E3E3E3}5.89  \\
+\multirow{2}{*}{JAMWiki}      & ImpactMiner                     & 33.80          & 38.21          & 41.26          & 45.04          & 49.19          & 19.09          & 16.38          & 12.82          & 9.95           & 7.38           \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}39.10 & \cellcolor[HTML]{E3E3E3}42.44 & \cellcolor[HTML]{E3E3E3}45.37 & \cellcolor[HTML]{E3E3E3}47.39 & \cellcolor[HTML]{E3E3E3}49.16 & \cellcolor[HTML]{E3E3E3}23.41 &\cellcolor[HTML]{E3E3E3} 18.64 &\cellcolor[HTML]{E3E3E3} 14.63 &\cellcolor[HTML]{E3E3E3}11.85 &\cellcolor[HTML]{E3E3E3} 7.38  \\
+\multirow{2}{*}{jEdit}        & ImpactMiner                     & 34.39          & 47.13          & 54.22          & 57.33          & 62.12          & 15.13          & 21.32          & 18.54          & 15.23          & 11.33          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}41.44 & \cellcolor[HTML]{E3E3E3}53.33 & \cellcolor[HTML]{E3E3E3}58.83 & \cellcolor[HTML]{E3E3E3}60.34 & \cellcolor[HTML]{E3E3E3}62.12 & \cellcolor[HTML]{E3E3E3}30.11 &\cellcolor[HTML]{E3E3E3} 28.49 & \cellcolor[HTML]{E3E3E3}23.12 & \cellcolor[HTML]{E3E3E3}19.83 &\cellcolor[HTML]{E3E3E3} 11.33 \\
+\multirow{2}{*}{JHotDrow}     & ImpactMiner                     & 16.72          & 21.02          & 24.26          & 27.11          & 29.30          & 13.07          & 11.55          & 9.87           & 8.05           & 5.15           \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}18.25 &\cellcolor[HTML]{E3E3E3} 24.54 & \cellcolor[HTML]{E3E3E3}27.24 &\cellcolor[HTML]{E3E3E3} 28.12 & \cellcolor[HTML]{E3E3E3}29.30 & \cellcolor[HTML]{E3E3E3}14.25 & \cellcolor[HTML]{E3E3E3}12.54 &\cellcolor[HTML]{E3E3E3} 11.06 & \cellcolor[HTML]{E3E3E3}8.49  &\cellcolor[HTML]{E3E3E3}5.15  \\
+\multirow{2}{*}{Makagiga}     & ImpactMiner                     & 28.31          & 35.76          & 40.01          & 48.21          & 53.87          & 29.33          & 23.54          & 17.65          & 13.33          & 10.94          \\
+                              & \cellcolor[HTML]{E3E3E3}Our Method          & \cellcolor[HTML]{E3E3E3}33.64 &\cellcolor[HTML]{E3E3E3} 39.09 & \cellcolor[HTML]{E3E3E3}44.84 & \cellcolor[HTML]{E3E3E3}51.59 & \cellcolor[HTML]{E3E3E3}53.87 &\cellcolor[HTML]{E3E3E3} 33.04 & \cellcolor[HTML]{E3E3E3}27.81 & \cellcolor[HTML]{E3E3E3}22.02 & \cellcolor[HTML]{E3E3E3}16.52 & \cellcolor[HTML]{E3E3E3}10.94 \\
+\multirow{2}{*}{OmegaT}       & ImpactMiner                     & 44.34          & 50.43          & 53.66          & 56.71          & 61.63          & 26.54          & 22.76          & 19.42          & 16.21          & 13.11          \\
+                              &\cellcolor[HTML]{E3E3E3} Our Method          &\cellcolor[HTML]{E3E3E3} 51.39 & \cellcolor[HTML]{E3E3E3}54.93 & \cellcolor[HTML]{E3E3E3}58.01 & \cellcolor[HTML]{E3E3E3}59.82 & \cellcolor[HTML]{E3E3E3}61.63 &\cellcolor[HTML]{E3E3E3} 29.45 & \cellcolor[HTML]{E3E3E3}24.35 &\cellcolor[HTML]{E3E3E3} 21.10 & \cellcolor[HTML]{E3E3E3}18.61 & \cellcolor[HTML]{E3E3E3}13.11 \\  \bottomrule
+\end{tabular}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{我们分别基于$JRipples$工具和$Impact Miner$工具在8个项目上评估了影响分析辅助方法效果，实验结果如表\ref{jrriples}和表\ref{ImpactMiner}所示。实验结果显示，我们的方法在8 个项目上对两个工具的初始影响集都起到了辅助效果，证实了本文提交出方法都有效性。其中，在$JRipples$基础上，我们的方法在8个项目上影响集前5和前10召回率平均提升了14.5\%和6.9\%，影响集前5和前10的精确率平均提升了15.4\%和16.6\%。而在$Impact Miner$的基础上，我们的方法在8个项目上的实验结果显示，影响集前5和前10的召回率平均提升了16.64\%和12.3\%，影响集前5和前10的精确率平均提升了25.1\%和16.1\%。观察可以发现，我们的方法对$Impact Miner$的辅助效果更好，我们研究发现这是由于$Impact Miner$ 的初始影响集中包含更多实际影响类，给我们的影响分析辅助方法提供了更大的调整空间。}
+\par{从表\ref{jrriples}中可以发现，在所有项目的前50召回率和精确率中，我们的方法的结果于基础影响分析方法的结果相同，这是由于我们实际设置的初始影响集大小为50，在影响集优化调整过程中，最终影响集也只包含初始影响集的50个结果。此外，在一些项目的实验结果中前30 的召回率和精确率是相同的，例如JAMWiki 和OmegaT 两个项目。我们从实验数据中发现，这是由于$JRipples$ 在这两个项目上影响分析产生的初始影响集大小小于30，导致我们取前30评估实验结果是相同的。同时，我们可以发现，当传统影响分析方法前50召回率或精确率更高时，我们的方法的辅助效果更加明显。这是因为初始影响集中包含更多的实际影响类，在影响集重排序时，我们的方法有更大几率将实际影响类的排序位置往前移动。}
+\par{综上所述，本文提出的基于历史修改模式的影响分析辅助方法在多个项目上能提升传统影响分析工具的效果，验证了本文方法的有效性。}
+\par{\textbf{研究问题2：相似提交检索中加入修改后代码片段是否能提高召回率和精确率？}}
+\par{对于研究问题2，我们以$ImpactMiner$影响分析工具为基础在3个项目上进行影响分析测试，并且在相似提交的检索中加入了修改后代码的相似性。实验结果如表\ref{newcode}所示，其中，$Our Method$对应相似提交检索中只使用注释文本（修改目标）和修改前代码两部分的相似度。$Our Method2$对应的是在前面方法的基础上增加修改后代码的相似度，综合三部分的相似度从提交库中检索相似提交。}
+\par{观察实验结果可以发现，$Our Method2$在三个项目上对$Impact Miner$的影响分析结果都起到了提升效果，证明通过注释文本、修改前代码以及修改后代码相似度检索相似提交的方法是有效的。同时，$Our Method2$ 与$Our Method$的影响分析结果相比，也有明显的提高，说明结合修改前后两个版本的代码片段的相似度，能更准确的反应历史提交与当前修改的相似性。值得注意的是，本文默认只使用修改前代码片段，这是由于大多数影响分析都是应用于修改之前。另外，如果开发人员在修改之后影响分析，我们的方法也证明了增加修改后的代码，能得到更准确的影响分析结果。}
+
+\begin{table}[]
+\begin{center}
+\begin{scriptsize}
+\caption{增加修改后代码相似度的实验结果}
+\label{newcode}
+\begin{tabular}{cccccccccccc}
+\toprule
+                               &                                      & \multicolumn{5}{c}{\textbf{召回率（\%）}}                                                                                                                          & \multicolumn{5}{c}{\textbf{精确率（\%）}}                                                                                                                          \\ \cline{3-12}
+\multirow{-2}{*}{\textbf{项目名}} & \multirow{-2}{*}{\textbf{方法}}        & \textbf{5}                    & \textbf{10}                   & \textbf{20}                   & \textbf{30}                   & \textbf{50}                   & \textbf{5}                    & \textbf{10}                   & \textbf{20}                   & \textbf{30}                   & \textbf{50}                   \\ \midrule
+                               & ImpactMiner                          & 34.39                         & 47.13                         & 54.22                         & 57.33                         & 62.12                         & 15.13                         & 21.32                         & 18.54                         & 15.23                         & 11.33                         \\
+                               & Our Method                           & 41.44                         & 53.33                         & 58.83                         & 60.34                         & 62.12                         & 30.11                         & 28.49                         & 23.12                         & 19.83                         & 11.33                         \\
+\multirow{-3}{*}{jEdit}        & \cellcolor[HTML]{E3E3E3}Our Method 2 & \cellcolor[HTML]{E3E3E3}42.56 & \cellcolor[HTML]{E3E3E3}56.81 & \cellcolor[HTML]{E3E3E3}59.34 & \cellcolor[HTML]{E3E3E3}60.55 & \cellcolor[HTML]{E3E3E3}62.12 & \cellcolor[HTML]{E3E3E3}31.58 & \cellcolor[HTML]{E3E3E3}30.32 & \cellcolor[HTML]{E3E3E3}25.66 & \cellcolor[HTML]{E3E3E3}19.87 & \cellcolor[HTML]{E3E3E3}11.33 \\ \hline
+                               & ImpactMiner                          & 16.72                         & 21.02                         & 24.26                         & 27.11                         & 29.30                         & 13.07                         & 11.55                         & 9.87                          & 8.05                          & 5.15                          \\
+                               & Our Method                           & 18.25                         & 24.54                         & 27.24                         & 28.12                         & 29.30                         & 14.25                         & 12.54                         & 11.06                         & 8.49                          & 5.15                          \\
+\multirow{-3}{*}{JHotDraw}     & \cellcolor[HTML]{E3E3E3}Our Method 2 & \cellcolor[HTML]{E3E3E3}19.89 & \cellcolor[HTML]{E3E3E3}27.45 & \cellcolor[HTML]{E3E3E3}27.96 & \cellcolor[HTML]{E3E3E3}28.24 & \cellcolor[HTML]{E3E3E3}29.30 & \cellcolor[HTML]{E3E3E3}15.11 & \cellcolor[HTML]{E3E3E3}13.69 & \cellcolor[HTML]{E3E3E3}11.26 & \cellcolor[HTML]{E3E3E3}9.04  & \cellcolor[HTML]{E3E3E3}5.15  \\ \hline
+                               & ImpactMiner                          & 34.33                         & 39.03                         & 47.99                         & 58.33                         & 63.87                         & 30.13                         & 24.11                         & 21.69                         & 17.56                         & 14.02                         \\
+                               & Our Method                           & 41.09                         & 45.42                         & 51.08                         & 60.77                         & 63.87                         & 33.77                         & 27.65                         & 23.00                         & 18.14                         & 14.02                         \\
+\multirow{-3}{*}{HSQLDB}       & \cellcolor[HTML]{E3E3E3}Our Method 2 & \cellcolor[HTML]{E3E3E3}42.19 & \cellcolor[HTML]{E3E3E3}48.78 & \cellcolor[HTML]{E3E3E3}52.65 & \cellcolor[HTML]{E3E3E3}61.34 & \cellcolor[HTML]{E3E3E3}63.87 & \cellcolor[HTML]{E3E3E3}33.77 & \cellcolor[HTML]{E3E3E3}28.42 & \cellcolor[HTML]{E3E3E3}25.64 & \cellcolor[HTML]{E3E3E3}18.21 & \cellcolor[HTML]{E3E3E3}14.02 \\  \bottomrule
+\end{tabular}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{\textbf{研究问题3：以关键类作为修改的等价类是否能提高影响分析的效果？}}
+\par{研究问题3的对比实验中，我们从提交中随机选择一个类作为当前修改类的等价类。在相似提交检索中，相似度计算使用该类的修改代码片段，且在影响集优化中的结构耦合关系相似度计算中，也使用该类与提交中其他类的耦合关系。}
+\begin{table}[htb]
+\begin{center}
+\begin{scriptsize}
+\caption{使用关键类识别的实验结果}
+\label{coreclassCompare}
+\begin{tabular}{cccccccccccc}
+\toprule
+                               &                                    & \multicolumn{5}{c}{\textbf{召回率（\%）}}                                                                                                                          & \multicolumn{5}{c}{\textbf{精确率（\%）}}                                                                                                                          \\ \cline{3-12}
+\multirow{-2}{*}{\textbf{项目名}} & \multirow{-2}{*}{\textbf{方法}}      & \textbf{5}                    & \textbf{10}                   & \textbf{20}                   & \textbf{30}                   & \textbf{50}                   & \textbf{5}                    & \textbf{10}                   & \textbf{20}                   & \textbf{30}                   & \textbf{50}                   \\ \midrule
+                               & ImpactMiner                        & 34.39                         & 47.13                         & 54.22                         & 57.33                         & 62.12                         & 15.13                         & 21.32                         & 18.54                         & 15.23                         & 11.33                         \\
+                               & Our Method                         & 41.44                         & 53.33                         & 58.83                         & 60.34                         & 62.12                         & 30.11                         & 28.49                         & 23.12                         & 19.83                         & 11.33                         \\
+\multirow{-3}{*}{jEdit}        & \cellcolor[HTML]{E3E3E3}Comparison & \cellcolor[HTML]{E3E3E3}31.21 & \cellcolor[HTML]{E3E3E3}42.55 & \cellcolor[HTML]{E3E3E3}49.32 & \cellcolor[HTML]{E3E3E3}54.35 & \cellcolor[HTML]{E3E3E3}62.12 & \cellcolor[HTML]{E3E3E3}13.44 & \cellcolor[HTML]{E3E3E3}19.23 & \cellcolor[HTML]{E3E3E3}16.58 & \cellcolor[HTML]{E3E3E3}15.03 & \cellcolor[HTML]{E3E3E3}11.33 \\ \hline
+                               & ImpactMiner                        & 16.72                         & 21.02                         & 24.26                         & 27.11                         & 29.30                         & 13.07                         & 11.55                         & 9.87                          & 8.05                          & 5.15                          \\
+                               & Our Method                         & 18.25                         & 24.54                         & 27.24                         & 28.12                         & 29.30                         & 14.25                         & 12.54                         & 11.06                         & 8.49                          & 5.15                          \\
+\multirow{-3}{*}{JHotDraw}     & \cellcolor[HTML]{E3E3E3}Comparison & \cellcolor[HTML]{E3E3E3}15.12 & \cellcolor[HTML]{E3E3E3}20.15 & \cellcolor[HTML]{E3E3E3}23.44 & \cellcolor[HTML]{E3E3E3}25.89 & \cellcolor[HTML]{E3E3E3}29.30 & \cellcolor[HTML]{E3E3E3}11.49 & \cellcolor[HTML]{E3E3E3}10.78 & \cellcolor[HTML]{E3E3E3}8.62  & \cellcolor[HTML]{E3E3E3}7.88  & \cellcolor[HTML]{E3E3E3}5.15  \\ \hline
+                               & ImpactMiner                        & 34.33                         & 39.03                         & 47.99                         & 58.33                         & 63.87                         & 30.13                         & 24.11                         & 21.69                         & 17.56                         & 14.02                         \\
+                               & Our Method                         & 41.09                         & 45.42                         & 51.08                         & 60.77                         & 63.87                         & 33.77                         & 27.65                         & 23.00                         & 18.14                         & 14.02                         \\
+\multirow{-3}{*}{HSQLDB}       & \cellcolor[HTML]{E3E3E3}Comparison & \cellcolor[HTML]{E3E3E3}28.33 & \cellcolor[HTML]{E3E3E3}31.09 & \cellcolor[HTML]{E3E3E3}38.89 & \cellcolor[HTML]{E3E3E3}49.54 & \cellcolor[HTML]{E3E3E3}63.87 & \cellcolor[HTML]{E3E3E3}22.39 & \cellcolor[HTML]{E3E3E3}19.57 & \cellcolor[HTML]{E3E3E3}18.00 & \cellcolor[HTML]{E3E3E3}16.31 & \cellcolor[HTML]{E3E3E3}14.02 \\  \bottomrule
+\end{tabular}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{在实验中，我们在3个项目上对两种方法进行了对比，其中基础影响分析工具选择的是$Impact Miner$。实验结果如表\ref{coreclassCompare}所示，其中，$Comparison$代表对比的方法。实验结果显示，对比方法的影响分析效果要明显低于我们的方法。并且随机选择一个类作为等价类的对比方法，对基础影响分析工具$Impact Miner$的结果不仅没有提高，反而有所降低。其原因是显而易见的，如果要引入历史提交的修改模式，必须找到提交中核心修改的类，以该类作为修改的起点，而其他类作为修改传播的结果。利用关键类识别方法有助于我们从提交中找到其核心修改的类。}
+\par{\textbf{研究问题4：结构耦合关系相似程度是否影响召回率和精确率？}}
+\par{对于第四个研究问题，我们以$JRipples$为传统影响分析工具在3个项目上测试不同结构耦合关系相似程度对召回率和精确率的影响。如本文2.5.2节所述，相似度阈值为$\eta$，当提交中关键类和一个非关键类的耦合关系与修改类与一个初始影响集中影响类的耦合关系的相似度大于阈值，认为修改类的修改影响会传播给该影响类，并增加该影响类的分数。实验测试不同$\eta$下影响分析的召回率和精确率。实验结果如表\ref{yuzhi}所示，我们可以发现当相似度阈值$\eta$从0.3，0.5，0.8一次增加时，影响分析的召回率和精确率在不断提升，但$\eta$从0.8增加到0.9时，影响分析的召回率和精确率是下降的。同时我们可以发现，$\eta$取值为0.3时，影响分析效果低于$JRipples$，说明实验对$JRipples$ 产生的初始影响集产生负面调整。}
+
+\begin{table}[h]
+\begin{center}
+\begin{scriptsize}
+\caption{不同相似阈值$\eta$下实验结果}
+\label{yuzhi}
+\begin{tabular}{ccccccccccccc}
+\toprule
+\multirow{2}{*}{\textbf{项目名}} & \multirow{2}{*}{\textbf{方法}} & \multirow{2}{*}{\textbf{$\eta$}} & \multicolumn{5}{c}{\textbf{召回率（\%）}}                                               & \multicolumn{5}{c}{\textbf{精确率（\%）}}                                             \\ \cline{4-13}
+                              &                              &                                  & \textbf{5}     & \textbf{10}    & \textbf{20}    & \textbf{30}    & \textbf{50}    & \textbf{5}     & \textbf{10}    & \textbf{20}    & \textbf{30}   & \textbf{50}   \\ \midrule
+\multirow{5}{*}{jEdit}        & JRipples                     &                                  & 23.59          & 34.18          & 43.77          & 47.28          & 50.10          & 16.15          & 11.15          & 6.90           & 5.19          & 3.31          \\
+                              & \multirow{4}{*}{Our method}  & 0.3                              & 17.23          & 27.32          & 35.11          & 42.65          & 50.10          & 13.17          & 9.88           & 6.34           & 5.19          & 3.31          \\
+                              &                              & 0.5                              & 23.62          & 33.75          & 42.68          & 46.44          & 50.10          & 16.21          & 11.66          & 6.90           & 5.24          & 3.31          \\
+                              &                              &\cellcolor[HTML]{E3E3E3} 0.8                     & \cellcolor[HTML]{E3E3E3}29.41 & \cellcolor[HTML]{E3E3E3}37.23 &\cellcolor[HTML]{E3E3E3} 44.83 & \cellcolor[HTML]{E3E3E3}48.34 & \cellcolor[HTML]{E3E3E3}50.10 &\cellcolor[HTML]{E3E3E3} 18.07 &\cellcolor[HTML]{E3E3E3} 12.12 & \cellcolor[HTML]{E3E3E3}7.02  &\cellcolor[HTML]{E3E3E3} 5.32 & \cellcolor[HTML]{E3E3E3}3.31 \\
+                              &                              & 0.9                              & 26.67          & 35.54          & 43.12          & 47.19          & 50.10          & 16.46          & 12.08          & 6.95           & 5.32          & 3.31          \\ \hline
+\multirow{5}{*}{JHotDraw}     & JRipples                     &                                  & 16.72          & 21.02          & 24.26          & 27.11          & 29.30          & 13.07          & 11.55          & 9.87           & 8.05          & 5.15          \\
+                              & \multirow{4}{*}{Our method}  & 0.3                              & 13.31          & 16.76          & 20.01          & 25.59          & 29.30          & 9.81           & 7.65           & 6.02           & 5.52          & 5.15          \\
+                              &                              & 0.5                              & 16.76          & 20.87          & 25.35          & 28.81          & 29.30          & 12.84          & 11.41          & 9.25           & 8.13          & 5.15          \\
+                              &                              &\cellcolor[HTML]{E3E3E3} 0.8                     &\cellcolor[HTML]{E3E3E3} 18.25 &\cellcolor[HTML]{E3E3E3}24.54 &\cellcolor[HTML]{E3E3E3}27.24 & \cellcolor[HTML]{E3E3E3}28.12 &\cellcolor[HTML]{E3E3E3} 29.30 & \cellcolor[HTML]{E3E3E3}14.25 & \cellcolor[HTML]{E3E3E3}12.54 & \cellcolor[HTML]{E3E3E3}11.06 &\cellcolor[HTML]{E3E3E3} 8.49 &\cellcolor[HTML]{E3E3E3} 5.15 \\
+                              &                              & 0.9                              & 17.09          & 23.84          & 25.59          & 27.36          & 29.30          & 13.57          & 12.38          & 10.88          & 8.21          & 5.15          \\ \hline
+\multirow{5}{*}{HSQLDB}       & JRipples                     &                                  & 12.82          & 16.86          & 17.29          & 18.34          & 18.82          & 11.07          & 8.39           & 4.38           & 3.21          & 2.04          \\
+                              & \multirow{4}{*}{Our method}  & 0.3                              & 8.54           & 12.10          & 15.89          & 16.34          & 18.82          & 8.95           & 6.34           & 3.21           & 2.54          & 2.04          \\
+                              &                              & 0.5                              & 11.99          & 15.88          & 17.16          & 17.55          & 18.82          & 11.15          & 8.41           & 4.25           & 3.21          & 2.04          \\
+                              &                              &\cellcolor[HTML]{E3E3E3}0.8                     & \cellcolor[HTML]{E3E3E3}15.10 & \cellcolor[HTML]{E3E3E3}18.45 & \cellcolor[HTML]{E3E3E3}17.39 & \cellcolor[HTML]{E3E3E3}18.34 & \cellcolor[HTML]{E3E3E3}18.82 & \cellcolor[HTML]{E3E3E3}13.77 & \cellcolor[HTML]{E3E3E3}9.26  & \cellcolor[HTML]{E3E3E3}4.44  & \cellcolor[HTML]{E3E3E3}3.21 &\cellcolor[HTML]{E3E3E3}2.04 \\
+                              &                              & 0.9                              & 15.04          & 17.84          & 17.99          & 18.29          & 18.82          & 12.67          & 9.06           & 4.35           & 3.23          & 2.04          \\  \bottomrule
+\end{tabular}
+\end{scriptsize}
+\end{center}
+\end{table}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=5.5in]{myfigure/eta1.pdf}
+\caption{不同$\eta$下影响集优化示例}
+\label{fig:eta}
+\end{figure}
+\par{为了进一步分析耦合关系相似度如何影响实验结果，我们随机从实验数据中提取一个提交的影响分析结果进行分析（如图\ref{fig:eta}所示），我们可以发现阈值$\eta$取值越低，影响集中每个类的最终的得分越高，说明类被调整的次数也越多，$\eta$取值越高，则相反。这是由于阈值低的时候，能找到更多相似耦合关系对（关键类-非关键类），这同时也造成了更多的负面调整。结合图中实际影响类在不同影响集中的位置可以发现，阈值越高，实际影响类被有效调整几率越高，排名越有可能提高。但是，阈值太高时（例如$\eta$取0.9），由于符合相似性的耦合关系对太少，导致影响集得到的调整也变少。}
+
+\par{综上所述，结构耦合关系的相似性可以用于映射修改模式，当相似度较低时，会对影响集产生较大调整，包括大量负面调整，当相似度过高时，则对影响集产生的调整过小。实验验证，当相似度阈值$\eta$ 取值为0.8时，基于机构耦合关系相似性的历史修改模式映射取得最好效果。}
+\subsection{代码修改周期预测实验设计与评估}
+\par{本节首先描述了实验数据的收集及去噪处理方法，然后介绍了在修改周期预测实验中关注的三个研究问题，最后分析了模型预测的实验结果。}
+\subsubsection{数据收集及去噪处理}
+\par{我们从Gerrit代码审核工具中收集开源项目的历史提交信息以及代码审核信息。我们选择了Eclipse\footnote{https://www.eclipse.org/}和OpenDaylight\footnote{https://www.opendaylight.org/}两个项目作为实验数据集。其中，Eclipse是使用最广泛的集成开发环境之一，而OpenDaylight是一种高度可用、模块化以及可扩展的多协议控制器基础架构，用于供应商网络上的SDN部署。Eclipse和OpenDaylight都拥有丰富的代码修改历史数据，可用于代码修改周期的分析。表格展示了实验数据集的详细信息。}
+\begin{table}[h]
+\caption{代码修改周期预测实验数据集}
+\begin{center}
+\begin{scriptsize}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Projects} & \textbf{Time span} & \textbf{No. of reviews} \\ \hline
+Eclipse           & 2016.1-2018.5      & 9455                    \\ \hline
+OpenDaylight      & 2017.1-2018.8      & 6403                    \\ \hline
+\end{tabular}
+\label{tab4}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{另外，我们对大量代码修改数据进行观察，发现其中存在一些噪声数据，这些数据对模型的训练产生负面影响。我们设置了一下几条规则对噪声数据进行过滤：
+\begin{itemize}
+    \item[1)]在代码修改周期的预测中，我们需要从被修改的代码中提取代码修改特征及代码耦合特征。许多提交中不涉及代码修改，我们将过滤这部分的提交数据。
+    \item[2)]我们同时去除数据集中，明显存在异常的修改提交。例如，有一个修改提交需要经过150次的反复修改和审核，而所有修改数据的平均修改和审核次数为5次。
+    \item[3)]另外，我们还去除了项目中不活跃的开发人员的修改提交。我们认为修改提交次数低于两次的开发人员为项目中的非核心维护人员，这些开发人员只在项目中完成极少数的代码修改工作。
+\end{itemize}
+}
+
+\subsubsection{代码修改周期预测的问题研究}
+\par{文章的主要目的是从代码修改及代码审核两个阶段分析代码修改周期，试着通过代码修改及审核次数预测代码修改周期的长短。本节从多个角度研究，评估本文提出的代码修改周期预测方法的有效性。我们关注的研究问题有以下三个：}
+\par{\textbf{研究问题1：本文方法对代码修改任务能否在较短周期内完成的预测效果如何？}}
+\par{开发人员都希望代码修改任务能在较短的时间周期内完成，即一次修改和审核周内，其中关键的是代码修改不存在问题并且在代码审核过程被接受。值得注意的是，在这个研究问题中，我们将审核次数为1的提交数据视为正样本，其余提交数据视为负样本。因此，我们使用本文提出的方法，训练预测模型，预测代码修改任务的审核次数是否为1。数据集中正负样本分布如表\ref{distibution1}所示。}
+\begin{table}[h]
+\caption{按周期是否较短划分的样本分布}
+\begin{center}
+\begin{scriptsize}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Projects} & \textbf{Positive} & \textbf{Negative} \\ \hline
+Eclipse           & 2905              & 6551              \\ \hline
+OpenDaylight      & 1598              & 4807              \\ \hline
+\end{tabular}
+\label{distibution1}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{\textbf{研究问题2：本文方法对代码修改周期的长短的预测效果如何？}}
+\par{观察图\ref{fig:review-day}可以发现，一项代码修改任务所花费时间周期的长短可以根据代码修改和审核次数来划分。在这个研究问题中，我们通过划分审核次数区间，来对应代码修改周期长短的层次。审核次数为1的提交的平均修改周期为1天，我们将这类修改对应为“较短”的代码修改周期；审核次数在2-6区间的提交的平均修改周期为1周内，我们认为这类修改任务对应代码修改周期长短为“一般”；而审核次数在7-20区间的提交的平均修改周期大于一周，我们则认为这类修改任务需要“较长”的修改周期。经过划分后的数据分布如表\ref{distibution2}所示。}
+\begin{table}[ht]
+\caption{不同修改周期的样本分布}
+\begin{center}
+\begin{scriptsize}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Projects} & \textbf{较短} & \textbf{一般} & \textbf{较长} \\ \hline
+Eclipse           & 2905               & 5203                 & 1287                  \\ \hline
+OpenDaylight      & 1598              & 3327                 & 1338                  \\ \hline
+\end{tabular}
+\label{distibution2}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{\textbf{研究问题3：三种类型的特征对模型预测效果的影响如何？}}
+\par{本文方法的核心是从代码修改的历史信息中提取审核元特征、代码耦合特征及代码修改特征，用于度量代码修改的时间周期长短。三种特征代表了代码修改阶段及代码审核阶段对代码修改周期的影响。在这个研究问题中，我们关注于三种类型各自的特征对模型预测效果的影响。}
+\subsubsection{实验结果与分析}
+\par{\textbf{研究问题1：本文方法对代码修改任务能否在较短周期内完成的预测效果如何？}}
+\begin{table}[ht]
+\caption{对修改周期是否较短的预测实验结果}
+\begin{center}
+\begin{scriptsize}
+\begin{tabular}{ccccccccc}
+\toprule
+                                   &                                 & \multicolumn{3}{c}{\textbf{正样例}} & \multicolumn{3}{c}{\textbf{负样例}} &                           \\ \cline{3-8}
+
+\multirow{-2}{*}{\textbf{项目名}} & \multirow{-2}{*}{\textbf{方法}} & \textbf{精确率}        & \textbf{召回率}        & \textbf{F1}        & \textbf{精确率}     & \textbf{召回率}     & \textbf{F1}    & \multirow{-2}{*}{\textbf{准确率}} \\ \midrule
+                                   & LR                                                        & 69.39                     & 33.72                  & 45.38              & 74.84                  & 92.98               & 82.93          & 73.99                                              \\
+                                   & SVM                                                       & 69.89                     & 42.98                  & 53.22              & 77.24                  & 91.27               & 83.67          & 75.79                                              \\
+                                   & RF                                                        & 75.85                     & 40.00                  & 52.55              & 76.85                  & 94.23               & 84.69          & 76.85                                              \\
+                                  & ANN                                                       & 63.21                     & 49.42                  & 55.47              & 78.37                  & 86.44               & 82.21          & 74.58                                              \\
+\rowcolor[HTML]{E1DDDD}
+\multirow{-5}{*}{\cellcolor[HTML]{FFFFFF}Eclipse}          & XGBoost                                                   & 71.63                     & 54.80                  & 62.10              & 82.16                  & 90.56               & 86.16          & 79.72                                              \\ \hline
+                                  & LR                                                        & 60.47                     & 33.66                  & 43.24              & 78.36                  & 78.36               & 84.66          & 74.86                                              \\
+                                   & SVM                                                       & 41.38                     & 19.41                  & 26.43              & 77.52                  & 90.10               & 83.72          & 73.34                                              \\
+                                  & RF                                                        & 51.75                     & 43.04                  & 46.99              & 82.32                  & 86.86               & 84.53          & 76.06                                              \\
+                                  & ANN                                                       & 49.18                     & 9.71                   & 16.22              & 75.59                  & 96.71               & 85.49          & 75.26                                              \\
+\rowcolor[HTML]{E1DDDD}
+\multirow{-5}{*}{\cellcolor[HTML]{FFFFFF}OpenDayLight}     & XGBoost                                                   & 50.39                     & 50.78                  & 50.58              & 87.57                  & 87.40               & 87.49          & 80.03                                              \\  \bottomrule
+\end{tabular}
+\label{RQ1 result}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{表格\ref{RQ1 result}展示了本文方法对代码修改任务能否在较短周期内完成的预测效果，包括正负样本的召回率、精确率和 $F_{1}$值，以及综合预测效果的准确率。在实验中，我们测试对比了本文提出方法在多个机器学习模型上的效果，并采用10折交叉验证方法。针对数据集样本分布不平衡问题，使用SMOTE算法生成训练集中占比较低的样本，测试集中不做改变。}
+\par{观察表\ref{RQ1 result}可以发现，在两个数据集上不同机器学习模型的预测准确率分布为73.34\%至80.03\%，这体现了本文提出方法对代码修改任务能否在较短周期内完成的预测的准确性。对比不同机器学习模型的效果，可以发现\emph{XGBoost}取得了最优的表现。在Eclipse数据集上，\emph{XGBoost}对负样本预测的召回率、精确率和 $F_{1}$值分别是82.16\%，90.56\%和86.16\%，意味着大部分负样本都能被准确预测。负样本代表可能需要重复多次修改的提交，对该类样本的预测有助于开发人员和项目管理提前做出调整和安排。另一方面，在正样本的预测效果上，多种机器学习模型的效果都要低于在负样本上表现。我们认为原因是SMOTE算法并不能完全解决样本不平衡的问题。}
+\par{另外，我们可以发现\emph{XGBoost} 的负样本召回率要稍微低于其他机器学习模型，但是，从正负样本的综合预测效果来看，\emph{XGBoost} 的表现还是明显优于其他机器学习算法。因此，我们选择\emph{XGBoost} 作为我们的预测模型。}
+\begin{table}[]
+\caption{不同修改周期的预测实验结果}
+\begin{center}
+\begin{scriptsize}
+\setlength{\tabcolsep}{1mm}{
+\begin{tabular}{cccccccccccc}
+\toprule
+                              &                              & \multicolumn{3}{c}{\textbf{较短}} & \multicolumn{3}{c}{\textbf{一般}} & \multicolumn{3}{c}{\textbf{较长}} &                                \\ \cline{3-11}
+\multirow{-2}{*}{\textbf{项目名}} & \multirow{-2}{*}{\textbf{方法}} & \textbf{精确率}      & \textbf{召回率}      & \textbf{F1}     & \textbf{精确率}      & \textbf{召回率}      & \textbf{F1}     & \textbf{精确率}      & \textbf{召回率}      & \textbf{F1}     & \multirow{-2}{*}{\textbf{准确率}} \\ \midrule
+                               & LR                                                    & 66.67             & 22.64             & 33.79           & 61.20             & 60.90             & 61.05           & 29.70             & 74.24             & 42.42           & 50.72                                                  \\
+                               & SVM                                                   & 64.04             & 43.92             & 52.10           & 64.07             & 57.18             & 60.04           & 33.57             & 71.21             & 45.63           & 54.98                                                  \\
+                               & RF                                                    & 60.00             & 54.73             & 57.24           & 64.96             & 72.14             & 68.36           & 46.31             & 35.61             & 40.26           & 61.52                                                  \\
+                             & ANN                                                   & 63.81             & 40.20             & 49.33           & 62.57             & 72.73             & 67.27           & 41.32             & 49.62             & 45.09           & 59.23                                                  \\
+\rowcolor[HTML]{E1DDDD}
+\multirow{-5}{*}{\cellcolor[HTML]{FFFFFF}Eclipse}      & XGBoost                                               & 69.59             & 54.90             & 61.38           & 66.45             & 80.94             & 72.98           & 57.23             & 35.99             & 44.19           & 66.42                                                  \\ \hline
+                               & LR                                                    & 52.14             & 23.62             & 32.52           & 59.73             & 61.68             & 60.69           & 44.22             & 65.89             & 52.93           & 53.31                                                  \\
+                              & SVM                                                   & 44.48             & 23.95             & 31.03           & 57.58             & 65.11             & 61.11           & 47.08             & 55.96             & 51.13           & 52.75                                                  \\
+                              & RF                                                    & 48.57             & 44.01             & 46.18           & 59.10             & 69.31             & 63.80           & 54.09             & 39.40             & 45.59           & 55.84                                                  \\
+                               & ANN                                                   & 55.10             & 17.47             & 26.54           & 57.88             & 62.31             & 60.01           & 43.10             & 66.23             & 52.22           & 52.19                                                  \\
+\rowcolor[HTML]{E1DDDD}
+\multirow{-5}{*}{\cellcolor[HTML]{FFFFFF}OpenDayLight} & XGBoost                                               & 60.10             & 37.54             & 46.22           & 61.03             & 77.57             & 68.31           & 58.61             & 47.35             & 52.38           & 60.42                                                  \\   \bottomrule
+\end{tabular}}
+\label{RQ2 result}
+\end{scriptsize}
+\end{center}
+\end{table}
+\par{表格\ref{RQ2 result}是本文方法对代码修改周期的长短的预测结果。在研究问题2中，我们同样对比了多种机器学习模型，以及通过SMOTE算法来一定程度样本不平衡造成的影响。观察实验结果可以发现，\emph{XGBoost} 的综合准确在两个数据集上分别达到66.41\% 和60.42\%，高于其他机器学习模型的预测效果。同时，我们发现，所有机器学习模型的综合准确率分布为50.72\%至66.42\%，表明了我们方法在代码修改周期预测上的有效性。在Eclipse数据集上，\emph{XGBoost}对于不同时间周期的$F_{1}$值分别达到61.38\%，72.68\%，44.19\%。而在OpenDaylight上的效果则有一些下降，我们认为原因是OpenDaylight数据集中样本低于Eclipse。}
+\par{另外，我们发现\emph{XGBoost}在修改周期“较长”的样本上，召回率要略低于一些机器学习算法，但从综合评价指标$F_{1}$值可以发现，\emph{XGBoost} 在该研究问题中是效果最好且稳定的模型。}
+
+\begin{table}[]
+\caption{不同特征组合对比的实验结果}
+\begin{center}
+\begin{scriptsize}
+\setlength{\tabcolsep}{4mm}{
+\begin{tabular}{ccccc}
+\toprule
+\multirow{2}{*}{\textbf{项目名}} & \multirow{2}{*}{\textbf{特征}} & \multicolumn{2}{c}{\textbf{F1}} & \multirow{2}{*}{\textbf{准确率}} \\ \cline{3-4}
+                              &                              & \textbf{正样例}   & \textbf{负样例}   &                               \\ \midrule
+\multirow{4}{*}{Eclipse}      & 审核元特征\&代码耦合特征                & 48.31          & 83.77          & 75.30                         \\
+                              & 审核元特征\&代码修改特征                & 51.04          & 85.17          & 77.24                         \\
+                              & 代码耦合特征\&代码修改特征               & 54.78          & 85.08          & 77.56                         \\
+                              & 所有特征                         & 62.10          & 86.16          & 79.72                         \\ \hline
+\multirow{4}{*}{OpenDayLight} & 审核元特征\&代码耦合特征                & 42.86          & 83.67          & 74.60                         \\
+                              & 审核元特征\&代码修改特征                & 35.90          & 85.38          & 76.19                         \\
+                              & 代码耦合特征\&代码修改特征               & 44.09          & 85.88          & 77.46                         \\
+                              & 所有特征                         & 50.58          & 87.49          & 80.03                         \\  \bottomrule
+\end{tabular}}
+\label{RQ3 result}
+\end{scriptsize}
+\end{center}
+\end{table}
+
+\par{为了研究三种特征对模型预测效果的影响，我们在研究问题1上进行对比实验。具体地，我们对三种特征进行两两组合，分别测试每对特征训练出来的模型的预测效果。例如，若审核元特征与代码耦合特征的组合训练出来的模型预测效果最优，则说明审核元特征与代码耦合特征对预测结果的重要性要高于代码修改特征。在实验中，我们对比了不同特征组合下模型预测效果的$F_{1}$值和准确率，实验结果如表\ref{RQ3 result}所示。}
+\par{观察表\ref{RQ3 result}中数据可以发现，任意两种特征组合的预测效果都低于使用三种特征时的预测效果，这说明三种对模型预测都起着重要作用。同时也证明了本文提取的三种可判别特征类型可用于代码修改周期的预测。使用审核元特征与代码耦合特征的组合训练得到的模型在$F_{1}$值和准确率上都低于其他两组特征组合，意味着代码修改特征在修改周期预测中的重要性高于另外两种特征。另一方面，代码耦合特征与代码修改特征训练的模型取得了最高的$F_{1}$ 值和准确率，这表明审核元特征在周期预测中的作用低于另外两种特征。}
+\subsection{代码修改影响分析及修改周期预测工具的具体实现}
+\par{本节详细描述代码修改影响分析及修改周期预测工具的实现，图\ref{fig:system}为该工具的系统功能结构图，系统中影响分析模块与修改周期预测模块分别对应第二章与第三章研究内容，基础服务模块主要提供用户的管理功能及数据的管理功能。下面我们分别介绍几个功能模块的实现。}
 \begin{figure}[h]
 \centering
 \includegraphics[width=5.5in]{myfigure/system.pdf}
 \caption{系统功能结构图}
 \label{fig:system}
 \end{figure}
-\subsection{系统需求分析}
-\par{本系统结合了第二章与第三章提出的方法，本系统主要目标用户为程序开发人员。图\ref{UML}为系统用例分析图， 主要有数据收集与预处理，模型训练以结果展示三大核心需求。下面对对系统用例进行详细介绍。}
-\begin{figure}[h]
-\centering
-\includegraphics[width=5.5in]{myfigure/uml.pdf}
-\caption{代码修改影响分析与修改周期预测系统用例分析图}
-\label{UML}
-\end{figure}
-\par{\textbf{1）数据收集与预处理}}
-\par{本文提出的两种方法都是基于历史代码修改信息实现，因此，我们需要提前收集一些开源项目的历史提交信息及历史审核信息。另外，需要对这些数据进行一些预处理操作，去除历史数据中的噪声数据。该用例还包括的功能有：历史提交中修改信息的提取、修改代码之间结构耦合信息提取以及提交中用于周期预测的可判别特征提取。最后将相关数据存储于本地仓库中。}
-\par{\textbf{2）	模型训练}}
-\par{在修改影响分析的详细提交检索基于词向量模型实现，而代码修改周期预测方法通过机器学习模型实现，除了可判别特征的提取外，模型训练效果直接影响预测结果。在系统中，我们提供多种机器学习算法，以及相应的可设置参数。}
-\par{\textbf{3）	结果展示}}
-\par{本章系统主要实现代码修改影响分析功能以及代码修改周期预测功能。在修改影响分析功能中，开发人员在前端上传相关修改代码、修改目标信息以及选定初始影响分析方法，后台根据初始影响分析方法得到初始影响集，再通过影响分析辅助方法对初始影响集进行优化，得到最终影响集并返回前端显示。在代码修改周期预测中，开发人员上传相关修改代码以及审核信息，后台关联其相关项目，根据项目中的代码修改和审核信息训练模型，再对其上传内容进行预测，并把结果返回前端显示。}
-\subsection{代码修改影响分析模块实现}
-\par{代码修改影响分析模块在历史提交库中检索与目标修改任务相似的提交，利用历史提交中关键类的修改模式，对当前修改类进行影响集的推荐。该模块包含一下几个功能：（1）关键类识别功能；（2）代码修改提取功能；（3）相似提交检索功能；（4）类间耦合关系提取功能；（5）影响集推荐功能。}
+\subsubsection{代码修改影响分析模块设计}
+\par{代码修改影响分析模块在历史提交库中检索与当前修改工作最相似的提交，利用历史提交中关键类的修改模式，对当前修改类进行影响集的推荐。该模块包含一下几个功能：（1）关键类识别功能；（2）代码修改提取功能；（3）相似提交检索功能；（4）类间耦合关系提取功能；（5）影响集推荐功能。用户上传涉及修改的代码和修改目标后，系统通过文本预处理对两份数据进行处理，得到与历史提交库中相同的文本形式；通过词向量模型，对比用户输入数据与提交库每个提交中关键类的相似度，得到最相似的提交列表；用户选择初始影响分析方法，得到初始影响集，系统计算相似提交中关键类与非关键类的耦合关系以及修改类与初始影响集中类的耦合关系，再基于两部分耦合关系中相似的部分，对初始影响集进行优化排序，得到最终影响集。}
+\par{表\ref{majorclass}中为代码修改影响分析模块中主要的功能类。\emph{ClassChange}的功能是提取提交前后两个版本的代码中同个类的修改信息，而\emph{VersionChange}则是提取提交两个版本的总修改信息。\emph{Word2VecModel}用于封装有提交库中所有提交数据训练得到的词向量模型。关键类模型则封装在\emph{CoreClassModel}中。\emph{InitImpactSecGenerator}用于提供多种传统影响分析方法，生成用户修改的初始影响集。\emph{CouplingRelations}的功能是提取类与类之间的结构耦合关系。\emph{ImpactSetOptimizer}实现了对初始影响集的优化调整，并返回影响分析结果给用户。}
 \begin{table}[h]
-\caption{修改影响分析主要类及对应功能}
+\caption{代码修改影响分析模块主要类及对应功能}
 \begin{center}
 \begin{scriptsize}
 \setlength{\tabcolsep}{7mm}{
 \begin{tabular}{ll}
-\toprule 
+\toprule
 \textbf{类名称}                    & \textbf{类功能描述}                \\
-\midrule 
+\midrule
 ClassChange            & 提取提交两个版本中同个类的修改信息    \\
 VersionChange          & 提取提交两个版本的修改信息        \\
 Word2VecModel          & 封装词向量模型              \\
@@ -43,37 +377,50 @@ CouplingRelations      & 提取类间结构耦合关系           \\
 ImpactSetOptimizer     & 初始影响集排序的调整，返回最终影响集\\
 \bottomrule
 \end{tabular}}
-\label{RQ2 result}
+\label{majorclass}
 \end{scriptsize}
 \end{center}
 \end{table}
-\par{图\ref{method1}为本功能模块的运行流程图。用户上传涉及修改的代码和修改目标后，系统通过文本预处理对两份数据进行处理，得到与历史提交库中相同的文本形式；通过词向量模型，对比用户输入数据与提交库每个提交中关键类的相似度，得到最相似的提交列表；用户选择初始影响分析方法，得到初始影响集，系统计算相似提交中关键类与非关键类的耦合关系以及修改类与初始影响集中类的耦合关系，再基于两部分耦合关系中相似的部分，对初始影响集进行优化排序，得到最终影响集。下面，我们简要阐述子功能模块的实现。}
+\par{下面简要阐述代码修改影响分析模块中各个子功能的实现：}
+\par{\textbf{（1）关键类识别功能}}
+\par{在本文影响分析方法中，关键类识别功能作为我们系统的核心模块之一。关键类识别功能是为了识别提交中核心修改的类。在相似提交检索及基于结构耦合相似性的影响集调整等两个步骤中，我们都是将提交中的关键类作为修改类的等价类。相似提交检索中，衡量指标是用户上传的代码修改片段与关键类的代码修改片段之间的相似度以及修改目标与注释文本的相似度。在对初始影响集的调整中，我们利用关键类的修改模式，对影响分析结果进行优化重排序。关键类识别功能如图\ref{tool:coreclass}，用户上传提交数据后，系统给出提交中每个类为关键类的概率。}
 \begin{figure}[h]
 \centering
-\includegraphics[width=5.5in]{myfigure/method1.pdf}
-\caption{代码修改影响分析流程图}
-\label{method1}
+\includegraphics[width=5in]{myfigure/toolcoreclass.pdf}
+\caption{关键类识别功能示例}
+\label{tool:coreclass}
 \end{figure}
-\subsubsection{关键类识别功能}
-\par{在本文影响分析方法中，关键类识别功能作为我们系统的核心模块之一。关键类识别功能是为了识别提交中核心修改的类。在相似提交检索及基于结构耦合相似性的影响集调整等两个步骤中，我们都是将提交中的关键类作为修改类的等价类。相似提交检索中，衡量指标是用户上传的代码修改片段与关键类的代码修改片段之间的相似度以及修改目标与注释文本的相似度。在对初始影响集的调整中，我们利用关键类的修改模式，对影响分析结果进行优化重排序。}
 \par{由于关键类判别模型已离线训练，系统中可以直接使用关键类识别模型。同时，由于提交数据库庞大，关键类的识别可离线完成。在用户使用阶段，可直接读取每个提交中的关键类。}
-\subsubsection{代码修改提取功能}
-\par{代码修改提取功能作为相似提交检索功能的基础模块，其主要功能是对用户上传的文件进行修改片段提取及不同版本代码对比。修改代码片段包括了变化的类，变化的方法以及变化的语句等。同时，若影响分析中引入修改后的代码片段，代码修改提取功能中还实现了新旧代码的对比。}
-\subsubsection{相似提交检索功能}
-\par{相似提交检索功能的核心利用提交库中的代码数据以及提交注释文本数据训练词向量模型，再基于词向量模型计算用户上传数据与提交库中提交的相似度，得到相似提交列表。在系统中，用户可根据需要，选择根据提交库训练词向量模型，也可以上传词向量模型。用户可以选择需要的相似提交数量，另外，在相似提交列表中，系统根据相似度从大到低展示相似提交，展示的数据包括了，注释文本相似度，修改前代码相似度，修改后代码相似度（若影响分析中引入修改后代码片段）以及综合相似度。另外，用户可以点击相似提交查看该提交的信息，包括注释信息，包含类的数量。} 
-\subsubsection{类间耦合关系提取功能}
+\par{\textbf{（2）代码修改提取功能}}
+\par{代码修改提取功能作为相似提交检索功能的基础模块，其主要功能是对用户上传的文件进行修改片段提取及不同版本代码对比。修改代码片段包括了类层次、方放层次和语句层次等。同时，若影响分析中引入修改后的代码片段，代码修改提取功能中还实现了新旧代码的对比。}
+\par{\textbf{（3）相似提交检索功能}}
+\par{相似提交检索功能的核心利用提交库中的代码数据以及提交注释文本数据训练词向量模型，再基于词向量模型计算用户上传数据与提交库中提交的相似度，得到相似提交列表。相似提交检索功能如图\ref{tool:commit}所示，用户可根据需要，选择衡量提交相似度的因素，包括注释相似度、修改前代码相似度和修改后代码相似度；还可以选择需要的相似提交数量。另外，在相似提交列表中，系统根据相似度从大到低展示相似提交，展示的数据包括了，注释文本相似度，修改前代码相似度，修改后代码相似度（若影响分析中引入修改后代码片段）以及综合相似度。另外，用户可以点击相似提交查看该提交的信息，包括注释信息，包含类的数量。}
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{myfigure/toolcommit.pdf}
+\caption{相似提交检索功能示例}
+\label{tool:commit}
+\end{figure}
+\par{\textbf{（4）类间耦合关系提取功能}}
 \par{本文的影响分析中初始影响集的优化重排序的基础是结构耦合关系的相似性。类间耦合关系的提取主要分为两部分，一是修改类与初始影响集中各个类的结构耦合关系，另一部分是相似提交中关键类与非关键类的耦合关系。通过该功能模块，用户可以选择查看不同类间的结构耦合关系。}
-\subsubsection{影响集推荐功能}
-\par{影响集推荐功能模块用于展示影响分析结果。} 
-\subsection{代码修改周期预测模块实现}
-\par{代码修改周期预测模块包括以下几个功能：（1）数据收集功能；（2）可判别特征提取功能；（3）机器学习模型训练功能；（4）修改周期预测功能。该模块主要实现对用户上传的数据，进行可判别特征的提取；提供机器学习模型的训练，以及修改周期预测等功能，表\ref{mainclass2}为该模块主要类及对应功能。}
+\par{\textbf{（5）影响集推荐功能}}
+\par{影响集推荐功能如图\ref{tool:impactset}所示，影响集推荐功能模块用于展示影响分析结果，包括初始影响分析结果和最终影响分析结果。最终影响分析结果中，绿色底纹的类是相对与初始影响集，排名上升的类。}
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{myfigure/toolimpactset.pdf}
+\caption{影响集推荐功能示例}
+\label{tool:impactset}
+\end{figure}
+\subsubsection{代码修改周期预测模块实现}
+\par{代码修改周期预测模块包括以下几个功能：（1）数据收集功能；（2）可判别特征提取功能；（3）机器学习模型训练功能；（4）修改周期预测功能。该模块主要实现对用户上传的数据，进行可判别特征的提取；提供机器学习模型的训练，以及修改周期预测等功能。用户上传代码修改数据及审核信息（另外，用户可上传项目历史修改数据集，也可以接入项目的代码审核平台，若用户未上传该部分数据，则系统默认使用已有数据集训练预测模型）。系统对用户上传数据进行一些文本预处理，然后提取代码审核元特征、代码耦合特征、代码修改特征。在预测模型训练部分，系统提供了多种机器学习模型供用户选择；同时，用户也可以直接使用已训练好的模型，对上传数据进行修改周期预测。下面我们简要介绍各功能模块。}
+\par{表\ref{mainclass2}为该代码修改周期预测模块主要类及对应功能。\emph{DataSet}用于提供已有代码修改数据集，并接收用户上传数据集，其中，系统提供数据集包括Eclipse和OpenDaylight。\emph{ReviewMetaFeatures}、\emph{CodeCouplingFeatures}以及\emph{CodeModifyingFeatures}功能分别是提取数据样本的代码审核元特征、代码耦合特征和代码修改特征。\emph{FeatureProcessing}实现一些对数据样本的特征处理方法。\emph{Model}提供了多种机器学习模型，用于实现模型训练。}
 \begin{table}[h]
-\caption{修改影响分析主要类及对应功能}
+\caption{代码修改周期预测模块主要类及对应功能}
 \begin{center}
 \begin{scriptsize}
 \setlength{\tabcolsep}{7mm}{
 \begin{tabular}{ll}
-\toprule 
+\toprule
 \textbf{类名称}                   & \textbf{类功能描述}                \\
 \midrule
 DataSet               & 封装已有代码修改及审核数据集，可替换成用户上传数据集    \\
@@ -88,11 +435,34 @@ Model                 & 封装多种机器学习模型\\
 \end{scriptsize}
 \end{center}
 \end{table}
-\par{图4-5为本功能模块的运行流程图。用户上传代码修改数据及审核信息（另外，用户可上传项目历史修改数据集，也可以接入项目的代码审核平台，若用户未上传该部分数据，则系统默认使用已有数据集训练预测模型）。系统对用户上传数据进行一些文本预处理，然后提取代码审核元特征、代码耦合特征、代码修改特征。在预测模型训练部分，系统提供了多种机器学习模型供用户选择；同时，用户也可以直接使用已训练好的模型，对上传数据进行修改周期预测。下面我们对这几个功能作简要的说明。}
+\par{下面简要阐述代码修改周期预测分析模块中各个子功能的实现：}
+\par{\textbf{（1）数据收集功能}}
+\par{数据收集模块主要用于收集用户的上传的代码修改数据。系统中已有两个开源项目Eclipse和OpenDaylight的数据集用于训练机器学习模型，同时，用户也可以上传本项目的历史修改数据集。另外，如果修改涉及项目的使用了Gerrit审核平台，用户可以通过提供Gerrit项目地址的方式，提供项目代码修改的历史数据信息。数据收集功能如图\ref{tool:data}。}
 \begin{figure}[h]
 \centering
-\includegraphics[width=4.2in]{myfigure/method21.pdf}
-\caption{代码修改周期预测流程图}
-\label{method1}
+\includegraphics[width=5in]{myfigure/tooldata.pdf}
+\caption{数据收集功能示例}
+\label{tool:data}
 \end{figure}
-\subsubsection{数据收集功能}
+\par{\textbf{（2）可判别特征提取功能}}
+\par{可判别特征提取是系统实现周期预测的核心功能，其主要目标是从用户上传的数据中提取本文3.2节中描述的40维特征，另外如果用户上传了自己的数据集，该模块还需对数据集中的代码和审核数据进行处理。在该模块中，用户可以查看审核元特征、代码耦合特征和代码修改特征下各维特征的详细数据。可判别特征提取功能示例图如图\ref{tool:feature}所示。}
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{myfigure/toolfeature.pdf}
+\caption{可判别特征提取功能示例}
+\label{tool:feature}
+\end{figure}
+\par{\textbf{（3）机器学习模型训练功能}}
+\par{机器学习模型训练模块中实现了多种机器学习模型，其中默认使用通过已有数据训练的\emph{XGBoost}模型。另外，用户也可选择训练其他常用的机器学习模型，如\emph{LR}、\emph{SVM}、\emph{RF}和\emph{ANN}等。在数据集使用方面，用户可以选择已有数据，或者自行上传数据集。}
+\par{\textbf{（5）修改周期预测功能}}
+\par{修改周期预测功能如图\ref{tool:predict}所示，修改周期预测功能主要是向用户展示模型预测结果。其中，较短表示修改周期在一天内完成，一般表示修改周期在一周内完成，较长则表示修改周期超过一周。}
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{myfigure/toolpredict.pdf}
+\caption{修改周期预测功能示例}
+\label{tool:predict}
+\end{figure}
+\subsubsection{基础服务模块的实现}
+\par{基础服务模块的主要功能是用户管理、数据管理等。其中，用户管理包括提供用户注册和登录功能；数据管理功能主要完成用户数据的管理及用户操作日志的保存等。}
+\subsection{本章小结}
+\par{在本章中，我们详细介绍了修改影响分析方法和修改周期预测方法的实验设计及实验评估，并简要介绍了修改影响分析及周期预测工具的设计。在基于历史修改模式的影响分析方法实验中，我们从多个开源项目的数据集中评估了方法的有效性，并验证了是否使用关键类及耦合关系相似度高低对影响分析效果的影响。实验结果表明，我们的方法对传统影响分析结果具有很好的提升效果，在所有开源项目数据集上影响集前5和前10的召回率、精确率平均提升超过15\%。在基于可判别特征的代码修改周期预测方法的实验中，我们通过对比了不同机器学习模型的效果以及不同特征对预测效果的影响。实验结果显示，不同机器学习模型的预测结果都有较好的准确性，验证了我们提取的可判别特征在周期预测中的有效性，并且结果表明XGBoost的预测效果优于其他机器学习模型。在工具设计中，我们通过两个功能模块实现了影响分析和代码修改周期预测功能，其中工具中的代码修改影响分析模块和代码修改周期预测模块分别对应第二章和第三章的研究内容。}

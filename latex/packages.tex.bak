@@ -1,5 +1,5 @@
 %\usepackage{picinpar}
-\usepackage{color}
+
 \usepackage{amssymb,amsmath} % 各种数学符号
 \usepackage{mathrsfs} % 哥特体
 \usepackage[dvips]{color} % 字体和背景颜色
@@ -33,6 +33,10 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{enumerate}
+\usepackage{colortbl}
+\usepackage[super,square,numbers,sort&compress]{natbib}
+%\usepackage[CJKbookmarks=true, bookmarks=true, bookmarksnumbered=true]{hyperref}
+\usepackage[hidelinks, CJKbookmarks=true, bookmarks=true, bookmarksnumbered=true]{hyperref}
 \normalem
 
 
